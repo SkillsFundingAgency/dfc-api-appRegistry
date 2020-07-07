@@ -14,7 +14,7 @@ using SwaggerIgnoreAttribute = DFC.Swagger.Standard.Annotations.SwaggerIgnoreAtt
 namespace DFC.Api.AppRegistry.Functions
 {
     [ExcludeFromCodeCoverage]
-    public class APIDefinition
+    public class ApiDefinition
     {
         private const string ApiTitle = "App Registratry API";
         private const string SwaggerJsonRoute = "swagger/json";
@@ -24,7 +24,7 @@ namespace DFC.Api.AppRegistry.Functions
 
         private readonly ISwaggerDocumentGenerator swaggerDocumentGenerator;
 
-        public APIDefinition(ISwaggerDocumentGenerator swaggerDocumentGenerator)
+        public ApiDefinition(ISwaggerDocumentGenerator swaggerDocumentGenerator)
         {
             this.swaggerDocumentGenerator = swaggerDocumentGenerator;
         }

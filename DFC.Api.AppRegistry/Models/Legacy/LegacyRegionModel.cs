@@ -1,8 +1,10 @@
 ﻿using DFC.Api.AppRegistry.Enums;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DFC.Api.AppRegistry.Models.Legacy
 {
+    [ExcludeFromCodeCoverage]
     public class LegacyRegionModel
     {
         public string? Path { get; set; }

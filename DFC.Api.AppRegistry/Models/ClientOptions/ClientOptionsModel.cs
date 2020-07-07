@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DFC.Api.AppRegistry.Models.ClientOptions
 {
+    [ExcludeFromCodeCoverage]
     public abstract class ClientOptionsModel
     {
         public Uri? BaseAddress { get; set; }

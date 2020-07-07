@@ -1,6 +1,9 @@
-﻿namespace DFC.Api.AppRegistry.Common
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace DFC.Api.AppRegistry.Common
 {
-    public static class Message
+    [ExcludeFromCodeCoverage]
+    public static class ValidationMessages
     {
         public const string FieldIsRequired = "The {0} field is required.";
         public const string PathIsInvalid = "Path is invalid";

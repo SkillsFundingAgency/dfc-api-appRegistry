@@ -5,10 +5,13 @@ using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 
 namespace DFC.Api.AppRegistry.Models
 {
+    [ExcludeFromCodeCoverage]
     public class RegionModel
     {
         [Display(Description = "The region on a page to which the application endpoint will supply data for.")]
@@ -54,10 +57,10 @@ namespace DFC.Api.AppRegistry.Models
             }
             else
             {
-                if (regionEndpoint.Contains(PlaceMarkerStub))
+                if (regionEndpoint.Contains(PlaceMarkerStub, StringComparison.OrdinalIgnoreCase))
                 {
                     // this is allowable, so replace with a valid string to permit the Uri.IsWellFormedUriString to check the resulting string
-                    regionEndpoint = regionEndpoint.Replace(PlaceMarkerStub, "valid");
+                    regionEndpoint = regionEndpoint.Replace(PlaceMarkerStub, "valid", StringComparison.OrdinalIgnoreCase);
                 }
 
                 if (!Uri.IsWellFormedUriString(regionEndpoint, UriKind.Absolute))
@@ -74,7 +77,7 @@ namespace DFC.Api.AppRegistry.Models
 
                 if (htmlDoc.ParseErrors.Any())
                 {
-                    result.Add(new ValidationResult(string.Format(Message.MalformedHtml, nameof(OfflineHtml))));
+                    result.Add(new ValidationResult(string.Format(CultureInfo.InvariantCulture, ValidationMessages.MalformedHtml, nameof(OfflineHtml))));
                 }
             }
 

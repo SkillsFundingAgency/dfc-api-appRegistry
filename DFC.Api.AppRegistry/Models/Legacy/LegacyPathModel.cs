@@ -1,8 +1,10 @@
 ﻿using DFC.Api.AppRegistry.Enums;
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DFC.Api.AppRegistry.Models.Legacy
 {
+    [ExcludeFromCodeCoverage]
     public class LegacyPathModel
     {
         public Guid DocumentId { get; set; }
@@ -21,11 +23,11 @@ namespace DFC.Api.AppRegistry.Models.Legacy
 
         public string? PhaseBannerHtml { get; set; }
 
-        public string? SitemapURL { get; set; }
+        public Uri? SitemapURL { get; set; }
 
-        public string? ExternalURL { get; set; }
+        public Uri? ExternalURL { get; set; }
 
-        public string? RobotsURL { get; set; }
+        public Uri? RobotsURL { get; set; }
 
         public DateTime? DateOfRegistration { get; set; }
 

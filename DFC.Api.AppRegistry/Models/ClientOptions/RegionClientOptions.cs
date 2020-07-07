@@ -1,5 +1,8 @@
-﻿namespace DFC.Api.AppRegistry.Models.ClientOptions
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace DFC.Api.AppRegistry.Models.ClientOptions
 {
+    [ExcludeFromCodeCoverage]
     public class RegionClientOptions : ClientOptionsModel
     {
     }

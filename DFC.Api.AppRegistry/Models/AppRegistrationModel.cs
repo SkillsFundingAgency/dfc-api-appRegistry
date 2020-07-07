@@ -6,11 +6,14 @@ using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace DFC.Api.AppRegistry.Models
 {
+    [ExcludeFromCodeCoverage]
     public class AppRegistrationModel : DocumentModel
     {
         [Display(Description = "The path of the application. This should match the url value immediately after the domain. i.e. https://nationalcareeers.service.gov.uk/explore-careers.")]
@@ -27,6 +30,7 @@ namespace DFC.Api.AppRegistry.Models
             {
                 return Path;
             }
+
             set
             {
                 Path = value;
@@ -61,15 +65,15 @@ namespace DFC.Api.AppRegistry.Models
 
         [Display(Description = "Optional Url endpoint for the retrieval of an application sitemap.")]
         [Example(Description = "https://nationalcareeers.service.gov.uk/explore-careers/sitemap")]
-        public string? SitemapURL { get; set; }
+        public Uri? SitemapURL { get; set; }
 
         [Display(Description = "External Url endpoint.")]
         [Example(Description = "https://nationalcareeers.service.gov.uk/explore-careers")]
-        public string? ExternalURL { get; set; }
+        public Uri? ExternalURL { get; set; }
 
         [Display(Description = "Optional Url endpoint for the retrieval of an application Robots.txt file.")]
         [Example(Description = "https://nationalcareeers.service.gov.uk/explore-careers/robots.txt")]
-        public string? RobotsURL { get; set; }
+        public Uri? RobotsURL { get; set; }
 
         [Display(Description = "UTC date and time the application was registered. This is auto generated.")]
         [Example(Description = "2019-05-01T13:32:00")]
@@ -89,11 +93,11 @@ namespace DFC.Api.AppRegistry.Models
         {
             var result = new List<ValidationResult>();
 
-            var pathRegex = new Regex(RegularExpressions.Path);
+            var pathRegex = new Regex(ValidationRegularExpressions.Path);
 
             if (!pathRegex.IsMatch(Path))
             {
-                result.Add(new ValidationResult(Message.PathIsInvalid, new string[] { nameof(Path) }));
+                result.Add(new ValidationResult(ValidationMessages.PathIsInvalid, new string[] { nameof(Path) }));
             }
 
             if (!string.IsNullOrEmpty(OfflineHtml))
@@ -104,7 +108,7 @@ namespace DFC.Api.AppRegistry.Models
 
                 if (htmlDoc.ParseErrors.Any())
                 {
-                    result.Add(new ValidationResult(string.Format(Message.MalformedHtml, nameof(OfflineHtml)), new string[] { nameof(OfflineHtml) }));
+                    result.Add(new ValidationResult(string.Format(CultureInfo.InvariantCulture, ValidationMessages.MalformedHtml, nameof(OfflineHtml)), new string[] { nameof(OfflineHtml) }));
                 }
             }
 
@@ -116,7 +120,7 @@ namespace DFC.Api.AppRegistry.Models
 
                 if (htmlDoc.ParseErrors.Any())
                 {
-                    result.Add(new ValidationResult(string.Format(Message.MalformedHtml, nameof(PhaseBannerHtml))));
+                    result.Add(new ValidationResult(string.Format(CultureInfo.InvariantCulture, ValidationMessages.MalformedHtml, nameof(PhaseBannerHtml))));
                 }
             }
 

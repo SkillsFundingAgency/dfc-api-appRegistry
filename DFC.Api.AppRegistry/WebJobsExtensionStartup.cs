@@ -15,12 +15,14 @@ using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 [assembly: FunctionsStartup(typeof(DFC.Api.AppRegistry.WebJobsExtensionStartup))]
 
 namespace DFC.Api.AppRegistry
 {
+    [ExcludeFromCodeCoverage]
     public class WebJobsExtensionStartup : IWebJobsStartup
     {
         private const string CosmosDbConfigAppSettings = "Configuration:CosmosDbConnections:AppRegistry";
