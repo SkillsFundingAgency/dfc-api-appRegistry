@@ -1,4 +1,3 @@
-using System;
 using Xunit;
 
 namespace DFC.Api.AppRegistry.UnitTests
@@ -8,7 +7,14 @@ namespace DFC.Api.AppRegistry.UnitTests
         [Fact]
         public void Test1()
         {
+            // Arrange
+            bool expectedResult = true;
 
+            // Act
+            var result = true;
+
+            // Assert
+            Assert.Equal(expectedResult, result);
         }
     }
 }

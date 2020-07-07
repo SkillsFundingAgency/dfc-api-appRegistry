@@ -1,11 +1,22 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30225.117
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DFC.Api.AppRegistry", "DFC.Api.AppRegistry\DFC.Api.AppRegistry.csproj", "{E5160D3E-46F2-4384-8C57-078251EB776E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Api.AppRegistry", "DFC.Api.AppRegistry\DFC.Api.AppRegistry.csproj", "{E5160D3E-46F2-4384-8C57-078251EB776E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DFC.Api.AppRegistry.UnitTests", "DFC.Api.AppRegistry.UnitTests\DFC.Api.AppRegistry.UnitTests.csproj", "{471E5567-3F89-4F41-BC17-98FA00091150}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Api.AppRegistry.UnitTests", "DFC.Api.AppRegistry.UnitTests\DFC.Api.AppRegistry.UnitTests.csproj", "{471E5567-3F89-4F41-BC17-98FA00091150}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solution Items", "{81C77B25-9D95-4600-925B-BA592E9DB410}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		CODEOWNERS = CODEOWNERS
+		DFC.Digital.CodeAnalysis.ruleset = DFC.Digital.CodeAnalysis.ruleset
+		LICENSE = LICENSE
+		README.md = README.md
+		stylecop.json = stylecop.json
+		UnitTests.CodeAnalysis.ruleset = UnitTests.CodeAnalysis.ruleset
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +26,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{E5160D3E-46F2-4384-8C57-078251EB776E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -44,5 +52,11 @@ Global
 		{471E5567-3F89-4F41-BC17-98FA00091150}.Release|x64.Build.0 = Release|Any CPU
 		{471E5567-3F89-4F41-BC17-98FA00091150}.Release|x86.ActiveCfg = Release|Any CPU
 		{471E5567-3F89-4F41-BC17-98FA00091150}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6B53CDC9-52E4-4681-83CD-BB94FDC1269C}
 	EndGlobalSection
 EndGlobal
