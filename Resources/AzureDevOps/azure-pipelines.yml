@@ -1,0 +1,31 @@
+variables:
+    SolutionBaseName: '__SolutionBaseName__'
+    BuildPlatform: 'any cpu'
+    BuildConfiguration: 'release'
+
+resources:
+  repositories:
+  - repository: self
+  - repository: dfc-devops
+    type: github
+    name: SkillsFundingAgency/dfc-devops
+    ref: refs/tags/v1.11.2
+    endpoint: 'GitHub (ESFA)'
+
+stages:
+- stage: Build
+  displayName: Build, Test and Analyze
+  jobs:
+  - job: BuildTestAndAnalyze
+    pool:
+      name: NCS - CI and CD
+      demands:
+      - msbuild
+      - visualstudio
+    steps:
+    - template: AzureDevOpsTemplates\Build\StepTemplates\dfc-dotnetcore-build-sonar.yml@dfc-devops
+      parameters:
+        SolutionBaseName: $(SolutionBaseName)
+        BuildPlatform: $(BuildPlatform)
+        BuildConfiguration: $(BuildConfiguration)
+        DotNetCoreVersion: '3.1.100'
