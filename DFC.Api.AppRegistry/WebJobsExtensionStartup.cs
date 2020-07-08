@@ -46,8 +46,13 @@ namespace DFC.Api.AppRegistry
 
             builder.AddSwashBuckle(Assembly.GetExecutingAssembly());
             builder.Services.AddAutoMapper(typeof(WebJobsExtensionStartup).Assembly);
-            builder.Services.AddTransient<ISwaggerDocumentGenerator, SwaggerDocumentGenerator>();
             builder.Services.AddDocumentServices<AppRegistrationModel>(cosmosDbConnection, false);
+            builder.Services.AddSingleton(configuration.GetSection(nameof(PathClientOptions)).Get<PathClientOptions>() ?? new PathClientOptions());
+            builder.Services.AddSingleton(configuration.GetSection(nameof(RegionClientOptions)).Get<RegionClientOptions>() ?? new RegionClientOptions());
+            builder.Services.AddTransient<ISwaggerDocumentGenerator, SwaggerDocumentGenerator>();
+            builder.Services.AddTransient<ILegacyDataLoadService, LegacyDataLoadService>();
+            builder.Services.AddTransient<IApiDataService, ApiDataService>();
+            builder.Services.AddTransient<IApiService, ApiService>();
 
             builder.Services
                 .AddPolicies(policyRegistry, nameof(PathClientOptions), policyOptions)

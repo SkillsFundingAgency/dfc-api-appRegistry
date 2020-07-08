@@ -1,0 +1,123 @@
+﻿using AutoMapper;
+using DFC.Api.AppRegistry.Contracts;
+using DFC.Api.AppRegistry.Models;
+using DFC.Api.AppRegistry.Models.Legacy;
+using DFC.Compui.Cosmos.Contracts;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+
+namespace DFC.Api.AppRegistry.Services
+{
+    public class LegacyDataLoadService : ILegacyDataLoadService
+    {
+        private readonly ILogger<LegacyDataLoadService> logger;
+        private readonly IMapper mapper;
+        private readonly IDocumentService<AppRegistrationModel> documentService;
+        private readonly ILegacyPathService legacyPathService;
+        private readonly ILegacyRegionService legacyRegionService;
+
+        public LegacyDataLoadService(
+            ILogger<LegacyDataLoadService> logger,
+            IMapper mapper,
+            IDocumentService<AppRegistrationModel> documentService,
+            ILegacyPathService legacyPathService,
+            ILegacyRegionService legacyRegionService)
+        {
+            this.logger = logger;
+            this.mapper = mapper;
+            this.documentService = documentService;
+            this.legacyPathService = legacyPathService;
+            this.legacyRegionService = legacyRegionService;
+        }
+
+        public async Task LoadAsync()
+        {
+            logger.LogInformation("Loading legacy data");
+
+            var legacyPathModels = await legacyPathService.GetListAsync().ConfigureAwait(false);
+
+            if (legacyPathModels != null && legacyPathModels.Any())
+            {
+                await ProcessPathsAsync(legacyPathModels).ConfigureAwait(false);
+            }
+
+            logger.LogInformation("Loaded legacy data");
+        }
+
+        public async Task ProcessPathsAsync(IList<LegacyPathModel> legacyPathModels)
+        {
+            _ = legacyPathModels ?? throw new ArgumentNullException(nameof(legacyPathModels));
+
+            foreach (var legacyPathModel in legacyPathModels.OrderBy(o => o.Path))
+            {
+                await ProcessPathAsync(legacyPathModel).ConfigureAwait(false);
+            }
+        }
+
+        public async Task ProcessPathAsync(LegacyPathModel legacyPathModel)
+        {
+            _ = legacyPathModel ?? throw new ArgumentNullException(nameof(legacyPathModel));
+
+            var legacyRegionModels = await legacyRegionService.GetListAsync(legacyPathModel.Path).ConfigureAwait(false);
+            var appRegistrationModels = await documentService.GetAllAsync().ConfigureAwait(false);
+            var appRegistrationModel = appRegistrationModels.FirstOrDefault(f => f.Path == legacyPathModel.Path) ?? new AppRegistrationModel();
+
+            MapModels(appRegistrationModel, legacyPathModel, legacyRegionModels);
+
+            if (ValidateModel(appRegistrationModel))
+            {
+                var upsertResult = await documentService.UpsertAsync(appRegistrationModel).ConfigureAwait(false);
+
+                if (upsertResult == HttpStatusCode.OK)
+                {
+                    logger.LogInformation($"Upserted app registration: {appRegistrationModel.Path}");
+                }
+                else
+                {
+                    logger.LogError($"Failed to upsert app registration: {appRegistrationModel.Path}: Status code: {upsertResult}");
+                }
+            }
+        }
+
+        public void MapModels(AppRegistrationModel? appRegistrationModel, LegacyPathModel? legacyPathModel, IList<LegacyRegionModel>? legacyRegionModels)
+        {
+            _ = appRegistrationModel ?? throw new ArgumentNullException(nameof(appRegistrationModel));
+            _ = legacyPathModel ?? throw new ArgumentNullException(nameof(legacyPathModel));
+
+            mapper.Map(legacyPathModel, appRegistrationModel);
+
+            if (legacyRegionModels != null)
+            {
+                appRegistrationModel.Regions = mapper.Map<List<RegionModel>>(legacyRegionModels.OrderBy(o => o.PageRegion));
+            }
+            else
+            {
+                appRegistrationModel.Regions = null;
+            }
+        }
+
+        public bool ValidateModel(AppRegistrationModel? appRegistrationModel)
+        {
+            _ = appRegistrationModel ?? throw new ArgumentNullException(nameof(appRegistrationModel));
+
+            var validationContext = new System.ComponentModel.DataAnnotations.ValidationContext(appRegistrationModel, null, null);
+            var validationResults = new List<ValidationResult>();
+            var isValid = Validator.TryValidateObject(appRegistrationModel, validationContext, validationResults, true);
+
+            if (!isValid && validationResults.Any())
+            {
+                foreach (var validationResult in validationResults)
+                {
+                    logger.LogError($"Error validating {appRegistrationModel.Path}: {string.Join(",", validationResult.MemberNames)} - {validationResult.ErrorMessage}");
+                }
+            }
+
+            return isValid;
+        }
+    }
+}

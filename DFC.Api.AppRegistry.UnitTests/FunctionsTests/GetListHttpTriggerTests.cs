@@ -11,6 +11,7 @@ using Xunit;
 
 namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 {
+    [Trait("Category", "GetList - Http trigger tests")]
     public class GetListHttpTriggerTests
     {
         private readonly ILogger<GetListHttpTrigger> fakeLogger = A.Fake<ILogger<GetListHttpTrigger>>();

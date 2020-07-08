@@ -6,6 +6,6 @@ namespace DFC.Api.AppRegistry.Contracts
 {
     public interface ILegacyRegionService
     {
-        Task<List<LegacyRegionModel>> GetListAsync(string? path);
+        Task<IList<LegacyRegionModel>?> GetListAsync(string? path);
     }
 }
