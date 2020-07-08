@@ -16,7 +16,7 @@ namespace DFC.Api.AppRegistry.Functions
     [ExcludeFromCodeCoverage]
     public class ApiDefinition
     {
-        private const string ApiTitle = "App Registratry API";
+        private const string ApiTitle = "App Registry API";
         private const string SwaggerJsonRoute = "swagger/json";
         private const string SwaggerUiRoute = "swagger/ui";
         private const string ApiDefinitionDescription = "National Careers Service app registry API is a RESTful API that provides a simple and consistent approach to requesting app registry data.";
@@ -41,10 +41,10 @@ namespace DFC.Api.AppRegistry.Functions
 
         [SwaggerIgnore]
         [FunctionName("SwaggerJson")]
-        public async Task<IActionResult> SwaggerJson([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = SwaggerJsonRoute)] HttpRequest req)
+        public async Task<IActionResult> SwaggerJson([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = SwaggerJsonRoute)] HttpRequest request)
         {
             var swaggerDoc = await Task.FromResult(swaggerDocumentGenerator.GenerateSwaggerDocument(
-                req,
+                request,
                 ApiTitle,
                 ApiDefinitionDescription,
                 SwaggerJsonRoute,

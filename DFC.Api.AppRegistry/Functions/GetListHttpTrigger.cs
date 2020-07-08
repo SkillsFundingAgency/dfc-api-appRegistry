@@ -36,7 +36,7 @@ namespace DFC.Api.AppRegistry.Functions
         [Response(HttpStatusCode = 429, Description = "Too many requests being sent, by default the API supports 150 per minute.", ShowSchema = false)]
         [Display(Name = "Get", Description = "Retrieves a list of all registered applications.")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "appregistry/")] HttpRequest req)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "appregistry/")] HttpRequest request)
         {
             logger.LogInformation("Getting all app registrations");
 

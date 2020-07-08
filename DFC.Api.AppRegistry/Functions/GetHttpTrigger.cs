@@ -35,7 +35,7 @@ namespace DFC.Api.AppRegistry.Functions
         [Response(HttpStatusCode = 429, Description = "Too many requests being sent, by default the API supports 150 per minute.", ShowSchema = false)]
         [Display(Name = "Get", Description = "Retrieves a registered application for the specified path.")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "appregistry/{path}")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "appregistry/{path}")] HttpRequest request,
             string path)
         {
             logger.LogInformation("C# HTTP trigger function processed a request.");
