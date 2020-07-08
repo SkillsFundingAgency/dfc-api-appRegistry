@@ -24,7 +24,7 @@ namespace DFC.Api.AppRegistry.Functions
         {
             this.logger = logger;
             this.documentService = documentService;
-            resourceName = typeof(HealthHttpTrigger)!.Namespace;
+            resourceName = typeof(HealthHttpTrigger)?.Namespace;
         }
 
         [Display(Name = "App registry API Health Check", Description = "App registry API Health Check")]
@@ -33,24 +33,24 @@ namespace DFC.Api.AppRegistry.Functions
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is invalid.", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.ServiceUnavailable, Description = "App registry API Health failed", ShowSchema = false)]
         [Response(HttpStatusCode = 429, Description = "Too many requests being sent, by default the API supports 150 per minute.", ShowSchema = false)]
-        public async Task<IActionResult> HealthCheck(
+        public async Task<IActionResult> Health(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "health")] HttpRequest request)
         {
-            logger.LogInformation($"{nameof(HealthCheck)} has been called");
+            logger.LogInformation($"{nameof(Health)} has been called");
             try
             {
                 var isHealthy = !(documentService is null) && await documentService.PingAsync().ConfigureAwait(false);
                 if (isHealthy)
                 {
-                    logger.LogInformation($"{nameof(HealthCheck)} responded with: {resourceName} - {SuccessMessage}");
+                    logger.LogInformation($"{nameof(Health)} responded with: {resourceName} - {SuccessMessage}");
                     return new OkResult();
                 }
 
-                logger.LogError($"{nameof(HealthCheck)}: Ping to {resourceName} has failed");
+                logger.LogError($"{nameof(Health)}: Ping to {resourceName} has failed");
             }
             catch (HttpRequestException ex)
             {
-                logger.LogError(ex, $"{nameof(HealthCheck)}: {resourceName} exception: {ex.Message}");
+                logger.LogError(ex, $"{nameof(Health)}: {resourceName} exception: {ex.Message}");
             }
 
             return new StatusCodeResult((int)HttpStatusCode.ServiceUnavailable);
