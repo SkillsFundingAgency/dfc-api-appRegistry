@@ -1,0 +1,11 @@
+{
+    "DatabaseName": "composition",
+    "Collections": [
+      {
+        "CollectionName": "appregistry",
+        "OfferThroughput": 400,
+        "StoredProcedures": [],
+        "PartitionKey":  "PartitionKey"
+      }
+    ]
+  }
