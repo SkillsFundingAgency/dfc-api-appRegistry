@@ -1,0 +1,54 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "ApimLoggerName": {
+            "value": "composite-ui-logger"
+        },
+        "ApimProductInstanceName": {
+            "value": "composite-ui"
+        },
+        "ApimResourceGroup": {
+            "value": "dfc-dev-shared-rg"
+        },
+        "ApimServiceName": {
+            "value": "dfc-dev-shared-apim"
+        },
+        "ApiName": {
+            "value": "paths"
+        },
+        "ApimCompositeKey": {
+            "value": "123456789"
+        },
+        "CompositeUiSharedResourceGroup": {
+            "value": "dfc-dev-compui-shared-rg"
+        },
+        "CompositeUiSharedStorageAccountName": {
+            "value": "dfcdevcompuisharedstr"
+        },
+        "CosmosDbAccount": {
+            "value": "dfc-dev-compui-shared-cdb"
+        },
+        "CompositeUiSharedCosmosPrimaryKey": {
+            "value": "98745632147"
+        },
+        "Environment": {
+            "value": "FOO"
+        },
+        "SharedAppServicePlanName": {
+            "value": "dfc-dev-compui-shared-asp"
+        },
+        "SharedAppServicePlanResourceGroup": {
+            "value": "dfc-dev-compui-shared-rg"
+        },
+        "CosmosDbCollectionName": {
+            "value": "a-comsmos-collection"
+        },
+        "ApimProxyAddress": {
+            "value": "-a-test-suffix"
+        },
+        "enableAlerts": {
+            "value": false
+        }
+    }
+}
