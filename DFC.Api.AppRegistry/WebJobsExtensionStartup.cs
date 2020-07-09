@@ -25,8 +25,7 @@ namespace DFC.Api.AppRegistry
     [ExcludeFromCodeCoverage]
     public class WebJobsExtensionStartup : IWebJobsStartup
     {
-        private const string CosmosDbConfigSection = "Configuration:CosmosDbConnections";
-        private string CosmosDbConfigAppSettings => $"{CosmosDbConfigAppSettings}:AppRegistry";
+        private const string CosmosDbConfigAppSettings = "Configuration:CosmosDbConnections:AppRegistry";
 
         private const string AppSettingsPolicies = "Policies";
 

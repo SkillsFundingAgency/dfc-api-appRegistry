@@ -1,4 +1,5 @@
-﻿using DFC.Api.AppRegistry.Contracts;
+﻿using AutoMapper;
+using DFC.Api.AppRegistry.Contracts;
 using DFC.Api.AppRegistry.Models;
 using DFC.Api.AppRegistry.Models.Legacy;
 using DFC.Compui.Cosmos.Contracts;
@@ -72,6 +73,11 @@ namespace DFC.Api.AppRegistry.Services
 
             modelMappingService.MapModels(appRegistrationModel, legacyPathModel, legacyRegionModels);
 
+            await UpsertAppRegistration(appRegistrationModel).ConfigureAwait(false);
+        }
+
+        private async Task UpsertAppRegistration(AppRegistrationModel appRegistrationModel)
+        {
             if (modelValidationService.ValidateModel(appRegistrationModel))
             {
                 var upsertResult = await documentService.UpsertAsync(appRegistrationModel).ConfigureAwait(false);
@@ -85,6 +91,22 @@ namespace DFC.Api.AppRegistry.Services
                     logger.LogError($"Failed to upsert app registration: {appRegistrationModel.Path}: Status code: {upsertResult}");
                 }
             }
+        }
+
+        public async Task UpdateRegionAsync(LegacyRegionModel legacyRegionModel)
+        {
+            //TODO: ian - need to improve the following two lines of code in the Cosmos nuget
+            var appRegistrationModels = await documentService.GetAllAsync().ConfigureAwait(false);
+            var appRegistrationModel = appRegistrationModels.FirstOrDefault(f => f.Path == legacyRegionModel.Path) ?? null;
+
+            if (appRegistrationModel == null)
+            {
+                logger.LogError($"Failed to Update Region for path: {legacyRegionModel!.Path}: registration not found");
+            }
+
+            modelMappingService.MapAndUpdateRegionModel(appRegistrationModel, legacyRegionModel);
+
+            await UpsertAppRegistration(appRegistrationModel).ConfigureAwait(false);
         }
     }
 }
