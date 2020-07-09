@@ -68,7 +68,7 @@ namespace DFC.Api.AppRegistry.Services
 
             //TODO: ian - need to improve the following two lines of code in the Cosmos nuget
             var appRegistrationModels = await documentService.GetAllAsync().ConfigureAwait(false);
-            var appRegistrationModel = appRegistrationModels.FirstOrDefault(f => f.Path == legacyPathModel.Path) ?? new AppRegistrationModel();
+            var appRegistrationModel = appRegistrationModels?.FirstOrDefault(f => f.Path == legacyPathModel.Path) ?? new AppRegistrationModel();
 
             modelMappingService.MapModels(appRegistrationModel, legacyPathModel, legacyRegionModels);
 
