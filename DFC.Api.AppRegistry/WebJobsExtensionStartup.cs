@@ -25,7 +25,9 @@ namespace DFC.Api.AppRegistry
     [ExcludeFromCodeCoverage]
     public class WebJobsExtensionStartup : IWebJobsStartup
     {
-        private const string CosmosDbConfigAppSettings = "Configuration:CosmosDbConnections:AppRegistry";
+        private const string CosmosDbConfigSection = "Configuration:CosmosDbConnections";
+        private string CosmosDbConfigAppSettings => $"{CosmosDbConfigAppSettings}:AppRegistry";
+
         private const string AppSettingsPolicies = "Policies";
 
         public void Configure(IWebJobsBuilder builder)
@@ -55,6 +57,9 @@ namespace DFC.Api.AppRegistry
             builder.Services.AddTransient<IApiService, ApiService>();
             builder.Services.AddTransient<IModelMappingService, ModelMappingService>();
             builder.Services.AddTransient<IModelValidationService, ModelValidationService>();
+
+            // Bind configuration settings for Change Feed Listeners
+            //builder.Services.Configure<RegionsLegacyOptions>(configuration.GetSection($"{CosmosDbConfigSection}:RegionsLegacyOptions") ?? throw new ArgumentException($"{CosmosDbConfigSection}:RegionsLegacyOptions not present in AppSettings"));
 
             builder.Services
                 .AddPolicies(policyRegistry, nameof(PathClientOptions), policyOptions)
