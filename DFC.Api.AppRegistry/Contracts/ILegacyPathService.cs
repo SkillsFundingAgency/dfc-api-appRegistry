@@ -6,6 +6,6 @@ namespace DFC.Api.AppRegistry.Contracts
 {
     public interface ILegacyPathService
     {
-        Task<List<LegacyPathModel>> GetListAsync();
+        Task<IList<LegacyPathModel>?> GetListAsync();
     }
 }

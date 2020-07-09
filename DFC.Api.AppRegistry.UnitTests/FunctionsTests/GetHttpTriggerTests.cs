@@ -12,8 +12,10 @@ using Xunit;
 
 namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 {
+    [Trait("Category", "Get - Http trigger tests")]
     public class GetHttpTriggerTests
     {
+        private const string PathName = "unit-tests";
         private readonly ILogger<GetHttpTrigger> fakeLogger = A.Fake<ILogger<GetHttpTrigger>>();
         private readonly IDocumentService<AppRegistrationModel> fakeDocumentService = A.Fake<IDocumentService<AppRegistrationModel>>();
 
@@ -21,17 +23,16 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         public async Task GetReturnsSuccessWhenDataPresent()
         {
             // Arrange
-            const string path = "unit-tests";
             var fakeAppRegistrationModels = A.CollectionOfDummy<AppRegistrationModel>(2);
             var expectedResult = new OkObjectResult(fakeAppRegistrationModels.First());
             var function = new GetHttpTrigger(fakeLogger, fakeDocumentService);
 
-            fakeAppRegistrationModels.First().Path = path;
+            fakeAppRegistrationModels.First().Path = PathName;
 
             A.CallTo(() => fakeDocumentService.GetAllAsync()).Returns(fakeAppRegistrationModels);
 
             // Act
-            var result = await function.Run(A.Fake<HttpRequest>(), path).ConfigureAwait(false);
+            var result = await function.Run(A.Fake<HttpRequest>(), PathName).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeDocumentService.GetAllAsync()).MustHaveHappenedOnceExactly();
@@ -42,10 +43,9 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         }
 
         [Fact]
-        public async Task GetReturnsNullWhenDatanotPresent()
+        public async Task GetReturnsNullWhenDataNotPresent()
         {
             // Arrange
-            const string path = "unit-tests";
             IEnumerable<AppRegistrationModel>? fakeAppRegistrationModels = null;
             var expectedResult = new OkObjectResult(null);
             var function = new GetHttpTrigger(fakeLogger, fakeDocumentService);
@@ -53,7 +53,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             A.CallTo(() => fakeDocumentService.GetAllAsync()).Returns(fakeAppRegistrationModels);
 
             // Act
-            var result = await function.Run(A.Fake<HttpRequest>(), path).ConfigureAwait(false);
+            var result = await function.Run(A.Fake<HttpRequest>(), PathName).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeDocumentService.GetAllAsync()).MustHaveHappenedOnceExactly();

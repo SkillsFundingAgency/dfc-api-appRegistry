@@ -40,6 +40,7 @@ namespace DFC.Api.AppRegistry.Functions
         {
             logger.LogInformation("C# HTTP trigger function processed a request.");
 
+            //TODO: ian - need to improve the following two lines of code in the Cosmo nuget
             var appRegistrations = await documentService.GetAllAsync().ConfigureAwait(false);
             var appRegistration = appRegistrations?.FirstOrDefault(f => f.Path == path);
 

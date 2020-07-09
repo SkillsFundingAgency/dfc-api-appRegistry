@@ -5,7 +5,6 @@ using FakeItEasy;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -13,6 +12,7 @@ using Xunit;
 
 namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 {
+    [Trait("Category", "Health - Http trigger tests")]
     public class HealthHttpTriggerTests
     {
         private readonly ILogger<HealthHttpTrigger> fakeLogger = A.Fake<ILogger<HealthHttpTrigger>>();

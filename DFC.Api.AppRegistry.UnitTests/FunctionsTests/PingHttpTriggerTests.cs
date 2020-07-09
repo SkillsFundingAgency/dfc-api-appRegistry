@@ -7,6 +7,7 @@ using Xunit;
 
 namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 {
+    [Trait("Category", "Ping - Http trigger tests")]
     public class PingHttpTriggerTests
     {
         private readonly ILogger<PingHttpTrigger> fakeLogger = A.Fake<ILogger<PingHttpTrigger>>();

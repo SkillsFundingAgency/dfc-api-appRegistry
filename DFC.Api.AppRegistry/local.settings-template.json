@@ -13,20 +13,6 @@
         "DatabaseId": "composition",
         "CollectionId": "appregistry",
         "PartitionKey": "/PartitionKey"
-      },
-      "RegionsLegacy": {
-        "AccessKey": "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-        "EndpointUrl": "https://localhost:8081",
-        "DatabaseId": "composition",
-        "CollectionId": "regions",
-        "PartitionKey": "/PartitionKey"
-      },
-      "PathsLegacy": {
-        "AccessKey": "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-        "EndpointUrl": "https://localhost:8081",
-        "DatabaseId": "composition",
-        "CollectionId": "paths",
-        "PartitionKey": "/PartitionKey"
       }
     }
   },
@@ -41,15 +27,13 @@
     }
   },
   "PathClientOptions": {
-    //"BaseAddress": "http://localhost:7071/",
-    "BaseAddress": "https://dev.api.nationalcareersservice.org.uk/composite-ui-paths/",
+    "BaseAddress": "http://localhost/",
     "Timeout": "00:00:30",
-    "ApiKey": ""
+    "ApiKey": "[ API key ]"
   },
   "RegionClientOptions": {
-    //"BaseAddress": "http://localhost:7072/",
-    "BaseAddress": "https://dev.api.nationalcareersservice.org.uk/composite-ui-regions/",
+    "BaseAddress": "http://localhost/",
     "Timeout": "00:00:30",
-    "ApiKey": ""
+    "ApiKey": "[ API key ]"
   }
 }
