@@ -59,7 +59,6 @@ namespace DFC.Api.AppRegistry.UnitTests.TestModels
             {
                 Path = path,
                 Layout = Layout.FullWidth,
-
             };
         }
 

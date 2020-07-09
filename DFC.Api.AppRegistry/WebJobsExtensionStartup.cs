@@ -53,6 +53,8 @@ namespace DFC.Api.AppRegistry
             builder.Services.AddTransient<ILegacyDataLoadService, LegacyDataLoadService>();
             builder.Services.AddTransient<IApiDataService, ApiDataService>();
             builder.Services.AddTransient<IApiService, ApiService>();
+            builder.Services.AddTransient<IModelMappingService, ModelMappingService>();
+            builder.Services.AddTransient<IModelValidationService, ModelValidationService>();
 
             builder.Services
                 .AddPolicies(policyRegistry, nameof(PathClientOptions), policyOptions)

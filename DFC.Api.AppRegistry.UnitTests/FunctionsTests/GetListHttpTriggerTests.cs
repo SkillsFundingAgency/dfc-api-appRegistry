@@ -39,11 +39,11 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         }
 
         [Fact]
-        public async Task GetListReturnsNullWhenDataNotPresent()
+        public async Task GetListReturnsnoContentWhenDataNotPresent()
         {
             // Arrange
+            var expectedResult = new NoContentResult();
             IEnumerable<AppRegistrationModel>? fakeAppRegistrationModels = null;
-            var expectedResult = new OkObjectResult(fakeAppRegistrationModels);
             var function = new GetListHttpTrigger(fakeLogger, fakeDocumentService);
 
             A.CallTo(() => fakeDocumentService.GetAllAsync()).Returns(fakeAppRegistrationModels);
@@ -54,7 +54,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             // Assert
             A.CallTo(() => fakeDocumentService.GetAllAsync()).MustHaveHappenedOnceExactly();
 
-            var statusResult = Assert.IsType<OkObjectResult>(result);
+            var statusResult = Assert.IsType<NoContentResult>(result);
 
             A.Equals(expectedResult, statusResult);
         }
