@@ -3,11 +3,53 @@
   "Values": {
     "AzureWebJobsStorage": "",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet",
-    "APPINSIGHTS_INSTRUMENTATIONKEY": "",
-    "CosmosSettings__AccessKey": "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-    "CosmosSettings__EndpointUrl": "https://localhost:8081",
-    "CosmosSettings__DatabaseId": "composition",
-    "CosmosSettings__CollectionId": "appregistry",
-    "CosmosSettings__PartitionKey": "/PartitionKey"
+    "APPINSIGHTS_INSTRUMENTATIONKEY": ""
+  },
+  "Configuration": {
+    "CosmosDbConnections": {
+      "AppRegistry": {
+        "AccessKey": "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
+        "EndpointUrl": "https://localhost:8081",
+        "DatabaseId": "composition",
+        "CollectionId": "appregistry",
+        "PartitionKey": "/PartitionKey"
+      },
+      "RegionsLegacy": {
+        "AccessKey": "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
+        "EndpointUrl": "https://localhost:8081",
+        "DatabaseId": "composition",
+        "CollectionId": "regions",
+        "PartitionKey": "/PartitionKey"
+      },
+      "PathsLegacy": {
+        "AccessKey": "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
+        "EndpointUrl": "https://localhost:8081",
+        "DatabaseId": "composition",
+        "CollectionId": "paths",
+        "PartitionKey": "/PartitionKey"
+      }
+    }
+  },
+  "Policies": {
+    "HttpCircuitBreaker": {
+      "DurationOfBreak": "00:01:00",
+      "ExceptionsAllowedBeforeBreaking": 3
+    },
+    "HttpRetry": {
+      "BackoffPower": 2,
+      "Count": 3
+    }
+  },
+  "PathClientOptions": {
+    //"BaseAddress": "http://localhost:7071/",
+    "BaseAddress": "https://dev.api.nationalcareersservice.org.uk/composite-ui-paths/",
+    "Timeout": "00:00:30",
+    "ApiKey": ""
+  },
+  "RegionClientOptions": {
+    //"BaseAddress": "http://localhost:7072/",
+    "BaseAddress": "https://dev.api.nationalcareersservice.org.uk/composite-ui-regions/",
+    "Timeout": "00:00:30",
+    "ApiKey": ""
   }
 }
