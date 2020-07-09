@@ -7,7 +7,7 @@ namespace DFC.Api.AppRegistry.Models.Legacy
     [ExcludeFromCodeCoverage]
     public class LegacyPathModel
     {
-        public Guid DocumentId { get; set; }
+        public Guid Id { get; set; }
 
         public string? Path { get; set; }
 
