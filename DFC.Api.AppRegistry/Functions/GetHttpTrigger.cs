@@ -40,11 +40,9 @@ namespace DFC.Api.AppRegistry.Functions
         {
             logger.LogInformation("C# HTTP trigger function processed a request.");
 
-            //TODO: ian - need to improve the following two lines of code in the Cosmo nuget
-            var appRegistrations = await documentService.GetAllAsync().ConfigureAwait(false);
-            var appRegistration = appRegistrations?.FirstOrDefault(f => f.Path == path);
+            var appRegistrationModel = await documentService.GetAsync(d => d.Path == path).ConfigureAwait(false);
 
-            if (appRegistration != null)
+            if (appRegistrationModel != null)
             {
                 logger.LogInformation($"Returning app registration for: {path}");
             }
@@ -53,7 +51,7 @@ namespace DFC.Api.AppRegistry.Functions
                 logger.LogWarning($"Failed to get app registration for: {path}");
             }
 
-            return new OkObjectResult(appRegistration);
+            return new OkObjectResult(appRegistrationModel);
         }
     }
 }
