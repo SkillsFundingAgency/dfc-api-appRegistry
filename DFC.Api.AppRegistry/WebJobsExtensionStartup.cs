@@ -45,6 +45,7 @@ namespace DFC.Api.AppRegistry
             var policyRegistry = builder.Services.AddPolicyRegistry();
 
             builder.AddSwashBuckle(Assembly.GetExecutingAssembly());
+            builder.Services.AddApplicationInsightsTelemetry();
             builder.Services.AddAutoMapper(typeof(WebJobsExtensionStartup).Assembly);
             builder.Services.AddDocumentServices<AppRegistrationModel>(cosmosDbConnection, false);
             builder.Services.AddSingleton(configuration.GetSection(nameof(PathClientOptions)).Get<PathClientOptions>() ?? new PathClientOptions());
