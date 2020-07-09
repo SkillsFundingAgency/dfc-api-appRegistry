@@ -20,6 +20,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         private readonly HttpClient fakeHttpClient = A.Fake<HttpClient>();
         private readonly IApiDataService fakeApiDataService = A.Fake<IApiDataService>();
         private readonly RegionClientOptions regionClientOptions;
+        private readonly LegacyRegionService legacyRegionService;
 
         public LegacyRegionServiceTests()
         {
@@ -27,6 +28,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             {
                 BaseAddress = dummyUrl,
             };
+            legacyRegionService = new LegacyRegionService(fakeLogger, fakeHttpClient, regionClientOptions, fakeApiDataService);
         }
 
         [Fact]
@@ -35,12 +37,11 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             // Arrange
             const string path = "unit-test";
             var expectedResult = A.CollectionOfDummy<LegacyRegionModel>(2);
-            var service = new LegacyRegionService(fakeLogger, fakeHttpClient, regionClientOptions, fakeApiDataService);
 
             A.CallTo(() => fakeApiDataService.GetAsync<IList<LegacyRegionModel>>(A<HttpClient>.Ignored, A<Uri>.Ignored)).Returns(expectedResult);
 
             // Act
-            var result = await service.GetListAsync(path).ConfigureAwait(false);
+            var result = await legacyRegionService.GetListAsync(path).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeApiDataService.GetAsync<List<LegacyRegionModel>>(A<HttpClient>.Ignored, A<Uri>.Ignored)).MustHaveHappenedOnceExactly();
@@ -53,10 +54,9 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         {
             // Arrange
             const string? path = null;
-            var service = new LegacyRegionService(fakeLogger, fakeHttpClient, regionClientOptions, fakeApiDataService);
 
             // Act
-            var exceptionResult = await Assert.ThrowsAsync<ArgumentNullException>(async () => await service.GetListAsync(path).ConfigureAwait(false)).ConfigureAwait(false);
+            var exceptionResult = await Assert.ThrowsAsync<ArgumentNullException>(async () => await legacyRegionService.GetListAsync(path).ConfigureAwait(false)).ConfigureAwait(false);
 
             // assert
             A.CallTo(() => fakeApiDataService.GetAsync<List<LegacyRegionModel>>(A<HttpClient>.Ignored, A<Uri>.Ignored)).MustNotHaveHappened();

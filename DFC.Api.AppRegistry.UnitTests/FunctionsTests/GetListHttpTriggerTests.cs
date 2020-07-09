@@ -39,7 +39,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         }
 
         [Fact]
-        public async Task GetListReturnsNullWhenDatanotPresent()
+        public async Task GetListReturnsNullWhenDataNotPresent()
         {
             // Arrange
             IEnumerable<AppRegistrationModel>? fakeAppRegistrationModels = null;

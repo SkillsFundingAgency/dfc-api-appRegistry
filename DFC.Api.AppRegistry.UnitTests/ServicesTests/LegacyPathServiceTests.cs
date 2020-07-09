@@ -20,6 +20,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         private readonly HttpClient fakeHttpClient = A.Fake<HttpClient>();
         private readonly IApiDataService fakeApiDataService = A.Fake<IApiDataService>();
         private readonly PathClientOptions pathClientOptions;
+        private readonly LegacyPathService legacyPathService;
 
         public LegacyPathServiceTests()
         {
@@ -27,6 +28,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             {
                 BaseAddress = dummyUrl,
             };
+            legacyPathService = new LegacyPathService(fakeLogger, fakeHttpClient, pathClientOptions, fakeApiDataService);
         }
 
         [Fact]
@@ -34,12 +36,11 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         {
             // Arrange
             var expectedResult = A.CollectionOfDummy<LegacyPathModel>(2);
-            var service = new LegacyPathService(fakeLogger, fakeHttpClient, pathClientOptions, fakeApiDataService);
 
             A.CallTo(() => fakeApiDataService.GetAsync<IList<LegacyPathModel>>(A<HttpClient>.Ignored, A<Uri>.Ignored)).Returns(expectedResult);
 
             // Act
-            var result = await service.GetListAsync().ConfigureAwait(false);
+            var result = await legacyPathService.GetListAsync().ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeApiDataService.GetAsync<List<LegacyPathModel>>(A<HttpClient>.Ignored, A<Uri>.Ignored)).MustHaveHappenedOnceExactly();

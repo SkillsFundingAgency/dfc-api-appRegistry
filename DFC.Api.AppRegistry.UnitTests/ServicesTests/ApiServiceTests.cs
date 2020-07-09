@@ -15,11 +15,12 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
     public class ApiServiceTests
     {
         private readonly Uri dummyUrl = new Uri("https://somewhere.com", UriKind.Absolute);
-        private readonly ILogger<ApiService> logger;
+        private readonly ILogger<ApiService> logger = A.Fake<ILogger<ApiService>>();
+        private readonly ApiService apiService;
 
         public ApiServiceTests()
         {
-            logger = A.Fake<ILogger<ApiService>>();
+            apiService = new ApiService(logger);
         }
 
         [Fact]
@@ -32,7 +33,6 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             var fakeHttpRequestSender = A.Fake<IFakeHttpRequestSender>();
             var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
             var httpClient = new HttpClient(fakeHttpMessageHandler);
-            var apiService = new ApiService(logger);
 
             A.CallTo(() => fakeHttpRequestSender.Send(A<HttpRequestMessage>.Ignored)).Returns(httpResponse);
 
@@ -58,7 +58,6 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             var fakeHttpRequestSender = A.Fake<IFakeHttpRequestSender>();
             var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
             var httpClient = new HttpClient(fakeHttpMessageHandler);
-            var apiService = new ApiService(logger);
 
             A.CallTo(() => fakeHttpRequestSender.Send(A<HttpRequestMessage>.Ignored)).Returns(httpResponse);
 
@@ -84,7 +83,6 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             var fakeHttpRequestSender = A.Fake<IFakeHttpRequestSender>();
             var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
             var httpClient = new HttpClient(fakeHttpMessageHandler);
-            var apiService = new ApiService(logger);
 
             A.CallTo(() => fakeHttpRequestSender.Send(A<HttpRequestMessage>.Ignored)).Returns(httpResponse);
 
@@ -107,7 +105,6 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             var fakeHttpRequestSender = A.Fake<IFakeHttpRequestSender>();
             var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
             var httpClient = new HttpClient(fakeHttpMessageHandler);
-            var apiService = new ApiService(logger);
 
             A.CallTo(() => fakeHttpRequestSender.Send(A<HttpRequestMessage>.Ignored)).Throws(new ArgumentException("fake exception"));
 
@@ -123,11 +120,10 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         }
 
         [Fact]
-        public async Task ApiServiceGetReturnsExceptionForNoHttpClient()
+        public async Task ApiServiceGetReturnsExceptionForNullHttpClient()
         {
             // arrange
             var fakeHttpRequestSender = A.Fake<IFakeHttpRequestSender>();
-            var apiService = new ApiService(logger);
 
             // act
             var exceptionResult = await Assert.ThrowsAsync<ArgumentNullException>(async () => await apiService.GetAsync(null, dummyUrl, MediaTypeNames.Application.Json).ConfigureAwait(false)).ConfigureAwait(false);

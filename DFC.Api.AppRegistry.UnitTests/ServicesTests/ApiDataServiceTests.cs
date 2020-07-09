@@ -15,6 +15,12 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
     {
         private readonly Uri dummyUrl = new Uri("https://somewhere.com", UriKind.Absolute);
         private readonly IApiService fakeApiService = A.Fake<IApiService>();
+        private readonly ApiDataService apiDataService;
+
+        public ApiDataServiceTests()
+        {
+            apiDataService = new ApiDataService(fakeApiService);
+        }
 
         [Fact]
         public async Task ApiDataServiceGetReturnsSuccess()
@@ -28,8 +34,6 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             var jsonResponse = JsonConvert.SerializeObject(expectedResult);
 
             A.CallTo(() => fakeApiService.GetAsync(A<HttpClient>.Ignored, A<Uri>.Ignored, A<string>.Ignored)).Returns(jsonResponse);
-
-            var apiDataService = new ApiDataService(fakeApiService);
 
             // act
             var result = await apiDataService.GetAsync<ApiTestModel>(A.Fake<HttpClient>(), dummyUrl).ConfigureAwait(false);
@@ -47,8 +51,6 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 
             A.CallTo(() => fakeApiService.GetAsync(A<HttpClient>.Ignored, A<Uri>.Ignored, A<string>.Ignored)).Returns(string.Empty);
 
-            var apiDataService = new ApiDataService(fakeApiService);
-
             // act
             var result = await apiDataService.GetAsync<ApiTestModel>(A.Fake<HttpClient>(), dummyUrl).ConfigureAwait(false);
 
@@ -58,10 +60,9 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         }
 
         [Fact]
-        public async Task ApiDataServiceGetReturnsExceptionForNoHttpClient()
+        public async Task ApiDataServiceGetReturnsExceptionForNullHttpClient()
         {
             // arrange
-            var apiDataService = new ApiDataService(fakeApiService);
 
             // act
             var exceptionResult = await Assert.ThrowsAsync<ArgumentNullException>(async () => await apiDataService.GetAsync<ApiTestModel>(null, dummyUrl).ConfigureAwait(false)).ConfigureAwait(false);

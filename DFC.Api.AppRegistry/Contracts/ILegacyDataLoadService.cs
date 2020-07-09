@@ -1,5 +1,4 @@
-﻿using DFC.Api.AppRegistry.Models;
-using DFC.Api.AppRegistry.Models.Legacy;
+﻿using DFC.Api.AppRegistry.Models.Legacy;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -9,12 +8,8 @@ namespace DFC.Api.AppRegistry.Contracts
     {
         Task LoadAsync();
 
-        void MapModels(AppRegistrationModel appRegistrationModel, LegacyPathModel legacyPathModel, IList<LegacyRegionModel> legacyRegionModels);
-
-        Task ProcessPathAsync(LegacyPathModel legacyPathModel);
-
         Task ProcessPathsAsync(IList<LegacyPathModel> legacyPathModels);
 
-        bool ValidateModel(AppRegistrationModel appRegistrationModel);
+        Task ProcessPathAsync(LegacyPathModel legacyPathModel);
     }
 }
