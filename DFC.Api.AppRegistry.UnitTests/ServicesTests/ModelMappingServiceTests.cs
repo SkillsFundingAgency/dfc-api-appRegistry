@@ -102,7 +102,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         }
 
         [Fact]
-        public void MapRegionModelToAppRegistrationReturnsSuccessForValidDataModelsWithLegacyRegions()
+        public void MapRegionModelToAppRegistrationHasExistingRegionsReturnsSuccessForValidDataModelsWithLegacyRegions()
         {
             // Arrange
             var appRegistrationModel = ModelBuilders.ValidAppRegistrationModel(ModelBuilders.PathName);
@@ -112,6 +112,26 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 
             appRegistrationModel.Regions = new List<RegionModel>();
             appRegistrationModel.Regions.Add(validRegionModel);
+
+            A.CallTo(() => fakeMapper.Map<RegionModel>(legacyRegionModel));
+
+            // Act
+            modelMappingService.MapRegionModelToAppRegistration(appRegistrationModel, legacyRegionModel);
+
+            // assert
+            A.CallTo(() => fakeMapper.Map<RegionModel>(legacyRegionModel)).MustHaveHappenedOnceExactly();
+
+            Assert.NotNull(appRegistrationModel.Regions);
+        }
+
+        [Fact]
+        public void MapRegionModelToAppRegistrationNoExistingRegionsReturnsSuccessForValidDataModelsWithLegacyRegions()
+        {
+            // Arrange
+            var appRegistrationModel = ModelBuilders.ValidAppRegistrationModel(ModelBuilders.PathName);
+
+            var legacyRegionModel = ModelBuilders.ValidLegacyRegionModel(ModelBuilders.PathName, Enums.PageRegion.Head);
+            var validRegionModel = ModelBuilders.ValidRegionModel(Enums.PageRegion.Head);
 
             A.CallTo(() => fakeMapper.Map<RegionModel>(legacyRegionModel));
 
