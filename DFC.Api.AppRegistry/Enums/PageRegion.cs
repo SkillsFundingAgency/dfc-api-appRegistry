@@ -9,5 +9,6 @@
         SidebarRight = 5,
         SidebarLeft = 6,
         Footer = 7,
+        HeroBanner = 8,
     }
 }
