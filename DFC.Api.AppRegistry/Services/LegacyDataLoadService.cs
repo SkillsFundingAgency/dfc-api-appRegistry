@@ -76,6 +76,23 @@ namespace DFC.Api.AppRegistry.Services
             await UpsertAppRegistration(appRegistrationModel).ConfigureAwait(false);
         }
 
+        public async Task UpdateRegionAsync(LegacyRegionModel legacyRegionModel)
+        {
+            _ = legacyRegionModel ?? throw new ArgumentNullException(nameof(legacyRegionModel));
+
+            //TODO: ian - need to improve the following two lines of code in the Cosmos nuget
+            var appRegistrationModel = await documentService.GetAsync(x => x.Path == legacyRegionModel.Path).ConfigureAwait(false);
+
+            if (appRegistrationModel == null)
+            {
+                logger.LogError($"Failed to Update Region for path: {legacyRegionModel!.Path}: registration not found");
+            }
+
+            modelMappingService.MapRegionModelToAppRegistration(appRegistrationModel!, legacyRegionModel);
+
+            await UpsertAppRegistration(appRegistrationModel!).ConfigureAwait(false);
+        }
+
         private async Task UpsertAppRegistration(AppRegistrationModel appRegistrationModel)
         {
             if (modelValidationService.ValidateModel(appRegistrationModel))
@@ -93,20 +110,5 @@ namespace DFC.Api.AppRegistry.Services
             }
         }
 
-        public async Task UpdateRegionAsync(LegacyRegionModel legacyRegionModel)
-        {
-            //TODO: ian - need to improve the following two lines of code in the Cosmos nuget
-            var appRegistrationModels = await documentService.GetAllAsync().ConfigureAwait(false);
-            var appRegistrationModel = appRegistrationModels.FirstOrDefault(f => f.Path == legacyRegionModel.Path) ?? null;
-
-            if (appRegistrationModel == null)
-            {
-                logger.LogError($"Failed to Update Region for path: {legacyRegionModel!.Path}: registration not found");
-            }
-
-            modelMappingService.MapAndUpdateRegionModel(appRegistrationModel, legacyRegionModel);
-
-            await UpsertAppRegistration(appRegistrationModel).ConfigureAwait(false);
-        }
     }
 }

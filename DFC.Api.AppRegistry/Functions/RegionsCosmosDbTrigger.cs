@@ -14,8 +14,7 @@ namespace DFC.Api.AppRegistry.Functions
     public class RegionsCosmosDbTrigger
     {
         private const string DatabaseName = "composition";
-        private const string CollectionName = "regions";
-        private const string ConnectionString = "AccountEndpoint=https://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
+        private const string CollectionName = "%RegionsCollectionName%";
         private const string LeaseCollectionName = "regions_lease";
         private const string LeaseCollectionPrefix = "";
 
@@ -48,8 +47,9 @@ namespace DFC.Api.AppRegistry.Functions
                     {
                         triggerLogger.LogInformation($"Updating Document with Id: {document.Id}");
 
-                        LegacyRegionModel legacyModel = (dynamic)document;
-                        legacyDataLoadService.l
+                        LegacyRegionModel legacyRegionModel = (dynamic)document;
+                        await legacyDataLoadService.UpdateRegionAsync(legacyRegionModel).ConfigureAwait(false);
+
                         triggerLogger.LogInformation($"Updated Document with Id: {document.Id}");
                     }
                 }
@@ -57,7 +57,7 @@ namespace DFC.Api.AppRegistry.Functions
             catch (Exception ex)
             {
                 triggerLogger.LogError(ex.ToString());
-                // _loggerHelper.LogException(log, Guid.NewGuid(), "Error when trying to send message to service bus queue", ex);
+                throw;
             }
         }
     }

@@ -1,11 +1,12 @@
 ﻿using DFC.Api.AppRegistry.Enums;
+using Microsoft.Azure.Documents;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace DFC.Api.AppRegistry.Models.Legacy
 {
     [ExcludeFromCodeCoverage]
-    public class LegacyRegionModel
+    public class LegacyRegionModel : Document
     {
         public string? Path { get; set; }
 

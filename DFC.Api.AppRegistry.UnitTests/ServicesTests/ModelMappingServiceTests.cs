@@ -100,5 +100,60 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 
             Assert.Null(appRegistrationModel.Regions);
         }
+
+        [Fact]
+        public void MapRegionModelToAppRegistrationReturnsSuccessForValidDataModelsWithLegacyRegions()
+        {
+            // Arrange
+            var appRegistrationModel = ModelBuilders.ValidAppRegistrationModel(ModelBuilders.PathName);
+
+            var legacyRegionModel = ModelBuilders.ValidLegacyRegionModel(ModelBuilders.PathName, Enums.PageRegion.Head);
+            var validRegionModel = ModelBuilders.ValidRegionModel(Enums.PageRegion.Head);
+
+            appRegistrationModel.Regions = new List<RegionModel>();
+            appRegistrationModel.Regions.Add(validRegionModel);
+
+            A.CallTo(() => fakeMapper.Map<RegionModel>(legacyRegionModel));
+
+            // Act
+            modelMappingService.MapRegionModelToAppRegistration(appRegistrationModel, legacyRegionModel);
+
+            // assert
+            A.CallTo(() => fakeMapper.Map<RegionModel>(legacyRegionModel)).MustHaveHappenedOnceExactly();
+
+            Assert.NotNull(appRegistrationModel.Regions);
+        }
+
+        [Fact]
+        public void MapRegionModelToAppRegistrationReturnsExceptionForNullLegacyPathModel()
+        {
+            // Arrange
+            var appRegistrationModel = ModelBuilders.ValidAppRegistrationModel(ModelBuilders.PathName);
+            LegacyRegionModel? legacyRegionModel = null;
+
+            // Act
+            var exceptionResult = Assert.Throws<ArgumentNullException>(() => modelMappingService.MapRegionModelToAppRegistration(appRegistrationModel, legacyRegionModel));
+
+            // Assert
+            A.CallTo(() => fakeMapper.Map<RegionModel>(legacyRegionModel)).MustNotHaveHappened();
+
+            Assert.Equal("Value cannot be null. (Parameter 'legacyRegionModel')", exceptionResult.Message);
+        }
+
+        [Fact]
+        public void MapRegionModelToAppRegistrationReturnsExceptionForNullAppRegistrationModel()
+        {
+            // Arrange
+            AppRegistrationModel? appRegistrationModel = null;
+            var legacyRegionModel = ModelBuilders.ValidLegacyRegionModel(ModelBuilders.PathName, Enums.PageRegion.Head);
+
+            // Act
+            var exceptionResult = Assert.Throws<ArgumentNullException>(() => modelMappingService.MapRegionModelToAppRegistration(appRegistrationModel, legacyRegionModel));
+
+            // Assert
+            A.CallTo(() => fakeMapper.Map<RegionModel>(legacyRegionModel)).MustNotHaveHappened();
+
+            Assert.Equal("Value cannot be null. (Parameter 'appRegistrationModel')", exceptionResult.Message);
+        }
     }
 }

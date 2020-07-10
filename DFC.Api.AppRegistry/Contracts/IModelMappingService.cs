@@ -7,6 +7,7 @@ namespace DFC.Api.AppRegistry.Contracts
     public interface IModelMappingService
     {
         void MapModels(AppRegistrationModel? appRegistrationModel, LegacyPathModel? legacyPathModel, IList<LegacyRegionModel>? legacyRegionModels);
-        void MapAndUpdateRegionModel(AppRegistrationModel? appRegistrationModel, LegacyRegionModel? legacyRegionModel);
+
+        void MapRegionModelToAppRegistration(AppRegistrationModel? appRegistrationModel, LegacyRegionModel? legacyRegionModel);
     }
 }

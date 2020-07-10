@@ -34,7 +34,7 @@ namespace DFC.Api.AppRegistry.Services
             }
         }
 
-        public void MapAndUpdateRegionModel(AppRegistrationModel? appRegistrationModel, LegacyRegionModel? legacyRegionModel)
+        public void MapRegionModelToAppRegistration(AppRegistrationModel? appRegistrationModel, LegacyRegionModel? legacyRegionModel)
         {
             _ = appRegistrationModel ?? throw new ArgumentNullException(nameof(appRegistrationModel));
             _ = legacyRegionModel ?? throw new ArgumentNullException(nameof(legacyRegionModel));
