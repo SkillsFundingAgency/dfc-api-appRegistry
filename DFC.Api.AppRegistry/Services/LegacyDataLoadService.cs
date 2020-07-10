@@ -73,7 +73,7 @@ namespace DFC.Api.AppRegistry.Services
             await UpsertAppRegistration(appRegistrationModel).ConfigureAwait(false);
         }
 
-        public async Task UpdateRegionAsync(LegacyRegionModel legacyRegionModel)
+        public async Task UpdateRegionAsync(LegacyRegionModel? legacyRegionModel)
         {
             _ = legacyRegionModel ?? throw new ArgumentNullException(nameof(legacyRegionModel));
 
@@ -106,6 +106,5 @@ namespace DFC.Api.AppRegistry.Services
                 }
             }
         }
-
     }
 }
