@@ -73,6 +73,17 @@ namespace DFC.Api.AppRegistry.Services
             await UpsertAppRegistration(appRegistrationModel).ConfigureAwait(false);
         }
 
+        public async Task UpdatePathAsync(LegacyPathModel? legacyPathModel)
+        {
+            _ = legacyPathModel ?? throw new ArgumentNullException(nameof(legacyPathModel));
+
+            var appRegistrationModel = await documentService.GetAsync(f => f.Path == legacyPathModel.Path).ConfigureAwait(false) ?? new AppRegistrationModel();
+
+            modelMappingService.MapModels(appRegistrationModel, legacyPathModel);
+
+            await UpsertAppRegistration(appRegistrationModel).ConfigureAwait(false);
+        }
+
         public async Task UpdateRegionAsync(LegacyRegionModel? legacyRegionModel)
         {
             _ = legacyRegionModel ?? throw new ArgumentNullException(nameof(legacyRegionModel));
