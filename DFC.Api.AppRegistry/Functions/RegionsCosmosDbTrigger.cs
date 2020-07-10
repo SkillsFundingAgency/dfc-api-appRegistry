@@ -11,10 +11,10 @@ namespace DFC.Api.AppRegistry.Functions
 {
     public class RegionsCosmosDbTrigger
     {
-        private const string DatabaseName = "composition";
+        private const string DatabaseName = "%LegacyDatabaseName%";
         private const string CollectionName = "%RegionsCollectionName%";
-        private const string LeaseCollectionName = "regions_lease";
-        private const string LeaseCollectionPrefix = "";
+        private const string LeaseCollectionName = "%RegionsLeaseCollectionName%";
+        private const string LeaseCollectionPrefix = "%RegionsLeaseCollectionNamePrefix%";
 
         private readonly ILegacyDataLoadService legacyDataLoadService;
         private readonly ILogger<RegionsCosmosDbTrigger> triggerLogger;
