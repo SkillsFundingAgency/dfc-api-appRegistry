@@ -21,7 +21,7 @@ namespace DFC.Api.AppRegistry.Models
 
         [Display(Description = "Indicator stating that the application endpoint is working as expected. ")]
         [Example(Description = "true")]
-        public bool IsHealthy { get; set; }
+        public bool IsHealthy { get; set; } = true;
 
         [Display(Description = "A url to the application that supplies content for the given area.")]
         [Example(Description = "https://ncs.careers.azurewebsites/explore/sidebar or https://ncs.careers.azurewebsites/explore/{0}/contents")]
