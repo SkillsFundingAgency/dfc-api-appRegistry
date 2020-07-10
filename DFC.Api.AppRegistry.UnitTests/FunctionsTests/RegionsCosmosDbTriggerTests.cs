@@ -1,23 +1,16 @@
-﻿using Castle.Core.Logging;
-using DFC.Api.AppRegistry.Contracts;
+﻿using DFC.Api.AppRegistry.Contracts;
 using DFC.Api.AppRegistry.Functions;
 using DFC.Api.AppRegistry.Models.Legacy;
-using DFC.Api.AppRegistry.Services;
+using DFC.Api.AppRegistry.UnitTests.TestModels;
 using FakeItEasy;
 using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.ChangeFeedProcessor.Logging;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
 {
-    public class Foo : Document
-    {
-        public string Bar { get; set; }
-    }
-
     public class RegionsCosmosDbTriggerTests
     {
         private readonly ILogger<RegionsCosmosDbTrigger> logger;
@@ -29,18 +22,17 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
             legacyDataLoadService = A.Fake<ILegacyDataLoadService>();
         }
 
-
         [Fact]
-        public void DoSomething()
+        public async Task RegionsCosmosDbTriggerWhenExecutedUpdatesRegion()
         {
             // Arrange
             var function = new RegionsCosmosDbTrigger(logger, legacyDataLoadService);
 
             // Act
-            var result = function.Run(new List<Document> { new LegacyRegionModel { Path = "A/Path", Id = Guid.NewGuid().ToString() } });
+            await function.Run(new List<Document> { ModelBuilders.ValidLegacyRegionModel(ModelBuilders.PathName, Enums.PageRegion.Head) }).ConfigureAwait(false);
 
             // Assert
-            Assert.NotNull(result);
+            A.CallTo(() => legacyDataLoadService.UpdateRegionAsync(A<LegacyRegionModel>.Ignored)).MustHaveHappenedOnceExactly();
         }
     }
 }
