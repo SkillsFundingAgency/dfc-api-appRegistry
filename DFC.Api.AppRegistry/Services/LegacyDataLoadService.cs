@@ -82,6 +82,7 @@ namespace DFC.Api.AppRegistry.Services
             if (appRegistrationModel == null)
             {
                 logger.LogError($"Failed to Update Region for path: {legacyRegionModel!.Path}: registration not found");
+                return;
             }
 
             modelMappingService.MapRegionModelToAppRegistration(appRegistrationModel!, legacyRegionModel);

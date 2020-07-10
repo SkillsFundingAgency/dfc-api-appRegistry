@@ -137,6 +137,27 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         }
 
         [Fact]
+        public async Task UpdateRegionAsyncAppRegistrationNullNoUpdate()
+        {
+            // Arrange
+            const HttpStatusCode upsertResult = HttpStatusCode.OK;
+            const bool validationResult = true;
+            var validLegacyRegionModel = ModelBuilders.ValidLegacyRegionModel(ModelBuilders.PathName, Enums.PageRegion.Head);
+
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns<AppRegistrationModel?>(null);
+            A.CallTo(() => fakeModelValidationService.ValidateModel(A<AppRegistrationModel>.Ignored)).Returns(validationResult);
+            A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).Returns(upsertResult);
+
+            // Act
+            await legacyDataLoadService.UpdateRegionAsync(validLegacyRegionModel).ConfigureAwait(false);
+
+            // Assert
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeModelValidationService.ValidateModel(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
+        }
+
+        [Fact]
         public async Task UpdateRegionAsyncReturnsExceptionForNullLegacyRegionModels()
         {
             // Arrange

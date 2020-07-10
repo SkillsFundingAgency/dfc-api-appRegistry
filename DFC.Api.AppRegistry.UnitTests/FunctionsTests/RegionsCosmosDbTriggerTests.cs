@@ -6,6 +6,7 @@ using FakeItEasy;
 using Microsoft.Azure.Documents;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -33,6 +34,19 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
 
             // Assert
             A.CallTo(() => legacyDataLoadService.UpdateRegionAsync(A<LegacyRegionModel>.Ignored)).MustHaveHappenedOnceExactly();
+        }
+
+        [Fact]
+        public async Task RegionsCosmosDbTriggerWhenExecutedThrowsException()
+        {
+            A.CallTo(() => legacyDataLoadService.UpdateRegionAsync(A<LegacyRegionModel>.Ignored)).ThrowsAsync(new HttpRequestException());
+
+            // Arrange
+            var function = new RegionsCosmosDbTrigger(logger, legacyDataLoadService);
+
+            // Act
+            // Assert
+            await Assert.ThrowsAsync<HttpRequestException>(() => function.Run(new List<Document> { ModelBuilders.ValidLegacyRegionModel(ModelBuilders.PathName, Enums.PageRegion.Head) })).ConfigureAwait(false);
         }
     }
 }
