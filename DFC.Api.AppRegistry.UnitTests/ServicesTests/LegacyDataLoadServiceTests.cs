@@ -137,6 +137,23 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         }
 
         [Fact]
+        public async Task UpdateRegionAsyncReturnsExceptionForNullLegacyRegionModels()
+        {
+            // Arrange
+            LegacyRegionModel? dummyLegacyRegionModel = null;
+
+            // Act
+            var exceptionResult = await Assert.ThrowsAsync<ArgumentNullException>(async () => await legacyDataLoadService.UpdateRegionAsync(dummyLegacyRegionModel).ConfigureAwait(false)).ConfigureAwait(false);
+
+            // assert
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeModelValidationService.ValidateModel(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
+
+            Assert.Equal("Value cannot be null. (Parameter 'legacyRegionModel')", exceptionResult.Message);
+        }
+
+        [Fact]
         public async Task ProcessPathAsyncUpsertFailure()
         {
             // Arrange

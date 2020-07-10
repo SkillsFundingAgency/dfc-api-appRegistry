@@ -58,9 +58,6 @@ namespace DFC.Api.AppRegistry
             builder.Services.AddTransient<IModelMappingService, ModelMappingService>();
             builder.Services.AddTransient<IModelValidationService, ModelValidationService>();
 
-            // Bind configuration settings for Change Feed Listeners
-            //builder.Services.Configure<RegionsLegacyOptions>(configuration.GetSection($"{CosmosDbConfigSection}:RegionsLegacyOptions") ?? throw new ArgumentException($"{CosmosDbConfigSection}:RegionsLegacyOptions not present in AppSettings"));
-
             builder.Services
                 .AddPolicies(policyRegistry, nameof(PathClientOptions), policyOptions)
                 .AddHttpClient<ILegacyPathService, LegacyPathService, PathClientOptions>(configuration, nameof(PathClientOptions), nameof(PolicyOptions.HttpRetry), nameof(PolicyOptions.HttpCircuitBreaker));

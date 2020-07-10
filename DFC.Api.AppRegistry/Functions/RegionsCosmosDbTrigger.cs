@@ -1,10 +1,8 @@
-﻿using AutoMapper;
-using DFC.Api.AppRegistry.Contracts;
+﻿using DFC.Api.AppRegistry.Contracts;
 using DFC.Api.AppRegistry.Models.Legacy;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -27,7 +25,6 @@ namespace DFC.Api.AppRegistry.Functions
             this.legacyDataLoadService = legacyDataLoadService;
         }
 
-
         [FunctionName("RegionsChangeFeedTrigger")]
         public async Task Run(
            [CosmosDBTrigger(
@@ -36,8 +33,7 @@ namespace DFC.Api.AppRegistry.Functions
             ConnectionStringSetting = "LegacyCosmosDbConnectionString",
             LeaseCollectionName = LeaseCollectionName,
             LeaseCollectionPrefix = LeaseCollectionPrefix,
-            CreateLeaseCollectionIfNotExists = true
-            )] IReadOnlyList<Document> documents)
+            CreateLeaseCollectionIfNotExists = true)] IReadOnlyList<Document> documents)
         {
             try
             {

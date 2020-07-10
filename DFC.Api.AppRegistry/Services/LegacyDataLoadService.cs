@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using DFC.Api.AppRegistry.Contracts;
+﻿using DFC.Api.AppRegistry.Contracts;
 using DFC.Api.AppRegistry.Models;
 using DFC.Api.AppRegistry.Models.Legacy;
 using DFC.Compui.Cosmos.Contracts;
@@ -78,7 +77,6 @@ namespace DFC.Api.AppRegistry.Services
         {
             _ = legacyRegionModel ?? throw new ArgumentNullException(nameof(legacyRegionModel));
 
-            //TODO: ian - need to improve the following two lines of code in the Cosmos nuget
             var appRegistrationModel = await documentService.GetAsync(x => x.Path == legacyRegionModel.Path).ConfigureAwait(false);
 
             if (appRegistrationModel == null)
