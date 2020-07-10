@@ -4,6 +4,7 @@ using DFC.Api.AppRegistry.Models;
 using DFC.Api.AppRegistry.Models.Legacy;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DFC.Api.AppRegistry.Services
 {
@@ -30,6 +31,31 @@ namespace DFC.Api.AppRegistry.Services
             else
             {
                 appRegistrationModel.Regions = null;
+            }
+        }
+
+        public void MapRegionModelToAppRegistration(AppRegistrationModel? appRegistrationModel, LegacyRegionModel? legacyRegionModel)
+        {
+            _ = appRegistrationModel ?? throw new ArgumentNullException(nameof(appRegistrationModel));
+            _ = legacyRegionModel ?? throw new ArgumentNullException(nameof(legacyRegionModel));
+
+            if (appRegistrationModel.Regions == null)
+            {
+                appRegistrationModel.Regions = new List<RegionModel>();
+            }
+
+            var model = mapper.Map<RegionModel>(legacyRegionModel);
+
+            var regionToUpdate = appRegistrationModel.Regions.FirstOrDefault(x => x.PageRegion == legacyRegionModel.PageRegion);
+
+            if (regionToUpdate == null)
+            {
+                appRegistrationModel.Regions.Add(model);
+            }
+            else
+            {
+                appRegistrationModel.Regions.Remove(regionToUpdate);
+                appRegistrationModel.Regions.Add(model);
             }
         }
     }

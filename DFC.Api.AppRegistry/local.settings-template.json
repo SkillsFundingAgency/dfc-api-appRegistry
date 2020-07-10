@@ -3,7 +3,12 @@
   "Values": {
     "AzureWebJobsStorage": "",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet",
-    "APPINSIGHTS_INSTRUMENTATIONKEY": ""
+    "APPINSIGHTS_INSTRUMENTATIONKEY": "",
+    "LegacyCosmosDbConnectionString": "[Cosmos DB Connection String]",
+    "RegionsCollectionName": "regions",
+    "LegacyDatabaseName": "composition",
+    "RegionsLeaseCollectionName": "regions_lease",
+    "RegionsLeaseCollectionNamePrefix": ""
   },
   "Configuration": {
     "CosmosDbConnections": {

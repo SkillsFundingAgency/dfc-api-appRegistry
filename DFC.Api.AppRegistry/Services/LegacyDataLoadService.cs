@@ -70,6 +70,28 @@ namespace DFC.Api.AppRegistry.Services
 
             modelMappingService.MapModels(appRegistrationModel, legacyPathModel, legacyRegionModels);
 
+            await UpsertAppRegistration(appRegistrationModel).ConfigureAwait(false);
+        }
+
+        public async Task UpdateRegionAsync(LegacyRegionModel? legacyRegionModel)
+        {
+            _ = legacyRegionModel ?? throw new ArgumentNullException(nameof(legacyRegionModel));
+
+            var appRegistrationModel = await documentService.GetAsync(x => x.Path == legacyRegionModel.Path).ConfigureAwait(false);
+
+            if (appRegistrationModel == null)
+            {
+                logger.LogError($"Failed to Update Region for path: {legacyRegionModel!.Path}: registration not found");
+                return;
+            }
+
+            modelMappingService.MapRegionModelToAppRegistration(appRegistrationModel!, legacyRegionModel);
+
+            await UpsertAppRegistration(appRegistrationModel!).ConfigureAwait(false);
+        }
+
+        private async Task UpsertAppRegistration(AppRegistrationModel appRegistrationModel)
+        {
             if (modelValidationService.ValidateModel(appRegistrationModel))
             {
                 var upsertResult = await documentService.UpsertAsync(appRegistrationModel).ConfigureAwait(false);
