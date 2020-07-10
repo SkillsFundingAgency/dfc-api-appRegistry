@@ -5,8 +5,10 @@ using FakeItEasy;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -23,19 +25,16 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         public async Task GetReturnsSuccessWhenDataPresent()
         {
             // Arrange
-            var fakeAppRegistrationModels = A.CollectionOfDummy<AppRegistrationModel>(2);
-            var expectedResult = new OkObjectResult(fakeAppRegistrationModels.First());
+            var expectedResult = A.Dummy<AppRegistrationModel>();
             var function = new GetHttpTrigger(fakeLogger, fakeDocumentService);
 
-            fakeAppRegistrationModels.First().Path = PathName;
-
-            A.CallTo(() => fakeDocumentService.GetAllAsync()).Returns(fakeAppRegistrationModels);
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(expectedResult);
 
             // Act
             var result = await function.Run(A.Fake<HttpRequest>(), PathName).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => fakeDocumentService.GetAllAsync()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
 
             var statusResult = Assert.IsType<OkObjectResult>(result);
 
@@ -46,17 +45,17 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         public async Task GetReturnsNullWhenDataNotPresent()
         {
             // Arrange
-            IEnumerable<AppRegistrationModel>? fakeAppRegistrationModels = null;
+            AppRegistrationModel? fakeAppRegistrationModel = null;
             var expectedResult = new OkObjectResult(null);
             var function = new GetHttpTrigger(fakeLogger, fakeDocumentService);
 
-            A.CallTo(() => fakeDocumentService.GetAllAsync()).Returns(fakeAppRegistrationModels);
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(fakeAppRegistrationModel);
 
             // Act
             var result = await function.Run(A.Fake<HttpRequest>(), PathName).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => fakeDocumentService.GetAllAsync()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
 
             var statusResult = Assert.IsType<OkObjectResult>(result);
 

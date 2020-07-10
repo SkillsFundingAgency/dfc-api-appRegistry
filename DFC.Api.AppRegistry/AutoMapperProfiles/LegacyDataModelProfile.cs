@@ -13,7 +13,8 @@ namespace DFC.Api.AppRegistry.AutoMapperProfiles
         {
             CreateMap<LegacyPathModel, AppRegistrationModel>();
 
-            CreateMap<LegacyRegionModel, RegionModel>();
+            CreateMap<LegacyRegionModel, RegionModel>()
+                .ForMember(d => d.IsHealthy, s => s.Ignore());
         }
     }
 }

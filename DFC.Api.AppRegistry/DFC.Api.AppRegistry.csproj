@@ -17,6 +17,7 @@
     <PackageReference Include="DFC.Compui.Cosmos" Version="1.0.41" />
     <PackageReference Include="DFC.Swagger.Standard" Version="0.1.20" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.24" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.14.0" />
     <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="3.1.5" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.CosmosDB" Version="3.0.7" />

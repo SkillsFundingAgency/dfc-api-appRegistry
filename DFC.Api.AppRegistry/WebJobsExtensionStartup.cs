@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AzureFunctions.Extensions.Swashbuckle;
+using DFC.Api.AppRegistry;
 using DFC.Api.AppRegistry.Contracts;
 using DFC.Api.AppRegistry.Extensions;
 using DFC.Api.AppRegistry.HttpClientPolicies;
@@ -9,7 +10,6 @@ using DFC.Api.AppRegistry.Services;
 using DFC.Compui.Cosmos;
 using DFC.Compui.Cosmos.Contracts;
 using DFC.Swagger.Standard;
-using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -18,7 +18,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
-[assembly: FunctionsStartup(typeof(DFC.Api.AppRegistry.WebJobsExtensionStartup))]
+[assembly: WebJobsStartup(typeof(WebJobsExtensionStartup), "Web Jobs Extension Startup")]
 
 namespace DFC.Api.AppRegistry
 {
@@ -46,6 +46,7 @@ namespace DFC.Api.AppRegistry
             var policyRegistry = builder.Services.AddPolicyRegistry();
 
             builder.AddSwashBuckle(Assembly.GetExecutingAssembly());
+            builder.Services.AddApplicationInsightsTelemetry();
             builder.Services.AddAutoMapper(typeof(WebJobsExtensionStartup).Assembly);
             builder.Services.AddDocumentServices<AppRegistrationModel>(cosmosDbConnection, false);
             builder.Services.AddSingleton(configuration.GetSection(nameof(PathClientOptions)).Get<PathClientOptions>() ?? new PathClientOptions());
