@@ -17,9 +17,9 @@ namespace DFC.Api.AppRegistry.Functions
         private const string LeaseCollectionPrefix = "%PathsLeaseCollectionNamePrefix%";
 
         private readonly ILegacyDataLoadService legacyDataLoadService;
-        private readonly ILogger<RegionsCosmosDbTrigger> triggerLogger;
+        private readonly ILogger<PathsCosmosDbTrigger> triggerLogger;
 
-        public PathsCosmosDbTrigger(ILogger<RegionsCosmosDbTrigger> logger, ILegacyDataLoadService legacyDataLoadService)
+        public PathsCosmosDbTrigger(ILogger<PathsCosmosDbTrigger> logger, ILegacyDataLoadService legacyDataLoadService)
         {
             this.triggerLogger = logger;
             this.legacyDataLoadService = legacyDataLoadService;

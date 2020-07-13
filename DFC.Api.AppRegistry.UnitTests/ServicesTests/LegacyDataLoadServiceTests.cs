@@ -175,6 +175,44 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         }
 
         [Fact]
+        public async Task UpdatePathAsyncReturnsExceptionForNullLegacyPathModels()
+        {
+            // Arrange
+            LegacyPathModel? dummyLegacyPathModel = null;
+
+            // Act
+            var exceptionResult = await Assert.ThrowsAsync<ArgumentNullException>(async () => await legacyDataLoadService.UpdatePathAsync(dummyLegacyPathModel).ConfigureAwait(false)).ConfigureAwait(false);
+
+            // assert
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeModelValidationService.ValidateModel(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
+
+            Assert.Equal("Value cannot be null. (Parameter 'legacyPathModel')", exceptionResult.Message);
+        }
+
+        [Fact]
+        public async Task UpdatePathAsyncAppRegistrationNullCreatesNew()
+        {
+            // Arrange
+            const HttpStatusCode upsertResult = HttpStatusCode.OK;
+            const bool validationResult = true;
+            var validLegacyPathModel = ModelBuilders.ValidLegacyPathModel(ModelBuilders.PathName);
+
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns<AppRegistrationModel?>(null);
+            A.CallTo(() => fakeModelValidationService.ValidateModel(A<AppRegistrationModel>.Ignored)).Returns(validationResult);
+            A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).Returns(upsertResult);
+
+            // Act
+            await legacyDataLoadService.UpdatePathAsync(validLegacyPathModel).ConfigureAwait(false);
+
+            // Assert
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeModelValidationService.ValidateModel(A<AppRegistrationModel>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustHaveHappenedOnceExactly();
+        }
+
+        [Fact]
         public async Task ProcessPathAsyncUpsertFailure()
         {
             // Arrange
