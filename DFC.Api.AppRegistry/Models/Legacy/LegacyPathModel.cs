@@ -8,8 +8,6 @@ namespace DFC.Api.AppRegistry.Models.Legacy
     [ExcludeFromCodeCoverage]
     public class LegacyPathModel : Document
     {
-        public Guid Id { get; set; }
-
         public string? Path { get; set; }
 
         public string? TopNavigationText { get; set; }

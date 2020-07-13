@@ -13,6 +13,7 @@ namespace DFC.Api.AppRegistry.Contracts
         Task ProcessPathAsync(LegacyPathModel legacyPathModel);
 
         Task UpdateRegionAsync(LegacyRegionModel legacyRegionModel);
+
         Task UpdatePathAsync(LegacyPathModel? legacyPathModel);
     }
 }
