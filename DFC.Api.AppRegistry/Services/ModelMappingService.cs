@@ -22,7 +22,7 @@ namespace DFC.Api.AppRegistry.Services
             _ = appRegistrationModel ?? throw new ArgumentNullException(nameof(appRegistrationModel));
             _ = legacyPathModel ?? throw new ArgumentNullException(nameof(legacyPathModel));
 
-            mapper.Map(legacyPathModel, appRegistrationModel);
+            MapModels(appRegistrationModel, legacyPathModel);
 
             if (legacyRegionModels != null)
             {
@@ -32,6 +32,14 @@ namespace DFC.Api.AppRegistry.Services
             {
                 appRegistrationModel.Regions = null;
             }
+        }
+
+        public void MapModels(AppRegistrationModel? appRegistrationModel, LegacyPathModel? legacyPathModel)
+        {
+            _ = appRegistrationModel ?? throw new ArgumentNullException(nameof(appRegistrationModel));
+            _ = legacyPathModel ?? throw new ArgumentNullException(nameof(legacyPathModel));
+
+            mapper.Map(legacyPathModel, appRegistrationModel);
         }
 
         public void MapRegionModelToAppRegistration(AppRegistrationModel? appRegistrationModel, LegacyRegionModel? legacyRegionModel)

@@ -8,6 +8,8 @@ namespace DFC.Api.AppRegistry.Contracts
     {
         void MapModels(AppRegistrationModel? appRegistrationModel, LegacyPathModel? legacyPathModel, IList<LegacyRegionModel>? legacyRegionModels);
 
+        void MapModels(AppRegistrationModel? appRegistrationModel, LegacyPathModel? legacyPathModel);
+
         void MapRegionModelToAppRegistration(AppRegistrationModel? appRegistrationModel, LegacyRegionModel? legacyRegionModel);
     }
 }

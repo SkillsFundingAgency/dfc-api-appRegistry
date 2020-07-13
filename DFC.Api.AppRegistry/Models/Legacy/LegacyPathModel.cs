@@ -1,14 +1,13 @@
 ﻿using DFC.Api.AppRegistry.Enums;
+using Microsoft.Azure.Documents;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace DFC.Api.AppRegistry.Models.Legacy
 {
     [ExcludeFromCodeCoverage]
-    public class LegacyPathModel
+    public class LegacyPathModel : Document
     {
-        public Guid Id { get; set; }
-
         public string? Path { get; set; }
 
         public string? TopNavigationText { get; set; }

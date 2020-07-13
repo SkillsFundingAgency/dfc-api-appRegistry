@@ -12,6 +12,7 @@ using Xunit;
 
 namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
 {
+    [Trait("Category", "RegionsCosmosDbTrigger - tests")]
     public class RegionsCosmosDbTriggerTests
     {
         private readonly ILogger<RegionsCosmosDbTrigger> logger;

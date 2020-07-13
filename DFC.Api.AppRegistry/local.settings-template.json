@@ -6,9 +6,12 @@
     "APPINSIGHTS_INSTRUMENTATIONKEY": "",
     "LegacyCosmosDbConnectionString": "[Cosmos DB Connection String]",
     "RegionsCollectionName": "regions",
+    "PathsCollectionName": "paths",
     "LegacyDatabaseName": "composition",
     "RegionsLeaseCollectionName": "regions_lease",
-    "RegionsLeaseCollectionNamePrefix": ""
+    "RegionsLeaseCollectionNamePrefix": "",
+    "PathsLeaseCollectionName": "paths_lease",
+    "PathsLeaseCollectionNamePrefix": ""
   },
   "Configuration": {
     "CosmosDbConnections": {
