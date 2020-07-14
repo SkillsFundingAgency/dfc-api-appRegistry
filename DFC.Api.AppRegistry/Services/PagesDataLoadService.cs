@@ -51,8 +51,8 @@ namespace DFC.Api.AppRegistry.Services
                 return;
             }
 
-            appRegistration.Locations = new List<string>();
             appRegistration.Locations = pages.Where(x => x.Url != null).Select(y => y.Url!.ToString()).ToList();
+            appRegistration.LastModifiedDate = DateTime.UtcNow;
 
             await legacyDataLoadService.UpdateAppRegistrationAsync(appRegistration).ConfigureAwait(false);
 
