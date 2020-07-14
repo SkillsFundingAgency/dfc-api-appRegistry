@@ -282,5 +282,38 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 
             Assert.Equal("Value cannot be null. (Parameter 'legacyPathModel')", exceptionResult.Message);
         }
+
+        [Fact]
+        public async Task GetAppRegistrationByPathAsyncReturnsAppRegistrationModel()
+        {
+            // Arrange
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(new AppRegistrationModel { Path = "pages" });
+
+            // Act
+            var result = await legacyDataLoadService.GetAppRegistrationByPathAsync("a-path").ConfigureAwait(false);
+
+            // assert
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappened();
+            A.CallTo(() => fakeModelMappingService.MapModels(A<AppRegistrationModel>.Ignored, A<LegacyPathModel>.Ignored, A<List<LegacyRegionModel>>.Ignored)).MustNotHaveHappened();
+
+            Assert.NotNull(result);
+        }
+
+        [Fact]
+        public async Task GetAppRegistrationByPathAsyncReturnsNull()
+        {
+            // Arrange
+            AppRegistrationModel? model = null;
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(model);
+
+            // Act
+            var result = await legacyDataLoadService.GetAppRegistrationByPathAsync("a-path").ConfigureAwait(false);
+
+            // assert
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappened();
+            A.CallTo(() => fakeModelMappingService.MapModels(A<AppRegistrationModel>.Ignored, A<LegacyPathModel>.Ignored, A<List<LegacyRegionModel>>.Ignored)).MustNotHaveHappened();
+
+            Assert.Null(result);
+        }
     }
 }

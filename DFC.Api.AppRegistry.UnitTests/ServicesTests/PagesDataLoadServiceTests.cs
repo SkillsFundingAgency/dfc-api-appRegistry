@@ -17,7 +17,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
     [Trait("Category", "LegacyPath - Service tests")]
     public class PagesDataLoadServiceTests
     {
-        private static readonly List<PageModel> PageModels = new List<PageModel>() { new PageModel { Url = new Uri("http://somewhere.com/1") }, new PageModel { Url = new Uri("http://somewhere.com/2") } };
+        private static readonly List<PageModel> PageModels = new List<PageModel>() { new PageModel { Url = new Uri("http://somewhere.com/1"), CanonicalName = "A Name", RedirectLocations = new List<string> { "http://somewhere/somewherelese" } }, new PageModel { Url = new Uri("http://somewhere.com/2") } };
 
         private readonly ILogger<PagesDataLoadService> logger = A.Fake<ILogger<PagesDataLoadService>>();
         private readonly HttpClient fakeHttpClient = A.Fake<HttpClient>();
