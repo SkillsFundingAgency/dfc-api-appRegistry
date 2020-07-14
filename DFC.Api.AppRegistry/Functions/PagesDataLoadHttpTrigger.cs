@@ -36,14 +36,14 @@ namespace DFC.Api.AppRegistry.Functions
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "pages/")] HttpRequest request)
         {
-            logger.LogInformation("Loading all legacy data into app registrations");
+            logger.LogInformation("Loading all pages data into app registrations");
 
             await pagesDataLoadService.LoadAsync().ConfigureAwait(false);
 
-            logger.LogInformation("Loaded all legacy data into app registrations");
+            logger.LogInformation("Loaded all pages data into app registrations");
 
             return new OkResult();
         }
     }
 }
-}
+
