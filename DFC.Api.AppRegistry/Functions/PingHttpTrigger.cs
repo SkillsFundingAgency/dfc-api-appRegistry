@@ -22,7 +22,7 @@ namespace DFC.Api.AppRegistry.Functions
         [FunctionName("app-registry-ping")]
         [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "App registry Ping.", ShowSchema = true)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is invalid.", ShowSchema = false)]
-        [Response(HttpStatusCode = 429, Description = "Too many requests being sent, by default the API supports 150 per minute.", ShowSchema = false)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.TooManyRequests, Description = "Too many requests being sent, by default the API supports 150 per minute.", ShowSchema = false)]
         public IActionResult Ping([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "health/ping")] HttpRequest request)
         {
             logger.LogInformation($"{nameof(Ping)} has been called");
