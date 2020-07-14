@@ -5,11 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DFC.Api.AppRegistry.Functions
@@ -34,7 +31,7 @@ namespace DFC.Api.AppRegistry.Functions
         [Response(HttpStatusCode = 429, Description = "Too many requests being sent, by default the API supports 150 per minute.", ShowSchema = false)]
         [Display(Name = "PagesDataLoad", Description = "Loads pages data into the pages app registration.")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "pages/")] HttpRequest request)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "pages/")])
         {
             logger.LogInformation("Loading all pages data into app registrations");
 
@@ -46,4 +43,3 @@ namespace DFC.Api.AppRegistry.Functions
         }
     }
 }
-
