@@ -224,6 +224,30 @@
                                 "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('CompositeUiSharedStorageAccountName'),';AccountKey=',listKeys(resourceId(parameters('CompositeUiSharedResourceGroup'), 'Microsoft.Storage/storageAccounts', parameters('CompositeUiSharedStorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]"
                             },
                             {
+                                "name": "Values__AzureWebJobsStorage",
+                                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('CompositeUiSharedStorageAccountName'),';AccountKey=',listKeys(resourceId(parameters('CompositeUiSharedResourceGroup'), 'Microsoft.Storage/storageAccounts', parameters('CompositeUiSharedStorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]"
+                            },
+                            {
+                                "name": "Values__LegacyCosmosDbConnectionString",
+                                "value": "[concat('AccountEndpoint=https://', parameters('CosmosDbAccount'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('CompositeUiSharedResourceGroup'), 'Microsoft.DocumentDB/databaseAccounts', parameters('CosmosDbAccount')), '2015-04-08').primaryMasterKey, ';')]"
+                            },
+                            {
+                                "name": "Values__RegionsCollectionName",
+                                "value": "regions"
+                            },
+                            {
+                                "name": "Values__LegacyDatabaseName",
+                                "value": "composition"
+                            },
+                            {
+                                "name": "Values__RegionsLeaseCollectionName",
+                                "value": "regions_lease"
+                            },
+                            {
+                                "name": "Values__RegionsLeaseCollectionNamePrefix",
+                                "value": ""
+                            },
+                            {
                                 "name": "Configuration__CosmosDbConnections__AppRegistry__EndpointUrl",
                                 "value": "[concat('https://', parameters('CosmosDbAccount'), '.documents.azure.com:443/')]"
                             },
