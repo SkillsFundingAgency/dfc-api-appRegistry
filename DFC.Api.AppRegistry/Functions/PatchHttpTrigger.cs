@@ -37,6 +37,7 @@ namespace DFC.Api.AppRegistry.Functions
         }
 
         [FunctionName("Patch")]
+        [Display(Name = "Patch a region", Description = Description)]
         [ProducesResponseType(typeof(AppRegistrationModel), (int)HttpStatusCode.OK)]
         [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "App Registration found", ShowSchema = true)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
@@ -45,7 +46,6 @@ namespace DFC.Api.AppRegistry.Functions
         [Response(HttpStatusCode = (int)HttpStatusCode.BadRequest, Description = "Request was malformed", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.UnprocessableEntity, Description = "Region validation error(s)", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.TooManyRequests, Description = "Too many requests being sent, by default the API supports 150 per minute.", ShowSchema = false)]
-        [Display(Name = "Patch", Description = Description)]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "appregistry/{path}/regions/{pageRegion}")] HttpRequest? request,
             string path,
@@ -138,6 +138,9 @@ namespace DFC.Api.AppRegistry.Functions
             try
             {
                 logger.LogInformation($"Attempting to update app registration for: {path}/{pageRegionValue}");
+
+                regionModel.LastModifiedDate = DateTime.UtcNow;
+                appRegistrationModel.LastModifiedDate = DateTime.UtcNow;
 
                 var statusCode = await documentService.UpsertAsync(appRegistrationModel).ConfigureAwait(false);
 
