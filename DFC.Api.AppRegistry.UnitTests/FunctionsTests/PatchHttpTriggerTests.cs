@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -228,7 +227,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         }
 
         [Fact]
-        public async Task PatchReturnsBadRequestResultWhenUpsertRaiseException()
+        public async Task PatchReturnsBadRequestResultWhenUpsertRaisesException()
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;
@@ -251,7 +250,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 
         private static AppRegistrationModel ValidAppRegistrationModel()
         {
-            var appRegistrationModel = new AppRegistrationModel
+            return new AppRegistrationModel
             {
                 Path = PathName,
                 Regions = new List<RegionModel>
@@ -268,8 +267,6 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
                     },
                 },
             };
-
-            return appRegistrationModel;
         }
 
         private static HttpRequest BuildRequestWithPatchObject<TModel, TProp>(Expression<Func<TModel, TProp>> path, TProp value)
@@ -278,31 +275,26 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             var patchDocument = new JsonPatchDocument<TModel>();
             patchDocument.Add(path, value);
 
-            HttpRequest request = new DefaultHttpRequest(new DefaultHttpContext())
+            return new DefaultHttpRequest(new DefaultHttpContext())
             {
                 Body = BuildStreamFromModel(patchDocument),
             };
-
-            return request;
         }
 
         private static HttpRequest BuildRequestWithInvalidBody(string bodyString)
         {
-            HttpRequest request = new DefaultHttpRequest(new DefaultHttpContext())
+            return new DefaultHttpRequest(new DefaultHttpContext())
             {
                 Body = new MemoryStream(Encoding.UTF8.GetBytes(bodyString)),
             };
-
-            return request;
         }
 
         private static Stream BuildStreamFromModel<TModel>(TModel model)
         {
             var jsonData = JsonConvert.SerializeObject(model);
             byte[] byteArray = Encoding.ASCII.GetBytes(jsonData);
-            MemoryStream stream = new MemoryStream(byteArray);
 
-            return stream;
+            return new MemoryStream(byteArray);
         }
     }
 }

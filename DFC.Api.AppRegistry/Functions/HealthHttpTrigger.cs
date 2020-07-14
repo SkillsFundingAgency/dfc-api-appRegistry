@@ -27,8 +27,8 @@ namespace DFC.Api.AppRegistry.Functions
             resourceName = typeof(HealthHttpTrigger)?.Namespace;
         }
 
-        [Display(Name = "App registry API Health Check", Description = "App registry API Health Check")]
         [FunctionName("app-registry-health")]
+        [Display(Name = "App registry API Health Check", Description = "App registry API Health Check")]
         [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "App registry API Health Check.", ShowSchema = true)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is invalid.", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.ServiceUnavailable, Description = "App registry API Health failed", ShowSchema = false)]

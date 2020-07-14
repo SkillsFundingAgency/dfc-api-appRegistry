@@ -18,8 +18,8 @@ namespace DFC.Api.AppRegistry.Functions
             this.logger = logger;
         }
 
-        [Display(Name = "Ping App registry API", Description = "Pings App registry API")]
         [FunctionName("app-registry-ping")]
+        [Display(Name = "Ping App registry API", Description = "Pings App registry API")]
         [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "App registry Ping.", ShowSchema = true)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is invalid.", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.TooManyRequests, Description = "Too many requests being sent, by default the API supports 150 per minute.", ShowSchema = false)]

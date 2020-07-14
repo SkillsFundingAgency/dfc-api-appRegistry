@@ -27,13 +27,13 @@ namespace DFC.Api.AppRegistry.Functions
         }
 
         [FunctionName("GetList")]
+        [Display(Name = "Get all app registrations", Description = "Retrieves a list of all registered applications.")]
         [ProducesResponseType(typeof(AppRegistrationModel), (int)HttpStatusCode.OK)]
         [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "App Registration found", ShowSchema = true)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.NoContent, Description = "Nothing found", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.TooManyRequests, Description = "Too many requests being sent, by default the API supports 150 per minute.", ShowSchema = false)]
-        [Display(Name = "GetList", Description = "Retrieves a list of all registered applications.")]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "appregistry/")] HttpRequest request)
         {
@@ -45,7 +45,7 @@ namespace DFC.Api.AppRegistry.Functions
             {
                 logger.LogInformation($"Returning {appRegistrationModels.Count()} app registrations");
 
-                return new OkObjectResult(appRegistrationModels?.OrderBy(o => o.Path));
+                return new OkObjectResult(appRegistrationModels.OrderBy(o => o.Path));
             }
 
             logger.LogWarning("Failed to get any app registrations");
