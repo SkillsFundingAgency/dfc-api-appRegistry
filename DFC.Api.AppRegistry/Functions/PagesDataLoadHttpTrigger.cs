@@ -1,4 +1,5 @@
-﻿using DFC.Swagger.Standard.Annotations;
+﻿using DFC.Api.AppRegistry.Contracts;
+using DFC.Swagger.Standard.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -16,14 +17,14 @@ namespace DFC.Api.AppRegistry.Functions
     public class PagesDataLoadHttpTrigger
     {
         private readonly ILogger<PagesDataLoadHttpTrigger> logger;
-        private readonly ILegacyDataLoadService legacyDataLoadService;
+        private readonly IPagesDataLoadService pagesDataLoadService;
 
         public PagesDataLoadHttpTrigger(
            ILogger<PagesDataLoadHttpTrigger> logger,
-           ILegacyDataLoadService legacyDataLoadService)
+           IPagesDataLoadService pagesDataLoadService)
         {
             this.logger = logger;
-            this.legacyDataLoadService = legacyDataLoadService;
+            this.pagesDataLoadService = pagesDataLoadService;
         }
 
         [FunctionName("PagesDataLoad")]
@@ -37,7 +38,7 @@ namespace DFC.Api.AppRegistry.Functions
         {
             logger.LogInformation("Loading all legacy data into app registrations");
 
-            await legacyDataLoadService.LoadAsync().ConfigureAwait(false);
+            await pagesDataLoadService.LoadAsync().ConfigureAwait(false);
 
             logger.LogInformation("Loaded all legacy data into app registrations");
 

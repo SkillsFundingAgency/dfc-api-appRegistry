@@ -19,6 +19,6 @@ namespace DFC.Api.AppRegistry.Contracts
 
         Task UpdateAppRegistrationAsync(AppRegistrationModel appRegistrationModel);
 
-        Task<AppRegistrationModel?> GetAppRegistrationAsync(string appRegistrationName);
+        Task<AppRegistrationModel?> GetAppRegistrationByPathAsync(string appRegistrationName);
     }
 }

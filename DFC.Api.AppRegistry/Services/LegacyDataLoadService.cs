@@ -101,15 +101,15 @@ namespace DFC.Api.AppRegistry.Services
             await UpdateAppRegistrationAsync(appRegistrationModel!).ConfigureAwait(false);
         }
 
-        public async Task<AppRegistrationModel?> GetAppRegistrationAsync(string appRegistrationName)
+        public async Task<AppRegistrationModel?> GetAppRegistrationByPathAsync(string path)
         {
-            logger.LogInformation($"Retrieving App Registration: {appRegistrationName}");
+            logger.LogInformation($"Retrieving App Registration: {path}");
 
-            var result = await documentService.GetAsync(x => x.Path == appRegistrationName).ConfigureAwait(false);
+            var result = await documentService.GetAsync(x => x.Path == path).ConfigureAwait(false);
 
             if (result == null)
             {
-                logger.LogInformation($"App Registration: {appRegistrationName} not found");
+                logger.LogInformation($"App Registration: {path} not found");
             }
 
             return result;
