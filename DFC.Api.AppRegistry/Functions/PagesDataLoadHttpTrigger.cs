@@ -31,7 +31,7 @@ namespace DFC.Api.AppRegistry.Functions
         [Response(HttpStatusCode = 429, Description = "Too many requests being sent, by default the API supports 150 per minute.", ShowSchema = false)]
         [Display(Name = "PagesDataLoad", Description = "Loads pages data into the pages app registration.")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "pages/")])
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "pages/")] HttpRequest request)
         {
             logger.LogInformation("Loading all pages data into app registrations");
 
