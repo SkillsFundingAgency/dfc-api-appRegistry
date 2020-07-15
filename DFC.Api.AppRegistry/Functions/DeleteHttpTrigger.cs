@@ -1,4 +1,3 @@
-using DFC.Api.AppRegistry.Extensions;
 using DFC.Api.AppRegistry.Models;
 using DFC.Compui.Cosmos.Contracts;
 using DFC.Swagger.Standard.Annotations;
@@ -29,7 +28,7 @@ namespace DFC.Api.AppRegistry.Functions
 
         [FunctionName("Delete")]
         [Display(Name = "Delete an app registration", Description = "Deletes a resource of type 'AppRegistry'.")]
-        [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "App Registration deleted", ShowSchema = true)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "App Registration deleted", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.NoContent, Description = "Path does not exist", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
