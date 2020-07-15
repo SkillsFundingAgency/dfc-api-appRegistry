@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
 using System.Text;
@@ -21,28 +22,31 @@ using Xunit;
 namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 {
     [Trait("Category", "Patch - Http trigger tests")]
-    public class PatchHttpTriggerTests
+    public class PatchRegionHttpTriggerTests
     {
         private const string PathName = "unit-tests";
-        private readonly ILogger<PatchHttpTrigger> fakeLogger = A.Fake<ILogger<PatchHttpTrigger>>();
+        private const PageRegion ValidPageRegionValue = PageRegion.Body;
+        private const PageRegion InvalidPageRegionValue = PageRegion.Head;
+        private const PageRegion NonExistingPageRegionValue = PageRegion.Footer;
+        private readonly ILogger<PatchRegionHttpTrigger> fakeLogger = A.Fake<ILogger<PatchRegionHttpTrigger>>();
         private readonly IDocumentService<AppRegistrationModel> fakeDocumentService = A.Fake<IDocumentService<AppRegistrationModel>>();
 
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
-        public async Task PatchReturnsSuccessWhenValid(bool isOnline)
+        public async Task PatchReturnsSuccessWhenValid(bool isHealthy)
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.OK;
             var validAppRegistrationModel = ValidAppRegistrationModel();
-            var request = BuildRequestWithPatchObject<AppRegistrationModel, bool>(x => x.IsOnline, isOnline);
-            var function = new PatchHttpTrigger(fakeLogger, fakeDocumentService);
+            var request = BuildRequestWithPatchObject<RegionModel, bool>(x => x.IsHealthy, isHealthy);
+            var function = new PatchRegionHttpTrigger(fakeLogger, fakeDocumentService);
 
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(validAppRegistrationModel);
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).Returns(expectedResult);
 
             // Act
-            var result = await function.Run(request, PathName).ConfigureAwait(false);
+            var result = await function.Run(request, PathName, (int)ValidPageRegionValue).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
@@ -51,7 +55,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             var statusResult = Assert.IsType<OkObjectResult>(result);
 
             A.Equals(expectedResult, statusResult.StatusCode);
-            A.Equals(isOnline, validAppRegistrationModel.IsOnline);
+            A.Equals(isHealthy, validAppRegistrationModel.Regions.FirstOrDefault(f => f.PageRegion == ValidPageRegionValue).IsHealthy);
         }
 
         [Fact]
@@ -60,10 +64,10 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;
             HttpRequest? request = null;
-            var function = new PatchHttpTrigger(fakeLogger, fakeDocumentService);
+            var function = new PatchRegionHttpTrigger(fakeLogger, fakeDocumentService);
 
             // Act
-            var result = await function.Run(request, PathName).ConfigureAwait(false);
+            var result = await function.Run(request, PathName, (int)ValidPageRegionValue).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustNotHaveHappened();
@@ -80,10 +84,10 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;
             var request = new DefaultHttpRequest(new DefaultHttpContext());
-            var function = new PatchHttpTrigger(fakeLogger, fakeDocumentService);
+            var function = new PatchRegionHttpTrigger(fakeLogger, fakeDocumentService);
 
             // Act
-            var result = await function.Run(request, PathName).ConfigureAwait(false);
+            var result = await function.Run(request, PathName, (int)ValidPageRegionValue).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustNotHaveHappened();
@@ -99,11 +103,31 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;
-            var request = BuildRequestWithPatchObject<AppRegistrationModel, bool>(x => x.IsOnline, true);
-            var function = new PatchHttpTrigger(fakeLogger, fakeDocumentService);
+            var request = BuildRequestWithPatchObject<RegionModel, bool>(x => x.IsHealthy, true);
+            var function = new PatchRegionHttpTrigger(fakeLogger, fakeDocumentService);
 
             // Act
-            var result = await function.Run(request, string.Empty).ConfigureAwait(false);
+            var result = await function.Run(request, string.Empty, (int)ValidPageRegionValue).ConfigureAwait(false);
+
+            // Assert
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
+
+            var statusResult = Assert.IsType<BadRequestResult>(result);
+
+            A.Equals(expectedResult, statusResult.StatusCode);
+        }
+
+        [Fact]
+        public async Task PatchReturnsBadRequestWhenInvalidPageRegion()
+        {
+            // Arrange
+            const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;
+            var request = BuildRequestWithPatchObject<RegionModel, bool>(x => x.IsHealthy, true);
+            var function = new PatchRegionHttpTrigger(fakeLogger, fakeDocumentService);
+
+            // Act
+            var result = await function.Run(request, PathName, 999).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustNotHaveHappened();
@@ -120,10 +144,10 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;
             var request = BuildRequestWithInvalidBody(string.Empty);
-            var function = new PatchHttpTrigger(fakeLogger, fakeDocumentService);
+            var function = new PatchRegionHttpTrigger(fakeLogger, fakeDocumentService);
 
             // Act
-            var result = await function.Run(request, PathName).ConfigureAwait(false);
+            var result = await function.Run(request, PathName, (int)ValidPageRegionValue).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustNotHaveHappened();
@@ -140,10 +164,10 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;
             var request = BuildRequestWithInvalidBody("some rubbish patch string");
-            var function = new PatchHttpTrigger(fakeLogger, fakeDocumentService);
+            var function = new PatchRegionHttpTrigger(fakeLogger, fakeDocumentService);
 
             // Act
-            var result = await function.Run(request, PathName).ConfigureAwait(false);
+            var result = await function.Run(request, PathName, (int)ValidPageRegionValue).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustNotHaveHappened();
@@ -160,13 +184,13 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.NoContent;
             AppRegistrationModel? invalidAppRegistrationModel = null;
-            var request = BuildRequestWithPatchObject<AppRegistrationModel, bool>(x => x.IsOnline, true);
-            var function = new PatchHttpTrigger(fakeLogger, fakeDocumentService);
+            var request = BuildRequestWithPatchObject<RegionModel, bool>(x => x.IsHealthy, true);
+            var function = new PatchRegionHttpTrigger(fakeLogger, fakeDocumentService);
 
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(invalidAppRegistrationModel);
 
             // Act
-            var result = await function.Run(request, PathName).ConfigureAwait(false);
+            var result = await function.Run(request, PathName, (int)ValidPageRegionValue).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
@@ -178,18 +202,41 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         }
 
         [Fact]
-        public async Task PatchReturnsBadRequestWhenValidationErrorsExist()
+        public async Task PatchReturnsNoContentWhenRegionDoesNotExist()
+        {
+            // Arrange
+            const HttpStatusCode expectedResult = HttpStatusCode.NoContent;
+            var validAppRegistrationModel = ValidAppRegistrationModel();
+            var request = BuildRequestWithPatchObject<RegionModel, bool>(x => x.IsHealthy, true);
+            var function = new PatchRegionHttpTrigger(fakeLogger, fakeDocumentService);
+
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(validAppRegistrationModel);
+
+            // Act
+            var result = await function.Run(request, PathName, (int)NonExistingPageRegionValue).ConfigureAwait(false);
+
+            // Assert
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
+
+            var statusResult = Assert.IsType<NoContentResult>(result);
+
+            A.Equals(expectedResult, statusResult.StatusCode);
+        }
+
+        [Fact]
+        public async Task PatchReturnsUnprocessableEntityWhenValidationErrorsExist()
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.UnprocessableEntity;
-            var invalidAppRegistrationModel = ValidAppRegistrationModel();
-            var request = BuildRequestWithPatchObject<AppRegistrationModel, string?>(x => x.Path, string.Empty);
-            var function = new PatchHttpTrigger(fakeLogger, fakeDocumentService);
+            var validAppRegistrationModel = ValidAppRegistrationModel();
+            var request = BuildRequestWithPatchObject<RegionModel, bool>(x => x.IsHealthy, true);
+            var function = new PatchRegionHttpTrigger(fakeLogger, fakeDocumentService);
 
-            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(invalidAppRegistrationModel);
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(validAppRegistrationModel);
 
             // Act
-            var result = await function.Run(request, PathName).ConfigureAwait(false);
+            var result = await function.Run(request, PathName, (int)InvalidPageRegionValue).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
@@ -206,13 +253,13 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;
             var validAppRegistrationModel = ValidAppRegistrationModel();
-            var request = BuildRequestWithPatchObject<AppRegistrationModel, Guid?>(x => x.Id, null);
-            var function = new PatchHttpTrigger(fakeLogger, fakeDocumentService);
+            var request = BuildRequestWithPatchObject<RegionModel, PageRegion?>(x => x.PageRegion, null);
+            var function = new PatchRegionHttpTrigger(fakeLogger, fakeDocumentService);
 
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(validAppRegistrationModel);
 
             // Act
-            var result = await function.Run(request, PathName).ConfigureAwait(false);
+            var result = await function.Run(request, PathName, (int)ValidPageRegionValue).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
@@ -229,14 +276,14 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.UnprocessableEntity;
             var validAppRegistrationModel = ValidAppRegistrationModel();
-            var request = BuildRequestWithPatchObject<AppRegistrationModel, bool>(x => x.IsOnline, true);
-            var function = new PatchHttpTrigger(fakeLogger, fakeDocumentService);
+            var request = BuildRequestWithPatchObject<RegionModel, bool>(x => x.IsHealthy, true);
+            var function = new PatchRegionHttpTrigger(fakeLogger, fakeDocumentService);
 
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(validAppRegistrationModel);
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).ThrowsAsync(new ApplicationException());
 
             // Act
-            var result = await function.Run(request, PathName).ConfigureAwait(false);
+            var result = await function.Run(request, PathName, (int)ValidPageRegionValue).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
@@ -251,19 +298,18 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         {
             return new AppRegistrationModel
             {
-                Id = Guid.NewGuid(),
                 Path = PathName,
                 Regions = new List<RegionModel>
                 {
                     new RegionModel
                     {
-                        PageRegion = PageRegion.Body,
+                        PageRegion = ValidPageRegionValue,
                         RegionEndpoint = "https://somewhere.com",
                         HealthCheckRequired = true,
                     },
                     new RegionModel
                     {
-                        PageRegion = PageRegion.BodyTop,
+                        PageRegion = InvalidPageRegionValue,
                     },
                 },
             };
