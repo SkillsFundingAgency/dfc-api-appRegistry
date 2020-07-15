@@ -29,7 +29,7 @@ namespace DFC.Api.AppRegistry.Functions
 
         [FunctionName("app-registry-health")]
         [Display(Name = "App registry API Health Check", Description = "App registry API Health Check")]
-        [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "App registry API Health Check.", ShowSchema = true)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "App registry API Health Check.", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is invalid.", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.ServiceUnavailable, Description = "App registry API Health failed", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.TooManyRequests, Description = "Too many requests being sent, by default the API supports 150 per minute.", ShowSchema = false)]

@@ -6,6 +6,7 @@ using FakeItEasy;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
@@ -51,7 +52,9 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustHaveHappenedOnceExactly();
 
-            A.Equals(expectedResult, result);
+            var statusResult = Assert.IsType<OkObjectResult>(result);
+
+            A.Equals(expectedResult, statusResult.StatusCode);
             A.Equals(isHealthy, validAppRegistrationModel.Regions.FirstOrDefault(f => f.PageRegion == ValidPageRegionValue).IsHealthy);
         }
 
@@ -70,7 +73,9 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
 
-            A.Equals(expectedResult, result);
+            var statusResult = Assert.IsType<BadRequestResult>(result);
+
+            A.Equals(expectedResult, statusResult.StatusCode);
         }
 
         [Fact]
@@ -88,7 +93,9 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
 
-            A.Equals(expectedResult, result);
+            var statusResult = Assert.IsType<BadRequestResult>(result);
+
+            A.Equals(expectedResult, statusResult.StatusCode);
         }
 
         [Fact]
@@ -106,7 +113,9 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
 
-            A.Equals(expectedResult, result);
+            var statusResult = Assert.IsType<BadRequestResult>(result);
+
+            A.Equals(expectedResult, statusResult.StatusCode);
         }
 
         [Fact]
@@ -124,7 +133,9 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
 
-            A.Equals(expectedResult, result);
+            var statusResult = Assert.IsType<BadRequestResult>(result);
+
+            A.Equals(expectedResult, statusResult.StatusCode);
         }
 
         [Fact]
@@ -142,7 +153,9 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
 
-            A.Equals(expectedResult, result);
+            var statusResult = Assert.IsType<BadRequestResult>(result);
+
+            A.Equals(expectedResult, statusResult.StatusCode);
         }
 
         [Fact]
@@ -160,7 +173,9 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
 
-            A.Equals(expectedResult, result);
+            var statusResult = Assert.IsType<BadRequestResult>(result);
+
+            A.Equals(expectedResult, statusResult.StatusCode);
         }
 
         [Fact]
@@ -181,7 +196,9 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
 
-            A.Equals(expectedResult, result);
+            var statusResult = Assert.IsType<NoContentResult>(result);
+
+            A.Equals(expectedResult, statusResult.StatusCode);
         }
 
         [Fact]
@@ -202,7 +219,9 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
 
-            A.Equals(expectedResult, result);
+            var statusResult = Assert.IsType<NoContentResult>(result);
+
+            A.Equals(expectedResult, statusResult.StatusCode);
         }
 
         [Fact]
@@ -223,14 +242,16 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
 
-            A.Equals(expectedResult, result);
+            var statusResult = Assert.IsType<UnprocessableEntityResult>(result);
+
+            A.Equals(expectedResult, statusResult.StatusCode);
         }
 
         [Fact]
-        public async Task PatchReturnsBadRequestResultWhenUpsertRaisesException()
+        public async Task PatchReturnsUnprocessableEntityResultWhenUpsertRaisesException()
         {
             // Arrange
-            const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;
+            const HttpStatusCode expectedResult = HttpStatusCode.UnprocessableEntity;
             var validAppRegistrationModel = ValidAppRegistrationModel();
             var request = BuildRequestWithPatchObject<RegionModel, bool>(x => x.IsHealthy, true);
             var function = new PatchHttpTrigger(fakeLogger, fakeDocumentService);
@@ -245,7 +266,9 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustHaveHappenedOnceExactly();
 
-            A.Equals(expectedResult, result);
+            var statusResult = Assert.IsType<UnprocessableEntityResult>(result);
+
+            A.Equals(expectedResult, statusResult.StatusCode);
         }
 
         private static AppRegistrationModel ValidAppRegistrationModel()

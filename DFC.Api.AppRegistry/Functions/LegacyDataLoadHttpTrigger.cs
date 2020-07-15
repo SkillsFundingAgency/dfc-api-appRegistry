@@ -26,7 +26,7 @@ namespace DFC.Api.AppRegistry.Functions
 
         [FunctionName("LegacyDataLoad")]
         [Display(Name = "Legacy data load", Description = "Loads all legacy data into app registrations.")]
-        [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "App Registrations loaded", ShowSchema = true)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "App Registrations loaded", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.TooManyRequests, Description = "Too many requests being sent, by default the API supports 150 per minute.", ShowSchema = false)]

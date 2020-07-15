@@ -71,7 +71,7 @@ namespace DFC.Api.AppRegistry.Functions
             catch (Exception ex)
             {
                 logger.LogError(ex, $"Error deleting app registration with Delete for: {appRegistrationModel.Path}");
-                return new BadRequestResult();
+                return new UnprocessableEntityResult();
             }
         }
     }
