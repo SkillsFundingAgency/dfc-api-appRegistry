@@ -50,6 +50,7 @@ namespace DFC.Api.AppRegistry
             builder.Services.AddDocumentServices<AppRegistrationModel>(cosmosDbConnection, false);
             builder.Services.AddSingleton(configuration.GetSection(nameof(PathClientOptions)).Get<PathClientOptions>() ?? new PathClientOptions());
             builder.Services.AddSingleton(configuration.GetSection(nameof(RegionClientOptions)).Get<RegionClientOptions>() ?? new RegionClientOptions());
+            builder.Services.AddSingleton(configuration.GetSection(nameof(PagesClientOptions)).Get<PagesClientOptions>() ?? new PagesClientOptions());
             builder.Services.AddTransient<ISwaggerDocumentGenerator, SwaggerDocumentGenerator>();
             builder.Services.AddTransient<ILegacyDataLoadService, LegacyDataLoadService>();
             builder.Services.AddTransient<IApiDataService, ApiDataService>();
@@ -64,6 +65,10 @@ namespace DFC.Api.AppRegistry
             builder.Services
                 .AddPolicies(policyRegistry, nameof(RegionClientOptions), policyOptions)
                 .AddHttpClient<ILegacyRegionService, LegacyRegionService, RegionClientOptions>(configuration, nameof(RegionClientOptions), nameof(PolicyOptions.HttpRetry), nameof(PolicyOptions.HttpCircuitBreaker));
+
+            builder.Services
+                .AddPolicies(policyRegistry, nameof(PagesClientOptions), policyOptions)
+                .AddHttpClient<IPagesDataLoadService, PagesDataLoadService, PagesClientOptions>(configuration, nameof(RegionClientOptions), nameof(PolicyOptions.HttpRetry), nameof(PolicyOptions.HttpCircuitBreaker));
         }
     }
 }

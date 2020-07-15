@@ -70,7 +70,7 @@ namespace DFC.Api.AppRegistry.Services
 
             modelMappingService.MapModels(appRegistrationModel, legacyPathModel, legacyRegionModels);
 
-            await UpsertAppRegistration(appRegistrationModel).ConfigureAwait(false);
+            await UpdateAppRegistrationAsync(appRegistrationModel).ConfigureAwait(false);
         }
 
         public async Task UpdatePathAsync(LegacyPathModel? legacyPathModel)
@@ -81,7 +81,7 @@ namespace DFC.Api.AppRegistry.Services
 
             modelMappingService.MapModels(appRegistrationModel, legacyPathModel);
 
-            await UpsertAppRegistration(appRegistrationModel).ConfigureAwait(false);
+            await UpdateAppRegistrationAsync(appRegistrationModel).ConfigureAwait(false);
         }
 
         public async Task UpdateRegionAsync(LegacyRegionModel? legacyRegionModel)
@@ -98,11 +98,27 @@ namespace DFC.Api.AppRegistry.Services
 
             modelMappingService.MapRegionModelToAppRegistration(appRegistrationModel!, legacyRegionModel);
 
-            await UpsertAppRegistration(appRegistrationModel!).ConfigureAwait(false);
+            await UpdateAppRegistrationAsync(appRegistrationModel!).ConfigureAwait(false);
         }
 
-        private async Task UpsertAppRegistration(AppRegistrationModel appRegistrationModel)
+        public async Task<AppRegistrationModel?> GetAppRegistrationByPathAsync(string path)
         {
+            logger.LogInformation($"Retrieving App Registration: {path}");
+
+            var result = await documentService.GetAsync(x => x.Path == path).ConfigureAwait(false);
+
+            if (result == null)
+            {
+                logger.LogInformation($"App Registration: {path} not found");
+            }
+
+            return result;
+        }
+
+        public async Task UpdateAppRegistrationAsync(AppRegistrationModel appRegistrationModel)
+        {
+            _ = appRegistrationModel ?? throw new ArgumentNullException(nameof(appRegistrationModel));
+
             if (modelValidationService.ValidateModel(appRegistrationModel))
             {
                 var upsertResult = await documentService.UpsertAsync(appRegistrationModel).ConfigureAwait(false);
