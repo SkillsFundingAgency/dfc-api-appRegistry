@@ -1,3 +1,4 @@
+using DFC.Api.AppRegistry.Enums;
 using DFC.Api.AppRegistry.Models;
 using DFC.Compui.Cosmos.Contracts;
 using DFC.Swagger.Standard.Annotations;
@@ -17,38 +18,40 @@ using System.Threading.Tasks;
 
 namespace DFC.Api.AppRegistry.Functions
 {
-    public class PatchHttpTrigger
+    public class PatchRegionHttpTrigger
     {
-        private const string Description = "Ability to update specific values of an AppRegistation. <br>" +
+        private const string Description = "Ability to update specific values of an existing Region for an AppRegistation. <br>" +
                                            "<br><b>Validation Rules:</b> <br>" +
-                                           "<br><b>Path:</b> Is mandatory <br>";
+                                           "<br><b>Path:</b> Is mandatory <br>" +
+                                           "<br><b>PageRegion:</b> Is mandatory <br>";
 
-        private readonly ILogger<PatchHttpTrigger> logger;
+        private readonly ILogger<PatchRegionHttpTrigger> logger;
         private readonly IDocumentService<AppRegistrationModel> documentService;
 
-        public PatchHttpTrigger(
-           ILogger<PatchHttpTrigger> logger,
+        public PatchRegionHttpTrigger(
+           ILogger<PatchRegionHttpTrigger> logger,
            IDocumentService<AppRegistrationModel> documentService)
         {
             this.logger = logger;
             this.documentService = documentService;
         }
 
-        [FunctionName("Patch")]
-        [Display(Name = "Patch an app registration", Description = Description)]
-        [ProducesResponseType(typeof(AppRegistrationModel), (int)HttpStatusCode.OK)]
-        [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "App Registration patched", ShowSchema = true)]
+        [FunctionName("PatchRegion")]
+        [Display(Name = "Patch a region", Description = Description)]
+        [ProducesResponseType(typeof(RegionModel), (int)HttpStatusCode.OK)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "Region patched", ShowSchema = true)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.NoContent, Description = "Nothing found for parameter", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.BadRequest, Description = "Request was malformed", ShowSchema = false)]
-        [Response(HttpStatusCode = (int)HttpStatusCode.UnprocessableEntity, Description = "App Registration validation error(s)", ShowSchema = false)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.UnprocessableEntity, Description = "Region validation error(s)", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.TooManyRequests, Description = "Too many requests being sent, by default the API supports 150 per minute.", ShowSchema = false)]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "appregistry/{path}")] HttpRequest? request,
-            string path)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "appregistry/{path}/regions/{pageRegion}")] HttpRequest? request,
+            string path,
+            int pageRegion)
         {
-            logger.LogInformation($"Validating patch AppRegistration for: {path}");
+            logger.LogInformation($"Validating patch AppRegistration for: {path}/{pageRegion}");
 
             if (request?.Body == null)
             {
@@ -62,14 +65,22 @@ namespace DFC.Api.AppRegistry.Functions
                 return new BadRequestResult();
             }
 
-            JsonPatchDocument<AppRegistrationModel>? appRegistrationModelPatch;
+            if (!Enum.IsDefined(typeof(PageRegion), pageRegion))
+            {
+                logger.LogWarning($"Invalid PageRegion '{pageRegion}' received");
+                return new BadRequestResult();
+            }
+
+            var pageRegionValue = (PageRegion)pageRegion;
+
+            JsonPatchDocument<RegionModel>? regionModelPatch;
             try
             {
                 using var streamReader = new StreamReader(request.Body);
                 var requestBody = await streamReader.ReadToEndAsync().ConfigureAwait(false);
-                appRegistrationModelPatch = JsonConvert.DeserializeObject<JsonPatchDocument<AppRegistrationModel>>(requestBody);
+                regionModelPatch = JsonConvert.DeserializeObject<JsonPatchDocument<RegionModel>>(requestBody);
 
-                if (appRegistrationModelPatch == null)
+                if (regionModelPatch == null)
                 {
                     logger.LogWarning("Request body is empty");
                     return new BadRequestResult();
@@ -77,7 +88,7 @@ namespace DFC.Api.AppRegistry.Functions
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"Error deserialising patch document for: {path}");
+                logger.LogError(ex, $"Error deserialising patch document for: {path}/{pageRegionValue}");
                 return new BadRequestResult();
             }
 
@@ -91,14 +102,22 @@ namespace DFC.Api.AppRegistry.Functions
                 return new NoContentResult();
             }
 
-            logger.LogInformation($"Patching AppRegistration for: {path}");
+            var regionModel = appRegistrationModel.Regions.FirstOrDefault(f => f.PageRegion == pageRegionValue);
+
+            if (regionModel == null)
+            {
+                logger.LogWarning($"No Region exists for: {path}/{pageRegionValue}");
+                return new NoContentResult();
+            }
+
+            logger.LogInformation($"Patching AppRegistration for: {path}/{pageRegionValue}");
 
             try
             {
-                logger.LogInformation($"Attempting to apply patch to: {path}");
-                appRegistrationModelPatch?.ApplyTo(appRegistrationModel);
+                logger.LogInformation($"Attempting to apply patch to: {path}/{pageRegionValue}");
+                regionModelPatch?.ApplyTo(regionModel);
 
-                var validationResults = appRegistrationModel.Validate(new ValidationContext(appRegistrationModel));
+                var validationResults = regionModel.Validate(new ValidationContext(regionModel));
                 if (validationResults != null && validationResults.Any())
                 {
                     logger.LogWarning($"Validation Failed with {validationResults.Count()} errors");
@@ -112,24 +131,25 @@ namespace DFC.Api.AppRegistry.Functions
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"Error applying patch to app registration model for: {path}");
+                logger.LogError(ex, $"Error applying patch to region model for: {path}/{pageRegionValue}");
                 return new BadRequestResult();
             }
 
             try
             {
-                logger.LogInformation($"Attempting to update app registration for: {path}");
+                logger.LogInformation($"Attempting to update app registration for: {path}/{pageRegionValue}");
 
+                regionModel.LastModifiedDate = DateTime.UtcNow;
                 appRegistrationModel.LastModifiedDate = DateTime.UtcNow;
 
                 var statusCode = await documentService.UpsertAsync(appRegistrationModel).ConfigureAwait(false);
 
-                logger.LogInformation($"Updated app registration with patch for: {path}: Status code {statusCode}");
-                return new OkObjectResult(appRegistrationModel);
+                logger.LogInformation($"Updated app registration with patch for: {path}/{pageRegionValue}: Status code {statusCode}");
+                return new OkObjectResult(regionModel);
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"Error updating app registration with patch for: {path}");
+                logger.LogError(ex, $"Error updating app registration with patch for: {path}/{pageRegionValue}");
                 return new UnprocessableEntityResult();
             }
         }
