@@ -38,7 +38,7 @@ namespace DFC.Api.AppRegistry.Functions
 
         [FunctionName("Patch")]
         [Display(Name = "Patch a region", Description = Description)]
-        [ProducesResponseType(typeof(AppRegistrationModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(RegionModel), (int)HttpStatusCode.OK)]
         [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "App Registration found", ShowSchema = true)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
@@ -145,12 +145,12 @@ namespace DFC.Api.AppRegistry.Functions
                 var statusCode = await documentService.UpsertAsync(appRegistrationModel).ConfigureAwait(false);
 
                 logger.LogInformation($"Updated app registration with patch for: {path}/{pageRegionValue}: Status code {statusCode}");
-                return new OkResult();
+                return new OkObjectResult(regionModel);
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, $"Error updating app registration with patch for: {path}/{pageRegionValue}");
-                return new BadRequestResult();
+                return new UnprocessableEntityResult();
             }
         }
     }

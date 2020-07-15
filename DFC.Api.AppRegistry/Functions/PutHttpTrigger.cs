@@ -9,7 +9,6 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -30,7 +29,7 @@ namespace DFC.Api.AppRegistry.Functions
 
         [FunctionName("Put")]
         [Display(Name = "Put an app registration", Description = "Updates a resource of type 'AppRegistry'.")]
-        [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "App Registration updated", ShowSchema = true)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "App Registration updated", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.NoContent, Description = "Path does not exist", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
@@ -97,7 +96,7 @@ namespace DFC.Api.AppRegistry.Functions
             catch (Exception ex)
             {
                 logger.LogError(ex, $"Error updating app registration with Put for: {appRegistrationModel.Path}");
-                return new BadRequestResult();
+                return new UnprocessableEntityResult();
             }
         }
     }

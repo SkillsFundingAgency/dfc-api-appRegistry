@@ -82,7 +82,7 @@ namespace DFC.Api.AppRegistry.Functions
             catch (Exception ex)
             {
                 logger.LogError(ex, $"Error creating app registration with Post for: {appRegistrationModel.Path}");
-                return new BadRequestResult();
+                return new UnprocessableEntityResult();
             }
         }
     }

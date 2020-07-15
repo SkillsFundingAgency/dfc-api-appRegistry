@@ -45,9 +45,9 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDocumentService.DeleteAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
 
-            var okResult = Assert.IsType<OkResult>(result);
+            var statusResult = Assert.IsType<OkResult>(result);
 
-            A.Equals(expectedResult, okResult.StatusCode);
+            A.Equals(expectedResult, statusResult.StatusCode);
         }
 
         [Fact]
@@ -66,7 +66,9 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeDocumentService.DeleteAsync(A<Guid>.Ignored)).MustNotHaveHappened();
 
-            A.Equals(expectedResult, result);
+            var statusResult = Assert.IsType<BadRequestResult>(result);
+
+            A.Equals(expectedResult, statusResult.StatusCode);
         }
 
         [Fact]
@@ -88,7 +90,9 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDocumentService.DeleteAsync(A<Guid>.Ignored)).MustNotHaveHappened();
 
-            A.Equals(expectedResult, result);
+            var statusResult = Assert.IsType<NoContentResult>(result);
+
+            A.Equals(expectedResult, statusResult.StatusCode);
         }
 
         [Fact]
@@ -109,14 +113,16 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDocumentService.DeleteAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
 
-            A.Equals(expectedResult, result);
+            var statusResult = Assert.IsType<UnprocessableEntityResult>(result);
+
+            A.Equals(expectedResult, statusResult.StatusCode);
         }
 
         [Fact]
-        public async Task DeleteReturnsBadRequestWhenDeleteRaisesException()
+        public async Task DeleteReturnsUnprocessableEntityWhenDeleteRaisesException()
         {
             // Arrange
-            const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;
+            const HttpStatusCode expectedResult = HttpStatusCode.UnprocessableEntity;
             var validAppRegistrationModel = ValidAppRegistrationModel();
             var request = BuildRequestWithMmodel(validAppRegistrationModel);
             var function = new DeleteHttpTrigger(fakeLogger, fakeDocumentService);
@@ -130,7 +136,9 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDocumentService.DeleteAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
 
-            A.Equals(expectedResult, result);
+            var statusResult = Assert.IsType<UnprocessableEntityResult>(result);
+
+            A.Equals(expectedResult, statusResult.StatusCode);
         }
 
         private static AppRegistrationModel ValidAppRegistrationModel()
