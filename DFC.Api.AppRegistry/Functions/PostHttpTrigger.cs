@@ -9,7 +9,6 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -30,8 +29,9 @@ namespace DFC.Api.AppRegistry.Functions
 
         [FunctionName("Post")]
         [Display(Name = "Post an app registration", Description = "Creates a new resource of type 'AppRegistry'.")]
-        [ProducesResponseType(typeof(AppRegistrationModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(AppRegistrationModel), (int)HttpStatusCode.Created)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Created, Description = "App Registration created", ShowSchema = true)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "App Registration updated", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.BadRequest, Description = "Request was malformed", ShowSchema = false)]
@@ -48,54 +48,40 @@ namespace DFC.Api.AppRegistry.Functions
                 return new BadRequestResult();
             }
 
-            var body = await request.GetBodyAsync<AppRegistrationModel>().ConfigureAwait(false);
+            var appRegistrationModel = await request.GetModelFromBodyAsync<AppRegistrationModel>(logger).ConfigureAwait(false);
 
-            if (body?.Value == null)
+            if (appRegistrationModel == null)
             {
                 logger.LogWarning($"Request.Body is malformed");
                 return new BadRequestResult();
             }
 
-            if (!body.IsValid)
-            {
-                if (body.ValidationResults != null && body.ValidationResults.Any())
-                {
-                    logger.LogWarning($"Validation Failed with {body.ValidationResults.Count()} errors");
-                    foreach (var validationResult in body.ValidationResults)
-                    {
-                        logger.LogWarning($"Validation Failed: {validationResult.ErrorMessage}: {string.Join(",", validationResult.MemberNames)}");
-                    }
-                }
-
-                return new BadRequestResult();
-            }
-
             try
             {
-                logger.LogInformation($"Attempting to create app registration for: {body.Value.Path}");
+                logger.LogInformation($"Attempting to create app registration for: {appRegistrationModel.Path}");
 
-                body.Value.Regions?.ForEach(f => f.DateOfRegistration = DateTime.UtcNow);
-                body.Value.DateOfRegistration = DateTime.UtcNow;
+                appRegistrationModel.Regions?.ForEach(f => f.DateOfRegistration = DateTime.UtcNow);
+                appRegistrationModel.DateOfRegistration = DateTime.UtcNow;
 
-                var statusCode = await documentService.UpsertAsync(body.Value).ConfigureAwait(false);
+                var statusCode = await documentService.UpsertAsync(appRegistrationModel).ConfigureAwait(false);
 
                 switch (statusCode)
                 {
                     case HttpStatusCode.Created:
-                        logger.LogInformation($"Created app registration with Post for: {body.Value.Path}: Status code {statusCode}");
-                        var appRegistrationModel = await documentService.GetAsync(p => p.Path == body.Value.Path).ConfigureAwait(false);
-                        return new CreatedResult(appRegistrationModel!.Path, appRegistrationModel);
+                        logger.LogInformation($"Created app registration with Post for: {appRegistrationModel.Path}: Status code {statusCode}");
+                        var resultModel = await documentService.GetAsync(p => p.Path == appRegistrationModel.Path).ConfigureAwait(false);
+                        return new CreatedResult(resultModel!.Path, resultModel);
                     case HttpStatusCode.OK:
-                        logger.LogInformation($"Upserted app registration with Post for: {body.Value.Path}: Status code {statusCode}");
+                        logger.LogInformation($"Upserted app registration with Post for: {appRegistrationModel.Path}: Status code {statusCode}");
                         return new OkResult();
                 }
 
-                logger.LogError($"Error creating app registration with Post for: {body.Value.Path}: Status code {statusCode}");
+                logger.LogError($"Error creating app registration with Post for: {appRegistrationModel.Path}: Status code {statusCode}");
                 return new UnprocessableEntityResult();
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"Error creating app registration with Post for: {body.Value.Path}");
+                logger.LogError(ex, $"Error creating app registration with Post for: {appRegistrationModel.Path}");
                 return new BadRequestResult();
             }
         }

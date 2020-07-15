@@ -54,37 +54,23 @@ namespace DFC.Api.AppRegistry.Functions
                 return new BadRequestResult();
             }
 
-            var body = await request.GetBodyAsync<AppRegistrationModel>().ConfigureAwait(false);
+            var appRegistrationModel = await request.GetModelFromBodyAsync<AppRegistrationModel>(logger).ConfigureAwait(false);
 
-            if (body?.Value == null)
+            if (appRegistrationModel == null)
             {
                 logger.LogWarning($"Request.Body is malformed");
                 return new BadRequestResult();
             }
 
-            if (!body.IsValid)
+            if (!string.Equals(path, appRegistrationModel.Path, StringComparison.OrdinalIgnoreCase))
             {
-                if (body.ValidationResults != null && body.ValidationResults.Any())
-                {
-                    logger.LogWarning($"Validation Failed with {body.ValidationResults.Count()} errors");
-                    foreach (var validationResult in body.ValidationResults)
-                    {
-                        logger.LogWarning($"Validation Failed: {validationResult.ErrorMessage}: {string.Join(",", validationResult.MemberNames)}");
-                    }
-                }
-
-                return new BadRequestResult();
-            }
-
-            if (!string.Equals(path, body.Value.Path, StringComparison.OrdinalIgnoreCase))
-            {
-                logger.LogWarning($"Path parameter ({path}) does not match request value Path ({body.Value.Path})");
+                logger.LogWarning($"Path parameter ({path}) does not match request value Path ({appRegistrationModel.Path})");
                 return new BadRequestResult();
             }
 
             logger.LogInformation($"Attempting to get app registration for: {path}");
-            var currentAppRegistration = await documentService.GetAsync(p => p.Path == path).ConfigureAwait(false);
-            if (currentAppRegistration == null)
+            var existingAppRegistration = await documentService.GetAsync(p => p.Path == path).ConfigureAwait(false);
+            if (existingAppRegistration == null)
             {
                 logger.LogWarning($"No app registration exists for path: {path}");
                 return new NoContentResult();
@@ -92,25 +78,25 @@ namespace DFC.Api.AppRegistry.Functions
 
             try
             {
-                logger.LogInformation($"Attempting to update app registration for: {body.Value.Path}");
+                logger.LogInformation($"Attempting to update app registration for: {appRegistrationModel.Path}");
 
-                body.Value.Regions?.ForEach(f => f.LastModifiedDate = DateTime.UtcNow);
-                body.Value.LastModifiedDate = DateTime.UtcNow;
+                appRegistrationModel.Regions?.ForEach(f => f.LastModifiedDate = DateTime.UtcNow);
+                appRegistrationModel.LastModifiedDate = DateTime.UtcNow;
 
-                var statusCode = await documentService.UpsertAsync(body.Value).ConfigureAwait(false);
+                var statusCode = await documentService.UpsertAsync(appRegistrationModel).ConfigureAwait(false);
 
                 if (statusCode == HttpStatusCode.OK)
                 {
-                    logger.LogInformation($"Upserted app registration with Put for: {body.Value.Path}: Status code {statusCode}");
+                    logger.LogInformation($"Upserted app registration with Put for: {appRegistrationModel.Path}: Status code {statusCode}");
                     return new OkResult();
                 }
 
-                logger.LogError($"Error updating app registration with Put for: {body.Value.Path}: Status code {statusCode}");
+                logger.LogError($"Error updating app registration with Put for: {appRegistrationModel.Path}: Status code {statusCode}");
                 return new UnprocessableEntityResult();
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"Error updating app registration with Put for: {body.Value.Path}");
+                logger.LogError(ex, $"Error updating app registration with Put for: {appRegistrationModel.Path}");
                 return new BadRequestResult();
             }
         }
