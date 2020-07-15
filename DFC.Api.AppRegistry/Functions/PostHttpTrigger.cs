@@ -30,9 +30,8 @@ namespace DFC.Api.AppRegistry.Functions
 
         [FunctionName("Post")]
         [Display(Name = "Post an app registration", Description = "Creates a new resource of type 'AppRegistry'.")]
-        [ProducesResponseType(typeof(AppRegistrationModel), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(AppRegistrationModel), (int)HttpStatusCode.OK)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Created, Description = "App Registration created", ShowSchema = true)]
-        [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "App Registration updated", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.BadRequest, Description = "Request was malformed", ShowSchema = false)]
