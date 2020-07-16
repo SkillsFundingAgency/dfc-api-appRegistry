@@ -255,6 +255,10 @@
                 "name": "PathsLeaseCollectionNamePrefix",
                 "value": "ls"
               },
+			  {
+                "name": "PartitionKey",
+                "value": "/id"
+              },
               {
                 "name": "Configuration__CosmosDbConnections__AppRegistry__EndpointUrl",
                 "value": "[concat('https://', parameters('CosmosDbAccount'), '.documents.azure.com:443/')]"
