@@ -12,7 +12,7 @@ namespace DFC.Api.AppRegistry.Functions
     public class PathsCosmosDbTrigger
     {
         private const string DatabaseName = "%LegacyDatabaseName%";
-        private const string CollectionName = "%RegionsCollectionName%";
+        private const string CollectionName = "%PathsCollectionName%";
         private const string LeaseCollectionName = "%PathsLeaseCollectionName%";
         private const string LeaseCollectionPrefix = "%PathsLeaseCollectionNamePrefix%";
 
