@@ -37,6 +37,8 @@ namespace DFC.Api.AppRegistry.Functions
         {
             try
             {
+                triggerLogger.LogInformation($"PathsChangeFeedTrigger executed with {(documents != null ? documents.Count : 0)} documents");
+
                 if (documents != null)
                 {
                     foreach (var document in documents)
