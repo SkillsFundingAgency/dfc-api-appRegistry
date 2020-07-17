@@ -3,6 +3,7 @@ using DFC.Api.AppRegistry.Models;
 using DFC.Api.AppRegistry.Models.Legacy;
 using DFC.Compui.Cosmos.Contracts;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -118,6 +119,8 @@ namespace DFC.Api.AppRegistry.Services
         public async Task UpdateAppRegistrationAsync(AppRegistrationModel appRegistrationModel)
         {
             _ = appRegistrationModel ?? throw new ArgumentNullException(nameof(appRegistrationModel));
+
+            logger.LogInformation($"Upserting App Registration: {JsonConvert.SerializeObject(appRegistrationModel)}");
 
             if (modelValidationService.ValidateModel(appRegistrationModel))
             {
