@@ -10,7 +10,8 @@ namespace DFC.Api.AppRegistry.AutoMapperProfiles
     {
         public LegacyDataModelProfile()
         {
-            CreateMap<LegacyPathModel, AppRegistrationModel>();
+            CreateMap<LegacyPathModel, AppRegistrationModel>()
+                .ForMember(d => d.Etag, s => s.Ignore());
 
             CreateMap<LegacyRegionModel, RegionModel>()
                 .ForMember(d => d.IsHealthy, s => s.Ignore());
