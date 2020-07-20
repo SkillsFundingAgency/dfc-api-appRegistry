@@ -50,6 +50,23 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         }
 
         [Fact]
+        public async Task PagesDataLoadServiceRemoveAsyncNullRegistrationDocumentNoUpdate()
+        {
+            // Arrange
+            AppRegistrationModel? model = null;
+            var serviceToTest = new PagesDataLoadService(logger, fakeHttpClient, pagesClientOptions, fakeApiDataService, fakeLegacyDataLoadService);
+            A.CallTo(() => fakeLegacyDataLoadService.GetAppRegistrationByPathAsync(A<string>.Ignored)).Returns(model);
+
+            // Act
+            await serviceToTest.RemoveAsync(Guid.NewGuid()).ConfigureAwait(false);
+
+            // Assert
+            A.CallTo(() => fakeLegacyDataLoadService.GetAppRegistrationByPathAsync(A<string>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeLegacyDataLoadService.UpdateAppRegistrationAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeApiDataService.GetAsync<PageModel>(A<HttpClient>.Ignored, A<Uri>.Ignored)).MustNotHaveHappened();
+        }
+
+        [Fact]
         public async Task PagesDataLoadServiceLoadAsyncNullPagesNoRegistrationDocumentUpdated()
         {
             // Arrange

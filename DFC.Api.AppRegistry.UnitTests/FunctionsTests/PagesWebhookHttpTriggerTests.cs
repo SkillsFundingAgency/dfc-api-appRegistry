@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -74,6 +75,20 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             var statusResult = Assert.IsType<StatusCodeResult>(result);
 
             A.Equals(expectedResult, statusResult);
+        }
+
+        [Fact]
+        public async Task PostThrowsException()
+        {
+            // Arrange
+            A.CallTo(() => fakewebhookReceiver.ReceiveEvents(A<string>.Ignored)).Throws(new NotImplementedException());
+
+            var function = new PagesWebhookHttpTrigger(fakeLogger, fakewebhookReceiver);
+            var request = new DefaultHttpRequest(new DefaultHttpContext());
+
+            // Act
+            // Assert
+            await Assert.ThrowsAsync<NotImplementedException>(async () => await function.Run(BuildRequestWithValidBody("a body")).ConfigureAwait(false)).ConfigureAwait(false);
         }
 
         private static HttpRequest BuildRequestWithValidBody(string bodyString)
