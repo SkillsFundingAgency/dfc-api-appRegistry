@@ -4,6 +4,7 @@ using DFC.Api.AppRegistry.Services;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Net;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -21,66 +22,45 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         }
 
         [Fact]
-        public async Task PagesWebhookServiceDeleteContentItemAsyncThrowsNotImplementedException()
+        public async Task PagesWebhookServiceProcessMessageNoneOperationReturnsOk()
         {
             // Arrange
             var serviceToTest = new PagesWebhookService(pageDataLoadService, logger);
 
             // Act
+            var result = await serviceToTest.ProcessMessageAsync(Compui.Subscriptions.Pkg.Data.Enums.WebhookCacheOperation.None, Guid.NewGuid(), Guid.NewGuid(), new Uri("http://somewhere.com")).ConfigureAwait(false);
+
             // Assert
-            await Assert.ThrowsAsync<NotImplementedException>(async () => await serviceToTest.DeleteContentItemAsync(Guid.NewGuid()).ConfigureAwait(false)).ConfigureAwait(false);
+            Assert.Equal(HttpStatusCode.OK, result);
         }
 
         [Fact]
-        public async Task PagesWebhookServiceProcessContentItemAsyncThrowsNotImplementedException()
+        public async Task PagesWebhookServiceProcessMessageCreateOrUpdateOperationReturnsOk()
         {
             // Arrange
             var serviceToTest = new PagesWebhookService(pageDataLoadService, logger);
+            A.CallTo(() => pageDataLoadService.CreateOrUpdateAsync(A<Guid>.Ignored)).Returns(HttpStatusCode.OK);
 
             // Act
+            var result = await serviceToTest.ProcessMessageAsync(Compui.Subscriptions.Pkg.Data.Enums.WebhookCacheOperation.CreateOrUpdate, Guid.NewGuid(), Guid.NewGuid(), new Uri("http://somewhere.com")).ConfigureAwait(false);
+
             // Assert
-            await Assert.ThrowsAsync<NotImplementedException>(async () => await serviceToTest.ProcessContentItemAsync(new Uri("http://somewhere.com"), Guid.NewGuid()).ConfigureAwait(false)).ConfigureAwait(false);
+            Assert.Equal(HttpStatusCode.OK, result);
         }
 
         [Fact]
-        public async Task PagesWebhookServiceProcessMessageAsyncThrowsNotImplementedException()
+        public async Task PagesWebhookServiceProcessMessageRemoveOperationReturnsOk()
         {
             // Arrange
             var serviceToTest = new PagesWebhookService(pageDataLoadService, logger);
+            A.CallTo(() => pageDataLoadService.RemoveAsync(A<Guid>.Ignored)).Returns(HttpStatusCode.OK);
 
             // Act
-            // Assert
-            await Assert.ThrowsAsync<NotImplementedException>(async () => await serviceToTest.ProcessMessageAsync(Compui.Subscriptions.Pkg.Data.Enums.WebhookCacheOperation.CreateOrUpdate, Guid.NewGuid(), Guid.NewGuid(), new Uri("http://somewhere.com")).ConfigureAwait(false)).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task PagesWebhookServiceDeleteContentAsyncReturnsOkStatus()
-        {
-            // Arrange
-            var serviceToTest = new PagesWebhookService(pageDataLoadService, logger);
-            A.CallTo(() => pageDataLoadService.RemoveAsync(A<Guid>.Ignored)).Returns(System.Net.HttpStatusCode.OK);
-
-            // Act
-            var result = await serviceToTest.DeleteContentAsync(Guid.NewGuid()).ConfigureAwait(false);
+            var result = await serviceToTest.ProcessMessageAsync(Compui.Subscriptions.Pkg.Data.Enums.WebhookCacheOperation.Delete, Guid.NewGuid(), Guid.NewGuid(), new Uri("http://somewhere.com")).ConfigureAwait(false);
 
             // Assert
-            Assert.Equal(System.Net.HttpStatusCode.OK, result);
-            A.CallTo(() => pageDataLoadService.RemoveAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
+            Assert.Equal(HttpStatusCode.OK, result);
         }
 
-        [Fact]
-        public async Task PagesWebhookServiceProcessContentAsyncReturnsOkStatus()
-        {
-            // Arrange
-            var serviceToTest = new PagesWebhookService(pageDataLoadService, logger);
-            A.CallTo(() => pageDataLoadService.CreateOrUpdateAsync(A<Guid>.Ignored)).Returns(System.Net.HttpStatusCode.OK);
-
-            // Act
-            var result = await serviceToTest.ProcessContentAsync(new Uri("http://somewhere.com"), Guid.NewGuid()).ConfigureAwait(false);
-
-            // Assert
-            Assert.Equal(System.Net.HttpStatusCode.OK, result);
-            A.CallTo(() => pageDataLoadService.CreateOrUpdateAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
-        }
     }
 }

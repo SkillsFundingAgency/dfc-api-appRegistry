@@ -19,35 +19,21 @@ namespace DFC.Api.AppRegistry.Services
             this.logger = logger;
         }
 
-        public async Task<HttpStatusCode> DeleteContentAsync(Guid contentId)
+        public async Task<HttpStatusCode> ProcessMessageAsync(WebhookCacheOperation webhookCacheOperation, Guid eventId, Guid contentId, Uri url)
         {
-            logger.LogInformation($"{nameof(DeleteContentAsync)} called in {nameof(PagesWebhookService)}");
+            logger.LogInformation($"{nameof(ProcessMessageAsync)} called in {nameof(PagesWebhookService)}");
 
-            var result = await pagesDataLoadService.RemoveAsync(contentId).ConfigureAwait(false);
-            return result;
-        }
-
-        public Task<HttpStatusCode> DeleteContentItemAsync(Guid contentItemId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<HttpStatusCode> ProcessContentAsync(Uri url, Guid contentId)
-        {
-            logger.LogInformation($"{nameof(ProcessContentAsync)} called in {nameof(PagesWebhookService)}  with Content Id {contentId}");
-
-            var result = await pagesDataLoadService.CreateOrUpdateAsync(contentId).ConfigureAwait(false);
-            return result;
-        }
-
-        public Task<HttpStatusCode> ProcessContentItemAsync(Uri url, Guid contentItemId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<HttpStatusCode> ProcessMessageAsync(WebhookCacheOperation webhookCacheOperation, Guid eventId, Guid contentId, Uri url)
-        {
-            throw new NotImplementedException();
+            switch (webhookCacheOperation)
+            {
+                case WebhookCacheOperation.CreateOrUpdate:
+                    logger.LogInformation($"{nameof(WebhookCacheOperation.CreateOrUpdate)} called in {nameof(PagesWebhookService)}  with Content Id {contentId}");
+                    return await pagesDataLoadService.CreateOrUpdateAsync(contentId).ConfigureAwait(false);
+                case WebhookCacheOperation.Delete:
+                    logger.LogInformation($"{nameof(WebhookCacheOperation.Delete)} called in {nameof(PagesWebhookService)} with Content Id {contentId}");
+                    return await pagesDataLoadService.RemoveAsync(contentId).ConfigureAwait(false);
+                default:
+                    return HttpStatusCode.OK;
+            }
         }
     }
 }
