@@ -294,7 +294,23 @@
               {
                 "name": "RegionClientOptions__ApiKey",
                 "value": "[parameters('ApimCompositeKey')]"
-              }
+              },
+			  {
+				"name":"SubscriptionSettings__Filter__BeginsWith",
+				"value": "/dfc-app-pages/"
+			  },
+			  {
+				"name":"SubscriptionSettings__Filter__IncludeEventTypes__0"
+				"value": "published"
+			  },
+			  {
+				"name":"SubscriptionSettings__Filter__IncludeEventTypes__1"
+				"value": "unpublished"
+			  },
+			  {
+				"name":"SubscriptionSettings__Filter__IncludeEventTypes__2"
+				"value": "deleted"
+			  }
             ]
           }
         }
