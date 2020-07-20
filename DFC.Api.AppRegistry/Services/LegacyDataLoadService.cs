@@ -126,9 +126,9 @@ namespace DFC.Api.AppRegistry.Services
             {
                 var upsertResult = await documentService.UpsertAsync(appRegistrationModel).ConfigureAwait(false);
 
-                if (upsertResult == HttpStatusCode.OK)
+                if (upsertResult == HttpStatusCode.OK || upsertResult == HttpStatusCode.Created)
                 {
-                    logger.LogInformation($"Upserted app registration: {appRegistrationModel.Path}");
+                    logger.LogInformation($"Upserted app registration: {appRegistrationModel.Path}: Status code: {upsertResult}");
                 }
                 else
                 {
