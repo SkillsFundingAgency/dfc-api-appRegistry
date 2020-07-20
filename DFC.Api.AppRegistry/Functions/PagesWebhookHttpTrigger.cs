@@ -43,7 +43,7 @@ namespace DFC.Api.AppRegistry.Functions
                 if (request == null)
                 {
                     logger.LogError($"{nameof(request)} is null");
-                    return new BadRequestResult();
+                    return new StatusCodeResult(400);
                 }
 
                 using var streamReader = new StreamReader(request.Body);
@@ -52,7 +52,7 @@ namespace DFC.Api.AppRegistry.Functions
                 if (string.IsNullOrEmpty(requestBody))
                 {
                     logger.LogError($"{nameof(request)} body is null");
-                    return new BadRequestResult();
+                    return new StatusCodeResult(400);
                 }
 
                 var result = await webhookReceiver.ReceiveEvents(requestBody).ConfigureAwait(false);
