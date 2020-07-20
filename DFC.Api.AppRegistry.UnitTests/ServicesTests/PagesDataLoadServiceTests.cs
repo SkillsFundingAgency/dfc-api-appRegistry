@@ -8,6 +8,7 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
@@ -84,6 +85,41 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             A.CallTo(() => fakeLegacyDataLoadService.GetAppRegistrationByPathAsync(A<string>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeLegacyDataLoadService.UpdateAppRegistrationAsync(A<AppRegistrationModel>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeApiDataService.GetAsync<List<PageModel>>(A<HttpClient>.Ignored, A<Uri>.Ignored)).MustHaveHappenedOnceExactly();
+        }
+
+        [Fact]
+        public async Task PagesDataLoadServiceCreateOrUpdateAsyncRegistrationDocumentUpdated()
+        {
+            // Arrange
+            AppRegistrationModel model = new AppRegistrationModel { Path = "/pages", Locations = new List<string> { "http://somewhere.com/a-place-a-page" } };
+            var serviceToTest = new PagesDataLoadService(logger, fakeHttpClient, pagesClientOptions, fakeApiDataService, fakeLegacyDataLoadService);
+            A.CallTo(() => fakeLegacyDataLoadService.GetAppRegistrationByPathAsync(A<string>.Ignored)).Returns(model);
+            A.CallTo(() => fakeApiDataService.GetAsync<PageModel>(A<HttpClient>.Ignored, A<Uri>.Ignored)).Returns(PageModels.FirstOrDefault());
+
+            // Act
+            await serviceToTest.CreateOrUpdateAsync(Guid.NewGuid()).ConfigureAwait(false);
+
+            // Assert
+            A.CallTo(() => fakeLegacyDataLoadService.GetAppRegistrationByPathAsync(A<string>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeLegacyDataLoadService.UpdateAppRegistrationAsync(A<AppRegistrationModel>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeApiDataService.GetAsync<PageModel>(A<HttpClient>.Ignored, A<Uri>.Ignored)).MustHaveHappenedOnceExactly();
+        }
+
+        [Fact]
+        public async Task PagesDataLoadServiceRemoveAsyncRegistrationDocumentUpdated()
+        {
+            // Arrange
+            AppRegistrationModel model = new AppRegistrationModel { Path = "/pages", Locations = new List<string> { "http://somewhere.com/66088614-5c55-4698-8382-42b47ec0be10" } };
+            var serviceToTest = new PagesDataLoadService(logger, fakeHttpClient, pagesClientOptions, fakeApiDataService, fakeLegacyDataLoadService);
+            A.CallTo(() => fakeLegacyDataLoadService.GetAppRegistrationByPathAsync(A<string>.Ignored)).Returns(model);
+            A.CallTo(() => fakeApiDataService.GetAsync<PageModel>(A<HttpClient>.Ignored, A<Uri>.Ignored)).Returns(PageModels.FirstOrDefault());
+
+            // Act
+            await serviceToTest.RemoveAsync(Guid.Parse("66088614-5c55-4698-8382-42b47ec0be10")).ConfigureAwait(false);
+
+            // Assert
+            A.CallTo(() => fakeLegacyDataLoadService.GetAppRegistrationByPathAsync(A<string>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeLegacyDataLoadService.UpdateAppRegistrationAsync(A<AppRegistrationModel>.Ignored)).MustHaveHappenedOnceExactly();
         }
     }
 }
