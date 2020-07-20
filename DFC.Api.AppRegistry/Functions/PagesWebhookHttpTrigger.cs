@@ -1,5 +1,4 @@
-﻿using DFC.Api.AppRegistry.Contracts;
-using DFC.Compui.Subscriptions.Pkg.Data.Contracts;
+﻿using DFC.Compui.Subscriptions.Pkg.Data.Contracts;
 using DFC.Swagger.Standard.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -34,7 +33,7 @@ namespace DFC.Api.AppRegistry.Functions
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.TooManyRequests, Description = "Too many requests being sent, by default the API supports 150 per minute.", ShowSchema = false)]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "pages/webhook")] HttpRequest request)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "pages/webhook")] HttpRequest? request)
         {
             try
             {

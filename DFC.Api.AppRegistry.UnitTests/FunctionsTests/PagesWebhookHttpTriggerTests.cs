@@ -44,13 +44,14 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         public async Task PostNullRequestReturnsBadRequest()
         {
             // Arrange
+            HttpRequest? request = null;
             var expectedResult = new StatusCodeResult(400);
             var function = new PagesWebhookHttpTrigger(fakeLogger, fakewebhookReceiver);
 
             A.CallTo(() => fakewebhookReceiver.ReceiveEvents(A<string>.Ignored)).Returns(new StatusCodeResult(200));
 
             // Act
-            var result = await function.Run(null).ConfigureAwait(false);
+            var result = await function.Run(request).ConfigureAwait(false);
 
             // Assert
             var statusResult = Assert.IsType<StatusCodeResult>(result);

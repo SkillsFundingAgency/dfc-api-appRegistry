@@ -9,7 +9,6 @@ using DFC.Api.AppRegistry.Models.ClientOptions;
 using DFC.Api.AppRegistry.Services;
 using DFC.Compui.Cosmos;
 using DFC.Compui.Cosmos.Contracts;
-using DFC.Compui.Subscriptions.Pkg.Data.Contracts;
 using DFC.Compui.Subscriptions.Pkg.Netstandard.Extensions;
 using DFC.Compui.Subscriptions.Pkg.Webhook.Extensions;
 using DFC.Swagger.Standard;
