@@ -2,6 +2,7 @@
 {
     public class PagesClientOptions : ClientOptionsModel
     {
-        public string Endpoint { get; set; } = "api/pages";
+        public string SummaryEndpoint { get; set; } = "api/pages";
+        public string Endpoint { get; set; } = "api/page";
     }
 }

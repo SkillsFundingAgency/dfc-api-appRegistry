@@ -27,7 +27,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 
         public PagesDataLoadServiceTests()
         {
-            this.pagesClientOptions = new PagesClientOptions { BaseAddress = new Uri("http://somewhere.com"), Endpoint = "pages" };
+            this.pagesClientOptions = new PagesClientOptions { BaseAddress = new Uri("http://somewhere.com"), SummaryEndpoint = "pages" };
         }
 
         [Fact]

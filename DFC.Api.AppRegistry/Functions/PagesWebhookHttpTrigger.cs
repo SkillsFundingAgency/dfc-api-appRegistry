@@ -36,28 +36,36 @@ namespace DFC.Api.AppRegistry.Functions
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "pages/webhook")] HttpRequest request)
         {
-            logger.LogInformation("Received webhook request");
-
-            if (request == null)
+            try
             {
-                logger.LogError($"{nameof(request)} is null");
-                return new BadRequestResult();
+                logger.LogInformation("Received webhook request");
+
+                if (request == null)
+                {
+                    logger.LogError($"{nameof(request)} is null");
+                    return new BadRequestResult();
+                }
+
+                using var streamReader = new StreamReader(request.Body);
+                var requestBody = await streamReader.ReadToEndAsync().ConfigureAwait(false);
+
+                if (string.IsNullOrEmpty(requestBody))
+                {
+                    logger.LogError($"{nameof(request)} body is null");
+                    return new BadRequestResult();
+                }
+
+                var result = await webhookReceiver.ReceiveEvents(requestBody).ConfigureAwait(false);
+
+                logger.LogInformation("Webhook request completed");
+
+                return result;
             }
-
-            using var streamReader = new StreamReader(request.Body);
-            var requestBody = await streamReader.ReadToEndAsync().ConfigureAwait(false);
-
-            if (string.IsNullOrEmpty(requestBody))
+            catch (Exception ex)
             {
-                logger.LogError($"{nameof(request)} body is null");
-                return new BadRequestResult();
+                logger.LogError(ex.ToString());
+                throw;
             }
-
-            var result = await webhookReceiver.ReceiveEvents(requestBody).ConfigureAwait(false);
-
-            logger.LogInformation("Webhook request completed");
-
-            return result;
         }
     }
 }
