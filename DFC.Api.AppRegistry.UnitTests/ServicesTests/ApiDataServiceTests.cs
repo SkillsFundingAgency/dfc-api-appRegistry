@@ -1,6 +1,7 @@
 ﻿using DFC.Api.AppRegistry.Contracts;
 using DFC.Api.AppRegistry.Services;
 using DFC.Api.AppRegistry.UnitTests.TestModels;
+using DFC.Compui.Subscriptions.Pkg.Data.Contracts;
 using FakeItEasy;
 using Newtonsoft.Json;
 using System;
