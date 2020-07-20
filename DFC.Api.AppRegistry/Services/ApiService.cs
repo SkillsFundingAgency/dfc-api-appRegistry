@@ -1,5 +1,4 @@
 ﻿using DFC.Api.AppRegistry.Contracts;
-using DFC.Compui.Subscriptions.Pkg.Data.Contracts;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Net;

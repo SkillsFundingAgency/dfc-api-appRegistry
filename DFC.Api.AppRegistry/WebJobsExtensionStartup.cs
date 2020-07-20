@@ -6,15 +6,11 @@ using DFC.Api.AppRegistry.Extensions;
 using DFC.Api.AppRegistry.HttpClientPolicies;
 using DFC.Api.AppRegistry.Models;
 using DFC.Api.AppRegistry.Models.ClientOptions;
-using DFC.Api.AppRegistry.Models.Pages;
 using DFC.Api.AppRegistry.Services;
 using DFC.Compui.Cosmos;
 using DFC.Compui.Cosmos.Contracts;
 using DFC.Compui.Subscriptions.Pkg.Data.Contracts;
 using DFC.Compui.Subscriptions.Pkg.Webhook.Extensions;
-//using DFC.Compui.Subscriptions.Pkg.Data.Models;
-//using DFC.Compui.Subscriptions.Pkg.Webhook.Extensions;
-using DFC.Compui.Subscriptions.Pkg.Webhook.Services;
 using DFC.Swagger.Standard;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
@@ -23,6 +19,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using IApiService = DFC.Api.AppRegistry.Contracts.IApiService;
 
 [assembly: WebJobsStartup(typeof(WebJobsExtensionStartup), "Web Jobs Extension Startup")]
 
@@ -60,7 +57,7 @@ namespace DFC.Api.AppRegistry
             builder.Services.AddTransient<ISwaggerDocumentGenerator, SwaggerDocumentGenerator>();
             builder.Services.AddTransient<ILegacyDataLoadService, LegacyDataLoadService>();
             builder.Services.AddTransient<IApiDataService, ApiDataService>();
-            builder.Services.AddTransient<IApiService, Services.ApiService>();
+            builder.Services.AddTransient<IApiService, ApiService>();
             builder.Services.AddTransient<IModelMappingService, ModelMappingService>();
             builder.Services.AddTransient<IModelValidationService, ModelValidationService>();
             builder.Services.AddWebhookSupport<PagesWebhookService>();
