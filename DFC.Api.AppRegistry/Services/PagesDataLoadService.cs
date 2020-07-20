@@ -130,7 +130,7 @@ namespace DFC.Api.AppRegistry.Services
         {
             logger.LogInformation($"Retrieving Pages data");
 
-            var url = new Uri($"{pagesClientOptions.BaseAddress}{pagesClientOptions.SummaryEndpoint}", UriKind.Absolute);
+            var url = new Uri($"{pagesClientOptions.BaseAddress}{pagesClientOptions.Endpoint}", UriKind.Absolute);
             var result = await apiDataService.GetAsync<List<PageModel>>(httpClient, url).ConfigureAwait(false);
 
             logger.LogInformation($"Retrieved Page data");

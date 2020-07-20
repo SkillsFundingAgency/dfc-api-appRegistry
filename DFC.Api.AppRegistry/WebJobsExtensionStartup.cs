@@ -10,6 +10,7 @@ using DFC.Api.AppRegistry.Services;
 using DFC.Compui.Cosmos;
 using DFC.Compui.Cosmos.Contracts;
 using DFC.Compui.Subscriptions.Pkg.Data.Contracts;
+using DFC.Compui.Subscriptions.Pkg.Netstandard.Extensions;
 using DFC.Compui.Subscriptions.Pkg.Webhook.Extensions;
 using DFC.Swagger.Standard;
 using Microsoft.Azure.WebJobs;
@@ -61,6 +62,7 @@ namespace DFC.Api.AppRegistry
             builder.Services.AddTransient<IModelMappingService, ModelMappingService>();
             builder.Services.AddTransient<IModelValidationService, ModelValidationService>();
             builder.Services.AddWebhookSupport<PagesWebhookService>();
+            builder.Services.AddSubscriptionService(configuration);
 
             builder.Services
                 .AddPolicies(policyRegistry, nameof(PathClientOptions), policyOptions)
