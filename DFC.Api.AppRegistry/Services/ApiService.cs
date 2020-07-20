@@ -16,11 +16,6 @@ namespace DFC.Api.AppRegistry.Services
             this.logger = logger;
         }
 
-        public Task<HttpStatusCode> DeleteAsync(HttpClient? httpClient, Uri url)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<string?> GetAsync(HttpClient? httpClient, Uri url, string acceptHeader)
         {
             _ = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
@@ -56,21 +51,6 @@ namespace DFC.Api.AppRegistry.Services
             }
 
             return default;
-        }
-
-        public Task<string?> GetAsync(HttpClient httpClient, string contentType, string id, string acceptHeader)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<string?> GetAsync(HttpClient httpClient, string contentType, string acceptHeader)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<HttpStatusCode> PostAsync<TApiModel>(HttpClient? httpClient, Uri url, TApiModel model) where TApiModel : class
-        {
-            throw new NotImplementedException();
         }
     }
 }
