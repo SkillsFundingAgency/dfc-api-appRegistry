@@ -94,14 +94,15 @@ namespace DFC.Api.AppRegistry.Functions
 
             logger.LogInformation($"Getting AppRegistration for: {path}");
 
-            var appRegistrationModel = await documentService.GetAsync(d => d.Path == path).ConfigureAwait(false);
+            var appRegistrationModels = await documentService.GetAsync(d => d.Path == path).ConfigureAwait(false);
 
-            if (appRegistrationModel == null)
+            if (appRegistrationModels == null)
             {
                 logger.LogWarning($"No app registration exists for: {path}");
                 return new NoContentResult();
             }
 
+            var appRegistrationModel = appRegistrationModels.FirstOrDefault();
             var regionModel = appRegistrationModel.Regions.FirstOrDefault(f => f.PageRegion == pageRegionValue);
 
             if (regionModel == null)

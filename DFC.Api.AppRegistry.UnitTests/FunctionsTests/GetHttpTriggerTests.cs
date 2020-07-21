@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Net;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -23,10 +25,11 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         public async Task GetReturnsSuccessWhenDataPresent()
         {
             // Arrange
-            var expectedResult = A.Dummy<AppRegistrationModel>();
+            const HttpStatusCode expectedResult = HttpStatusCode.OK;
+            var dummyModels = A.CollectionOfDummy<AppRegistrationModel>(2);
             var function = new GetHttpTrigger(fakeLogger, fakeDocumentService);
 
-            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(expectedResult);
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(dummyModels);
 
             // Act
             var result = await function.Run(A.Fake<HttpRequest>(), PathName).ConfigureAwait(false);
@@ -36,14 +39,14 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 
             var statusResult = Assert.IsType<OkObjectResult>(result);
 
-            A.Equals(expectedResult, statusResult.StatusCode);
+            Assert.Equal((int)expectedResult, statusResult.StatusCode);
         }
 
         [Fact]
         public async Task GetReturnsNullWhenDataNotPresent()
         {
             // Arrange
-            AppRegistrationModel? fakeAppRegistrationModel = null;
+            IEnumerable<AppRegistrationModel>? fakeAppRegistrationModel = null;
             var expectedResult = new OkObjectResult(null);
             var function = new GetHttpTrigger(fakeLogger, fakeDocumentService);
 
@@ -57,7 +60,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 
             var statusResult = Assert.IsType<OkObjectResult>(result);
 
-            A.Equals(expectedResult, statusResult);
+            Assert.Equal(expectedResult.StatusCode, statusResult.StatusCode);
         }
     }
 }

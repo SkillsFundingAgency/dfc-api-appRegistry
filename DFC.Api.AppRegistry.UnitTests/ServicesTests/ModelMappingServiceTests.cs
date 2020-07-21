@@ -175,5 +175,51 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 
             Assert.Equal("Value cannot be null. (Parameter 'appRegistrationModel')", exceptionResult.Message);
         }
+
+        [Fact]
+        public void MapModelsPairIsSuccessful()
+        {
+            // Arrange
+            var appRegistrationModel = ModelBuilders.ValidAppRegistrationModel(ModelBuilders.PathName);
+            var legacyPathModel = ModelBuilders.ValidLegacyPathModel(ModelBuilders.PathName);
+
+            // Act
+            modelMappingService.MapModels(appRegistrationModel, legacyPathModel);
+
+            // assert
+            A.CallTo(() => fakeMapper.Map(legacyPathModel, appRegistrationModel)).MustHaveHappenedOnceExactly();
+        }
+
+        [Fact]
+        public void MapModelsPairReturnsExceptionForNullAppRegistrationModel()
+        {
+            // Arrange
+            AppRegistrationModel? appRegistrationModel = null;
+            var legacyPathModel = ModelBuilders.ValidLegacyPathModel(ModelBuilders.PathName);
+
+            // Act
+            var exceptionResult = Assert.Throws<ArgumentNullException>(() => modelMappingService.MapModels(appRegistrationModel, legacyPathModel));
+
+            // assert
+            A.CallTo(() => fakeMapper.Map(legacyPathModel, appRegistrationModel)).MustNotHaveHappened();
+
+            Assert.Equal("Value cannot be null. (Parameter 'appRegistrationModel')", exceptionResult.Message);
+        }
+
+        [Fact]
+        public void MapModelsPairReturnsExceptionForNullLegacyPathModel()
+        {
+            // Arrange
+            var appRegistrationModel = ModelBuilders.ValidAppRegistrationModel(ModelBuilders.PathName);
+            LegacyPathModel? legacyPathModel = null;
+
+            // Act
+            var exceptionResult = Assert.Throws<ArgumentNullException>(() => modelMappingService.MapModels(appRegistrationModel, legacyPathModel));
+
+            // assert
+            A.CallTo(() => fakeMapper.Map(legacyPathModel, appRegistrationModel)).MustNotHaveHappened();
+
+            Assert.Equal("Value cannot be null. (Parameter 'legacyPathModel')", exceptionResult.Message);
+        }
     }
 }

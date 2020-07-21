@@ -35,7 +35,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 
             var statusResult = Assert.IsType<OkObjectResult>(result);
 
-            A.Equals(expectedResult, statusResult);
+            Assert.Equal(expectedResult.StatusCode, statusResult.StatusCode);
         }
 
         [Fact]
@@ -56,7 +56,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 
             var statusResult = Assert.IsType<NoContentResult>(result);
 
-            A.Equals(expectedResult, statusResult);
+            Assert.Equal(expectedResult.StatusCode, statusResult.StatusCode);
         }
     }
 }

@@ -95,10 +95,10 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             const bool validationResult = true;
             var validLegacyPathModel = ModelBuilders.ValidLegacyPathModel(ModelBuilders.PathName);
             var validLegacyRegionModels = ModelBuilders.ValidLegacyRegionModels();
-            var validAppRegistrationModel = ModelBuilders.ValidAppRegistrationModel(ModelBuilders.PathName);
+            var validAppRegistrationModels = ModelBuilders.ValidAppRegistrationModels(ModelBuilders.PathName);
 
             A.CallTo(() => fakeLegacyRegionService.GetListAsync(A<string>.Ignored)).Returns(validLegacyRegionModels);
-            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(validAppRegistrationModel);
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(validAppRegistrationModels);
             A.CallTo(() => fakeModelMappingService.MapModels(A<AppRegistrationModel>.Ignored, A<LegacyPathModel>.Ignored, A<List<LegacyRegionModel>>.Ignored));
             A.CallTo(() => fakeModelValidationService.ValidateModel(A<AppRegistrationModel>.Ignored)).Returns(validationResult);
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).Returns(upsertResult);
@@ -121,9 +121,9 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             const HttpStatusCode upsertResult = HttpStatusCode.OK;
             const bool validationResult = true;
             var validLegacyRegionModel = ModelBuilders.ValidLegacyRegionModel(ModelBuilders.PathName, Enums.PageRegion.Head);
-            var validAppRegistrationModel = ModelBuilders.ValidAppRegistrationModel(ModelBuilders.PathName);
+            var validAppRegistrationModels = ModelBuilders.ValidAppRegistrationModels(ModelBuilders.PathName);
 
-            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(validAppRegistrationModel);
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(validAppRegistrationModels);
             A.CallTo(() => fakeModelValidationService.ValidateModel(A<AppRegistrationModel>.Ignored)).Returns(validationResult);
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).Returns(upsertResult);
 
@@ -144,7 +144,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             const bool validationResult = true;
             var validLegacyRegionModel = ModelBuilders.ValidLegacyRegionModel(ModelBuilders.PathName, Enums.PageRegion.Head);
 
-            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns<AppRegistrationModel?>(null);
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns<IEnumerable<AppRegistrationModel>?>(null);
             A.CallTo(() => fakeModelValidationService.ValidateModel(A<AppRegistrationModel>.Ignored)).Returns(validationResult);
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).Returns(upsertResult);
 
@@ -199,7 +199,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             const bool validationResult = true;
             var validLegacyPathModel = ModelBuilders.ValidLegacyPathModel(ModelBuilders.PathName);
 
-            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns<AppRegistrationModel?>(null);
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns<IEnumerable<AppRegistrationModel>?>(null);
             A.CallTo(() => fakeModelValidationService.ValidateModel(A<AppRegistrationModel>.Ignored)).Returns(validationResult);
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).Returns(upsertResult);
 
@@ -220,10 +220,10 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             const bool validationResult = true;
             var validLegacyPathModel = ModelBuilders.ValidLegacyPathModel(ModelBuilders.PathName);
             var validLegacyRegionModels = ModelBuilders.ValidLegacyRegionModels();
-            var validAppRegistrationModel = ModelBuilders.ValidAppRegistrationModel(ModelBuilders.PathName);
+            var validAppRegistrationModels = ModelBuilders.ValidAppRegistrationModels(ModelBuilders.PathName);
 
             A.CallTo(() => fakeLegacyRegionService.GetListAsync(A<string>.Ignored)).Returns(validLegacyRegionModels);
-            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(validAppRegistrationModel);
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(validAppRegistrationModels);
             A.CallTo(() => fakeModelMappingService.MapModels(A<AppRegistrationModel>.Ignored, A<LegacyPathModel>.Ignored, A<List<LegacyRegionModel>>.Ignored));
             A.CallTo(() => fakeModelValidationService.ValidateModel(A<AppRegistrationModel>.Ignored)).Returns(validationResult);
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).Returns(upsertResult);
@@ -246,10 +246,10 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             const bool validationResult = false;
             var validLegacyPathModel = ModelBuilders.ValidLegacyPathModel(ModelBuilders.PathName);
             var invalidLegacyRegionModels = A.CollectionOfDummy<LegacyRegionModel>(2);
-            var validAppRegistrationModel = ModelBuilders.ValidAppRegistrationModel(ModelBuilders.PathName);
+            var validAppRegistrationModels = ModelBuilders.ValidAppRegistrationModels(ModelBuilders.PathName);
 
             A.CallTo(() => fakeLegacyRegionService.GetListAsync(A<string>.Ignored)).Returns(invalidLegacyRegionModels);
-            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(validAppRegistrationModel);
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(validAppRegistrationModels);
             A.CallTo(() => fakeModelMappingService.MapModels(A<AppRegistrationModel>.Ignored, A<LegacyPathModel>.Ignored, A<List<LegacyRegionModel>>.Ignored));
             A.CallTo(() => fakeModelValidationService.ValidateModel(A<AppRegistrationModel>.Ignored)).Returns(validationResult);
 
@@ -287,7 +287,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         public async Task GetAppRegistrationByPathAsyncReturnsAppRegistrationModel()
         {
             // Arrange
-            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(new AppRegistrationModel { Path = "pages" });
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(new List<AppRegistrationModel> { new AppRegistrationModel { Path = "pages" } });
 
             // Act
             var result = await legacyDataLoadService.GetAppRegistrationByPathAsync("a-path").ConfigureAwait(false);
@@ -303,8 +303,8 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         public async Task GetAppRegistrationByPathAsyncReturnsNull()
         {
             // Arrange
-            AppRegistrationModel? model = null;
-            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(model);
+            IEnumerable<AppRegistrationModel>? models = null;
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(models);
 
             // Act
             var result = await legacyDataLoadService.GetAppRegistrationByPathAsync("a-path").ConfigureAwait(false);
@@ -314,6 +314,41 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             A.CallTo(() => fakeModelMappingService.MapModels(A<AppRegistrationModel>.Ignored, A<LegacyPathModel>.Ignored, A<List<LegacyRegionModel>>.Ignored)).MustNotHaveHappened();
 
             Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task UpdateAppRegistrationAsyncReturnsExceptionForNullAppRegistrationModel()
+        {
+            // Arrange
+            AppRegistrationModel? dummyAppRegistrationModel = null;
+
+            // Act
+            var exceptionResult = await Assert.ThrowsAsync<ArgumentNullException>(async () => await legacyDataLoadService.UpdateAppRegistrationAsync(dummyAppRegistrationModel).ConfigureAwait(false)).ConfigureAwait(false);
+
+            // assert
+            A.CallTo(() => fakeModelValidationService.ValidateModel(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
+
+            Assert.Equal("Value cannot be null. (Parameter 'appRegistrationModel')", exceptionResult.Message);
+        }
+
+        [Fact]
+        public async Task UpdateAppRegistrationAsyncAppRegistrationxxxxxxxxxxxxxxx()
+        {
+            // Arrange
+            const HttpStatusCode upsertResult = HttpStatusCode.OK;
+            const bool validationResult = true;
+            var validAppRegistrationModel = ModelBuilders.ValidAppRegistrationModel(ModelBuilders.PathName);
+
+            A.CallTo(() => fakeModelValidationService.ValidateModel(A<AppRegistrationModel>.Ignored)).Returns(validationResult);
+            A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).Returns(upsertResult);
+
+            // Act
+            await legacyDataLoadService.UpdateAppRegistrationAsync(validAppRegistrationModel).ConfigureAwait(false);
+
+            // Assert
+            A.CallTo(() => fakeModelValidationService.ValidateModel(A<AppRegistrationModel>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustHaveHappenedOnceExactly();
         }
     }
 }

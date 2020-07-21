@@ -67,7 +67,7 @@ namespace DFC.Api.AppRegistry.Services
 
             var legacyRegionModels = await legacyRegionService.GetListAsync(legacyPathModel.Path).ConfigureAwait(false);
 
-            var appRegistrationModel = await documentService.GetAsync(f => f.Path == legacyPathModel.Path).ConfigureAwait(false) ?? new AppRegistrationModel();
+            var appRegistrationModel = await GetAppRegistrationByPathAsync(legacyPathModel.Path).ConfigureAwait(false) ?? new AppRegistrationModel();
 
             modelMappingService.MapModels(appRegistrationModel, legacyPathModel, legacyRegionModels);
 
@@ -78,7 +78,7 @@ namespace DFC.Api.AppRegistry.Services
         {
             _ = legacyPathModel ?? throw new ArgumentNullException(nameof(legacyPathModel));
 
-            var appRegistrationModel = await documentService.GetAsync(f => f.Path == legacyPathModel.Path).ConfigureAwait(false) ?? new AppRegistrationModel();
+            var appRegistrationModel = await GetAppRegistrationByPathAsync(legacyPathModel.Path).ConfigureAwait(false) ?? new AppRegistrationModel();
 
             modelMappingService.MapModels(appRegistrationModel, legacyPathModel);
 
@@ -89,7 +89,7 @@ namespace DFC.Api.AppRegistry.Services
         {
             _ = legacyRegionModel ?? throw new ArgumentNullException(nameof(legacyRegionModel));
 
-            var appRegistrationModel = await documentService.GetAsync(x => x.Path == legacyRegionModel.Path).ConfigureAwait(false);
+            var appRegistrationModel = await GetAppRegistrationByPathAsync(legacyRegionModel.Path).ConfigureAwait(false);
 
             if (appRegistrationModel == null)
             {
@@ -102,7 +102,7 @@ namespace DFC.Api.AppRegistry.Services
             await UpdateAppRegistrationAsync(appRegistrationModel!).ConfigureAwait(false);
         }
 
-        public async Task<AppRegistrationModel?> GetAppRegistrationByPathAsync(string path)
+        public async Task<AppRegistrationModel?> GetAppRegistrationByPathAsync(string? path)
         {
             logger.LogInformation($"Retrieving App Registration: {path}");
 
@@ -113,7 +113,7 @@ namespace DFC.Api.AppRegistry.Services
                 logger.LogInformation($"App Registration: {path} not found");
             }
 
-            return result;
+            return result?.FirstOrDefault();
         }
 
         public async Task UpdateAppRegistrationAsync(AppRegistrationModel appRegistrationModel)

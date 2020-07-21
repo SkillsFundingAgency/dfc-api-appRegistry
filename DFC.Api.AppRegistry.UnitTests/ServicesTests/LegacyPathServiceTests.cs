@@ -35,9 +35,9 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         public async Task GetListAsyncIsSuccessful()
         {
             // Arrange
-            var expectedResult = A.CollectionOfDummy<LegacyPathModel>(2);
+            var expectedResult = new List<LegacyPathModel> { new LegacyPathModel { Path = "a-path" } };
 
-            A.CallTo(() => fakeApiDataService.GetAsync<IList<LegacyPathModel>>(A<HttpClient>.Ignored, A<Uri>.Ignored)).Returns(expectedResult);
+            A.CallTo(() => fakeApiDataService.GetAsync<List<LegacyPathModel>>(A<HttpClient>.Ignored, A<Uri>.Ignored)).Returns(expectedResult);
 
             // Act
             var result = await legacyPathService.GetListAsync().ConfigureAwait(false);
@@ -45,7 +45,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             // Assert
             A.CallTo(() => fakeApiDataService.GetAsync<List<LegacyPathModel>>(A<HttpClient>.Ignored, A<Uri>.Ignored)).MustHaveHappenedOnceExactly();
 
-            A.Equals(expectedResult, result);
+            Assert.Equal(expectedResult, result);
         }
     }
 }

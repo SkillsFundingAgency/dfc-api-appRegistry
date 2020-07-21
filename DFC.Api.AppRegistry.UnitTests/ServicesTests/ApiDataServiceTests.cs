@@ -40,7 +40,9 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 
             // assert
             A.CallTo(() => fakeApiService.GetAsync(A<HttpClient>.Ignored, A<Uri>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();
-            A.Equals(result, expectedResult);
+            Assert.NotNull(result);
+            Assert.Equal(expectedResult.Id, result!.Id);
+            Assert.Equal(expectedResult.Name, result.Name);
         }
 
         [Fact]
@@ -56,7 +58,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 
             // assert
             A.CallTo(() => fakeApiService.GetAsync(A<HttpClient>.Ignored, A<Uri>.Ignored, A<string>.Ignored)).MustHaveHappenedOnceExactly();
-            A.Equals(result, expectedResult);
+            Assert.Equal(result, expectedResult);
         }
 
         [Fact]

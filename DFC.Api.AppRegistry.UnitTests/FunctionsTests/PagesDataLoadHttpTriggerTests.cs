@@ -32,7 +32,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 
             var statusResult = Assert.IsType<OkResult>(result);
 
-            A.Equals(expectedResult, statusResult);
+            Assert.Equal(expectedResult.StatusCode, statusResult.StatusCode);
         }
     }
 }

@@ -36,9 +36,9 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         {
             // Arrange
             const string path = "unit-test";
-            var expectedResult = A.CollectionOfDummy<LegacyRegionModel>(2);
+            var expectedResult = new List<LegacyRegionModel> { new LegacyRegionModel { Path = "a-path" } };
 
-            A.CallTo(() => fakeApiDataService.GetAsync<IList<LegacyRegionModel>>(A<HttpClient>.Ignored, A<Uri>.Ignored)).Returns(expectedResult);
+            A.CallTo(() => fakeApiDataService.GetAsync<List<LegacyRegionModel>>(A<HttpClient>.Ignored, A<Uri>.Ignored)).Returns(expectedResult);
 
             // Act
             var result = await legacyRegionService.GetListAsync(path).ConfigureAwait(false);
@@ -46,7 +46,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             // Assert
             A.CallTo(() => fakeApiDataService.GetAsync<List<LegacyRegionModel>>(A<HttpClient>.Ignored, A<Uri>.Ignored)).MustHaveHappenedOnceExactly();
 
-            A.Equals(expectedResult, result);
+            Assert.Equal(expectedResult, result);
         }
 
         [Fact]
