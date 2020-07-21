@@ -23,6 +23,9 @@
     "ApimCompositeKey": {
       "type": "string"
     },
+    "ApimContentKey": {
+      "type": "string"
+    },
     "AseHostingEnvironmentName": {
       "type": "string",
       "defaultValue": ""
@@ -255,7 +258,7 @@
                 "name": "PathsLeaseCollectionNamePrefix",
                 "value": "ls"
               },
-			  {
+              {
                 "name": "PartitionKey",
                 "value": "/id"
               },
@@ -295,22 +298,42 @@
                 "name": "RegionClientOptions__ApiKey",
                 "value": "[parameters('ApimCompositeKey')]"
               },
-			  {
-				"name":"SubscriptionSettings__Filter__BeginsWith",
-				"value": "/dfc-app-pages/"
-			  },
-			  {
-				"name":"SubscriptionSettings__Filter__IncludeEventTypes__0",
-				"value": "published"
-			  },
-			  {
-				"name":"SubscriptionSettings__Filter__IncludeEventTypes__1",
-				"value": "unpublished"
-			  },
-			  {
-				"name":"SubscriptionSettings__Filter__IncludeEventTypes__2",
-				"value": "deleted"
-			  }
+              {
+                "name": "SubscriptionSettings__Filter__BeginsWith",
+                "value": "/dfc-app-pages/"
+              },
+              {
+                "name": "SubscriptionSettings__Filter__IncludeEventTypes__0",
+                "value": "published"
+              },
+              {
+                "name": "SubscriptionSettings__Filter__IncludeEventTypes__1",
+                "value": "unpublished"
+              },
+              {
+                "name": "SubscriptionSettings__Filter__IncludeEventTypes__2",
+                "value": "deleted"
+              },
+              {
+                "name": "SubscriptionSettings__Endpoint",
+                "value": "[concat(parameters('ApimProxyAddress'), '/composite-ui-appRegistry/pages/webhook')]"
+              },
+              {
+                "name": "SubscriptionSettings__SubscriptionServiceEndpoint",
+                "value": "[concat(parameters('ApimProxyAddress'), '/content/Subscription/api/Execute/')]"
+              },
+              {
+                "name": "ApiKey",
+                "value": "[parameters('apimCompositeKey')]"
+              },
+              {
+                "name": "PagesClientOptions__BaseAddress",
+                "value": "[concat(parameters('ApimProxyAddress'), '/content/GetAllPages/')]"
+              },
+              {
+                "name": "PagesClientOptions_ApiKey",
+                "value": "[parameters('ApimContentKey')]"
+              }
             ]
           }
         }
