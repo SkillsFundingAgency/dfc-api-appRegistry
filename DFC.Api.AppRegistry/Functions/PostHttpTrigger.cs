@@ -9,6 +9,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -70,7 +71,7 @@ namespace DFC.Api.AppRegistry.Functions
                     case HttpStatusCode.Created:
                         logger.LogInformation($"Created app registration with Post for: {appRegistrationModel.Path}: Status code {statusCode}");
                         var resultModel = await documentService.GetAsync(p => p.Path == appRegistrationModel.Path).ConfigureAwait(false);
-                        return new CreatedResult(resultModel!.Path, resultModel);
+                        return new CreatedResult(appRegistrationModel.Path, resultModel.FirstOrDefault());
                     case HttpStatusCode.OK:
                         logger.LogInformation($"Upserted app registration with Post for: {appRegistrationModel.Path}: Status code {statusCode}");
                         return new OkResult();

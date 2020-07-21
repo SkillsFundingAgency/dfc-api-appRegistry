@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
 using System.Text;
@@ -34,11 +35,11 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.OK;
-            var validAppRegistrationModel = ValidAppRegistrationModel();
+            var validAppRegistrationModels = ValidAppRegistrationModels();
             var request = BuildRequestWithPatchObject<AppRegistrationModel, bool>(x => x.IsOnline, isOnline);
             var function = new PatchHttpTrigger(fakeLogger, fakeDocumentService);
 
-            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(validAppRegistrationModel);
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(validAppRegistrationModels);
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).Returns(expectedResult);
 
             // Act
@@ -50,8 +51,8 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 
             var statusResult = Assert.IsType<OkObjectResult>(result);
 
-            A.Equals(expectedResult, statusResult.StatusCode);
-            A.Equals(isOnline, validAppRegistrationModel.IsOnline);
+            Assert.Equal((int)expectedResult, statusResult.StatusCode);
+            Assert.Equal(isOnline, validAppRegistrationModels.First().IsOnline);
         }
 
         [Fact]
@@ -71,7 +72,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 
             var statusResult = Assert.IsType<BadRequestResult>(result);
 
-            A.Equals(expectedResult, statusResult.StatusCode);
+            Assert.Equal((int)expectedResult, statusResult.StatusCode);
         }
 
         [Fact]
@@ -91,7 +92,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 
             var statusResult = Assert.IsType<BadRequestResult>(result);
 
-            A.Equals(expectedResult, statusResult.StatusCode);
+            Assert.Equal((int)expectedResult, statusResult.StatusCode);
         }
 
         [Fact]
@@ -111,7 +112,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 
             var statusResult = Assert.IsType<BadRequestResult>(result);
 
-            A.Equals(expectedResult, statusResult.StatusCode);
+            Assert.Equal((int)expectedResult, statusResult.StatusCode);
         }
 
         [Fact]
@@ -131,7 +132,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 
             var statusResult = Assert.IsType<BadRequestResult>(result);
 
-            A.Equals(expectedResult, statusResult.StatusCode);
+            Assert.Equal((int)expectedResult, statusResult.StatusCode);
         }
 
         [Fact]
@@ -151,7 +152,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 
             var statusResult = Assert.IsType<BadRequestResult>(result);
 
-            A.Equals(expectedResult, statusResult.StatusCode);
+            Assert.Equal((int)expectedResult, statusResult.StatusCode);
         }
 
         [Fact]
@@ -159,7 +160,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.NoContent;
-            AppRegistrationModel? invalidAppRegistrationModel = null;
+            IEnumerable<AppRegistrationModel>? invalidAppRegistrationModel = null;
             var request = BuildRequestWithPatchObject<AppRegistrationModel, bool>(x => x.IsOnline, true);
             var function = new PatchHttpTrigger(fakeLogger, fakeDocumentService);
 
@@ -174,7 +175,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 
             var statusResult = Assert.IsType<NoContentResult>(result);
 
-            A.Equals(expectedResult, statusResult.StatusCode);
+            Assert.Equal((int)expectedResult, statusResult.StatusCode);
         }
 
         [Fact]
@@ -182,11 +183,11 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.UnprocessableEntity;
-            var invalidAppRegistrationModel = ValidAppRegistrationModel();
+            var invalidAppRegistrationModels = ValidAppRegistrationModels();
             var request = BuildRequestWithPatchObject<AppRegistrationModel, string?>(x => x.Path, string.Empty);
             var function = new PatchHttpTrigger(fakeLogger, fakeDocumentService);
 
-            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(invalidAppRegistrationModel);
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(invalidAppRegistrationModels);
 
             // Act
             var result = await function.Run(request, PathName).ConfigureAwait(false);
@@ -197,7 +198,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 
             var statusResult = Assert.IsType<UnprocessableEntityResult>(result);
 
-            A.Equals(expectedResult, statusResult.StatusCode);
+            Assert.Equal((int)expectedResult, statusResult.StatusCode);
         }
 
         [Fact]
@@ -205,11 +206,11 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;
-            var validAppRegistrationModel = ValidAppRegistrationModel();
+            var validAppRegistrationModels = ValidAppRegistrationModels();
             var request = BuildRequestWithPatchObject<AppRegistrationModel, Guid?>(x => x.Id, null);
             var function = new PatchHttpTrigger(fakeLogger, fakeDocumentService);
 
-            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(validAppRegistrationModel);
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(validAppRegistrationModels);
 
             // Act
             var result = await function.Run(request, PathName).ConfigureAwait(false);
@@ -220,7 +221,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 
             var statusResult = Assert.IsType<BadRequestResult>(result);
 
-            A.Equals(expectedResult, statusResult.StatusCode);
+            Assert.Equal((int)expectedResult, statusResult.StatusCode);
         }
 
         [Fact]
@@ -228,11 +229,11 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.UnprocessableEntity;
-            var validAppRegistrationModel = ValidAppRegistrationModel();
+            var validAppRegistrationModels = ValidAppRegistrationModels();
             var request = BuildRequestWithPatchObject<AppRegistrationModel, bool>(x => x.IsOnline, true);
             var function = new PatchHttpTrigger(fakeLogger, fakeDocumentService);
 
-            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(validAppRegistrationModel);
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(validAppRegistrationModels);
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).ThrowsAsync(new ApplicationException());
 
             // Act
@@ -244,26 +245,47 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 
             var statusResult = Assert.IsType<UnprocessableEntityResult>(result);
 
-            A.Equals(expectedResult, statusResult.StatusCode);
+            Assert.Equal((int)expectedResult, statusResult.StatusCode);
         }
 
-        private static AppRegistrationModel ValidAppRegistrationModel()
+        private static IEnumerable<AppRegistrationModel> ValidAppRegistrationModels()
         {
-            return new AppRegistrationModel
+            return new List<AppRegistrationModel>
             {
-                Id = Guid.NewGuid(),
-                Path = PathName,
-                Regions = new List<RegionModel>
+                new AppRegistrationModel
                 {
-                    new RegionModel
+                    Id = Guid.NewGuid(),
+                    Path = PathName,
+                    Regions = new List<RegionModel>
                     {
-                        PageRegion = PageRegion.Body,
-                        RegionEndpoint = "https://somewhere.com",
-                        HealthCheckRequired = true,
+                        new RegionModel
+                        {
+                            PageRegion = PageRegion.Body,
+                            RegionEndpoint = "https://somewhere.com",
+                            HealthCheckRequired = true,
+                        },
+                        new RegionModel
+                        {
+                            PageRegion = PageRegion.BodyTop,
+                        },
                     },
-                    new RegionModel
+                },
+                new AppRegistrationModel
+                {
+                    Id = Guid.NewGuid(),
+                    Path = PathName + "-2",
+                    Regions = new List<RegionModel>
                     {
-                        PageRegion = PageRegion.BodyTop,
+                        new RegionModel
+                        {
+                            PageRegion = PageRegion.Body,
+                            RegionEndpoint = "https://somewhere.com",
+                            HealthCheckRequired = true,
+                        },
+                        new RegionModel
+                        {
+                            PageRegion = PageRegion.BodyTop,
+                        },
                     },
                 },
             };

@@ -9,12 +9,12 @@ namespace DFC.Api.AppRegistry.UnitTests.TestModels
     {
         public const string PathName = "unit-tests";
 
-        public static List<AppRegistrationModel> ValidAppRegistrationModels()
+        public static List<AppRegistrationModel> ValidAppRegistrationModels(string path)
         {
             return new List<AppRegistrationModel>
             {
-                ValidAppRegistrationModel(PathName),
-                ValidAppRegistrationModel(PathName + "-2"),
+                ValidAppRegistrationModel(path),
+                ValidAppRegistrationModel(path + "-2"),
             };
         }
 

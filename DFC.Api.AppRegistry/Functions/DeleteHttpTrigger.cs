@@ -8,6 +8,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -46,12 +47,14 @@ namespace DFC.Api.AppRegistry.Functions
             }
 
             logger.LogInformation($"Attempting to get app registration for: {path}");
-            var appRegistrationModel = await documentService.GetAsync(p => p.Path == path).ConfigureAwait(false);
-            if (appRegistrationModel == null)
+            var appRegistrationModels = await documentService.GetAsync(p => p.Path == path).ConfigureAwait(false);
+            if (appRegistrationModels == null)
             {
                 logger.LogWarning($"No app registration exists for path: {path}");
                 return new NoContentResult();
             }
+
+            var appRegistrationModel = appRegistrationModels.FirstOrDefault();
 
             try
             {
