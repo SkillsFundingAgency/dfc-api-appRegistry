@@ -20,6 +20,9 @@
         "ApimCompositeKey": {
             "value": "__ApimCompositeKey__"
         },
+        "ApimContentKey": {
+            "value": "__ApimContentKey__"
+        },
         "AseHostingEnvironmentName": {
             "value": "__AseHostingEnvironmentName__"
         },
