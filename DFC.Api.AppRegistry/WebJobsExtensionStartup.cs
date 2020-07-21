@@ -9,6 +9,8 @@ using DFC.Api.AppRegistry.Models.ClientOptions;
 using DFC.Api.AppRegistry.Services;
 using DFC.Compui.Cosmos;
 using DFC.Compui.Cosmos.Contracts;
+using DFC.Compui.Subscriptions.Pkg.Netstandard.Extensions;
+using DFC.Compui.Subscriptions.Pkg.Webhook.Extensions;
 using DFC.Swagger.Standard;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
@@ -17,6 +19,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using IApiService = DFC.Api.AppRegistry.Contracts.IApiService;
 
 [assembly: WebJobsStartup(typeof(WebJobsExtensionStartup), "Web Jobs Extension Startup")]
 
@@ -57,6 +60,8 @@ namespace DFC.Api.AppRegistry
             builder.Services.AddTransient<IApiService, ApiService>();
             builder.Services.AddTransient<IModelMappingService, ModelMappingService>();
             builder.Services.AddTransient<IModelValidationService, ModelValidationService>();
+            builder.Services.AddWebhookSupport<PagesWebhookService>();
+            builder.Services.AddSubscriptionService(configuration);
 
             builder.Services
                 .AddPolicies(policyRegistry, nameof(PathClientOptions), policyOptions)

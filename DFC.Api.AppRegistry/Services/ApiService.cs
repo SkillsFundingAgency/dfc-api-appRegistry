@@ -1,6 +1,7 @@
 ﻿using DFC.Api.AppRegistry.Contracts;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
