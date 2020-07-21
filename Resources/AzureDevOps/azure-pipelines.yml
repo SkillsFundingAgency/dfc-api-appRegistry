@@ -1,4 +1,5 @@
 variables:
+    ArmTemplateRoot: '$(Build.SourcesDirectory)\Resources\ArmTemplates'
     SolutionBaseName: 'DFC.Api.AppRegistry'
     BuildPlatform: 'any cpu'
     BuildConfiguration: 'release'
@@ -12,20 +13,32 @@ resources:
     ref: refs/tags/v1.11.2
     endpoint: 'GitHub (ESFA)'
 
+pool:
+  name: NCS - CI and CD
+  demands:
+    - msbuild
+    - visualstudio
+
 stages:
 - stage: Build
   displayName: Build, Test and Analyze
   jobs:
-  - job: BuildTestAndAnalyze
-    pool:
-      name: NCS - CI and CD
-      demands:
-      - msbuild
-      - visualstudio
-    steps:
-    - template: AzureDevOpsTemplates\Build\StepTemplates\dfc-dotnetcore-build-sonar.yml@dfc-devops
-      parameters:
-        SolutionBaseName: $(SolutionBaseName)
-        BuildPlatform: $(BuildPlatform)
-        BuildConfiguration: $(BuildConfiguration)
-        DotNetCoreVersion: '3.1.100'
+    - job: TestArmTemplates
+      displayName: "Test & package ARM template(s)"
+      steps:
+      - template: AzureDevOpsTemplates\Build\StepTemplates\dfc-arm-build.yml@dfc-devops
+        parameters:
+          ArmTemplateRoot: '${{ variables.ArmTemplateRoot }}'
+          SolutionBaseName: '${{ variables.SolutionBaseName }}'
+
+    - job: BuildDotNetCore
+      displayName: Build-DotNetCore
+      steps:
+      - template: AzureDevOpsTemplates\Build\StepTemplates\dfc-dotnetcore-build-sonar.yml@dfc-devops
+        parameters:
+         SolutionBaseName: $(SolutionBaseName)
+         BuildPlatform: $(BuildPlatform)
+         BuildConfiguration: $(BuildConfiguration)
+         DotNetCoreVersion: '3.1.100'
+         PublishWebApp: true
+         TestSuffix: UnitTests
