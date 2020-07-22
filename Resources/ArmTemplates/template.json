@@ -76,6 +76,21 @@
       "metadata": {
         "description": "Enable or disable alerting"
       }
+    },
+    "RegionClientOptionsBaseAddress": {
+      "type": "string"
+    },
+    "PathClientOptionsBaseAddress": {
+      "type": "string"
+    },
+    "SubscriptionSettingsEndpoint": {
+      "type": "string"
+    },
+    "RegionsCollectionName": {
+      "type": "string"
+    },
+    "PathsCollectionName": {
+      "type": "string"
     }
   },
   "variables": {
@@ -232,11 +247,11 @@
               },
               {
                 "name": "RegionsCollectionName",
-                "value": "regions"
+                "value": "[parameters('RegionsCollectionName')]"
               },
               {
                 "name": "PathsCollectionName",
-                "value": "paths"
+                "value": "[parameters('PathsCollectionName')]"
               },
               {
                 "name": "RegionsLeaseCollectionName",
@@ -284,7 +299,7 @@
               },
               {
                 "name": "PathClientOptions__BaseAddress",
-                "value": "[concat(parameters('ApimProxyAddress'), '/composite-ui-paths/')]"
+                "value": "[parameters('PathClientOptionsBaseAddress')]"
               },
               {
                 "name": "PathClientOptions__ApiKey",
@@ -292,7 +307,7 @@
               },
               {
                 "name": "RegionClientOptions__BaseAddress",
-                "value": "[concat(parameters('ApimProxyAddress'), '/composite-ui-regions/')]"
+                "value": "[parameters('RegionClientOptionsBaseAddress')]"
               },
               {
                 "name": "RegionClientOptions__ApiKey",
@@ -316,7 +331,7 @@
               },
               {
                 "name": "SubscriptionSettings__Endpoint",
-                "value": "[concat(parameters('ApimProxyAddress'), '/composite-ui-appRegistry/pages/webhook')]"
+                "value": "[parameters('SubscriptionSettingsEndpoint')]"
               },
               {
                 "name": "SubscriptionSettings__SubscriptionServiceEndpoint",
