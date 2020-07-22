@@ -1,5 +1,4 @@
-﻿using Castle.Core.Logging;
-using DFC.Api.AppRegistry.Contracts;
+﻿using DFC.Api.AppRegistry.Contracts;
 using DFC.Api.AppRegistry.Models;
 using DFC.Api.AppRegistry.Models.ClientOptions;
 using DFC.Api.AppRegistry.Models.Pages;
@@ -19,7 +18,11 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
     [Trait("Category", "LegacyPath - Service tests")]
     public class PagesDataLoadServiceTests
     {
-        private static readonly List<PageModel> PageModels = new List<PageModel>() { new PageModel { Url = new Uri("http://somewhere.com/1"), CanonicalName = "A Name", RedirectLocations = new List<string> { "http://somewhere/somewherelese" } }, new PageModel { Url = new Uri("http://somewhere.com/2") } };
+        private static readonly List<PageModel> PageModels = new List<PageModel>()
+        {
+            new PageModel { Id = Guid.NewGuid(), Url = new Uri("http://somewhere.com/1"), Location = "/here/a-name", RedirectLocations = new List<string> { "/somewhere/somewhere-else" } },
+            new PageModel { Id = Guid.NewGuid(), Url = new Uri("http://somewhere.com/1"), Location = "/here/a-name-2", RedirectLocations = new List<string> { "/somewhere/somewhere-else-2" } },
+        };
 
         private readonly ILogger<PagesDataLoadService> logger = A.Fake<ILogger<PagesDataLoadService>>();
         private readonly HttpClient fakeHttpClient = A.Fake<HttpClient>();
@@ -29,7 +32,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 
         public PagesDataLoadServiceTests()
         {
-            this.pagesClientOptions = new PagesClientOptions { BaseAddress = new Uri("http://somewhere.com"), Endpoint = "pages" };
+            pagesClientOptions = new PagesClientOptions { BaseAddress = new Uri("http://somewhere.com"), Endpoint = PagesDataLoadService.AppRegistryPathNameForPagesApp };
         }
 
         [Fact]
