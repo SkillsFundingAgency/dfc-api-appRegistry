@@ -54,17 +54,15 @@ namespace DFC.Api.AppRegistry.Services
                 return HttpStatusCode.NotFound;
             }
 
-            var newLocations = page.AllLocations;
-
-            if (newLocations != null && newLocations.Any())
+            if (page.Locations != null && page.Locations.Any())
             {
                 if (appRegistration.Locations == null)
                 {
-                    appRegistration.Locations = newLocations;
+                    appRegistration.Locations = page.Locations;
                 }
                 else
                 {
-                    appRegistration.Locations.AddRange(newLocations);
+                    appRegistration.Locations.AddRange(page.Locations);
                 }
 
                 appRegistration.LastModifiedDate = DateTime.UtcNow;
@@ -96,7 +94,7 @@ namespace DFC.Api.AppRegistry.Services
                 return;
             }
 
-            appRegistration.Locations = pages.Where(x => x.Url != null).SelectMany(x => x.AllLocations).ToList();
+            appRegistration.Locations = pages.SelectMany(x => x.Locations).ToList();
             appRegistration.LastModifiedDate = DateTime.UtcNow;
 
             await legacyDataLoadService.UpdateAppRegistrationAsync(appRegistration).ConfigureAwait(false);
@@ -123,11 +121,9 @@ namespace DFC.Api.AppRegistry.Services
                 return HttpStatusCode.NotFound;
             }
 
-            var locationsToRemove = page.AllLocations;
-
-            if (locationsToRemove != null && locationsToRemove.Any() && appRegistration.Locations != null && appRegistration.Locations.Any())
+            if (page.Locations != null && page.Locations.Any() && appRegistration.Locations != null && appRegistration.Locations.Any())
             {
-                locationsToRemove.ForEach(f => appRegistration.Locations.Remove(f));
+                page.Locations.ForEach(f => appRegistration.Locations.Remove(f));
                 appRegistration.LastModifiedDate = DateTime.UtcNow;
 
                 await legacyDataLoadService.UpdateAppRegistrationAsync(appRegistration).ConfigureAwait(false);
