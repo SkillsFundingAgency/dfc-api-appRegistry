@@ -70,6 +70,18 @@
         },
         "ApiTitleSuffix": {
             "value": "a-comsmos-collection"
+        },
+        "PagesClientOptionsBaseAddress": {
+            "value": "tbc"
+        },
+        "ApimPagesKey": {
+            "value": "tbc"
+        },
+        "PathsLeaseCollectionName": {
+            "value": "tbc"
+        },
+        "RegionsLeaseCollectionName": {
+            "value": "tbc"
         }
     }
 }

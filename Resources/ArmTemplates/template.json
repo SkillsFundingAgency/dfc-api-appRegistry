@@ -98,6 +98,18 @@
     },
     "PathsCollectionName": {
       "type": "string"
+    },
+    "PagesClientOptionsBaseAddress": {
+      "type": "string"
+    },
+    "ApimPagesKey": {
+      "type": "string"
+    },
+    "PathsLeaseCollectionName": {
+      "type": "string"
+    },
+    "RegionsLeaseCollectionName": {
+      "type": "string"
     }
   },
   "variables": {
@@ -262,11 +274,11 @@
               },
               {
                 "name": "RegionsLeaseCollectionName",
-                "value": "regions_lease"
+                "value": "[parameters('RegionsLeaseCollectionName')]"
               },
               {
                 "name": "PathsLeaseCollectionName",
-                "value": "paths_lease"
+                "value": "[parameters('PathsLeaseCollectionName')]"
               },
               {
                 "name": "LegacyDatabaseName",
@@ -350,11 +362,11 @@
               },
               {
                 "name": "PagesClientOptions__BaseAddress",
-                "value": "[concat(parameters('ApimProxyAddress'), '/content/GetAllPages/')]"
+                "value": "[parameters('PagesClientOptionsBaseAddress')]"
               },
               {
                 "name": "PagesClientOptions_ApiKey",
-                "value": "[parameters('ApimContentKey')]"
+                "value": "[parameters('ApimPagesKey')]"
               },
               {
                 "name": "ApiSuffix",
