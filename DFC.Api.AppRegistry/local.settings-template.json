@@ -11,7 +11,8 @@
     "RegionsLeaseCollectionName": "regions_lease",
     "RegionsLeaseCollectionNamePrefix": "",
     "PathsLeaseCollectionName": "paths_lease",
-    "PathsLeaseCollectionNamePrefix": ""
+    "PathsLeaseCollectionNamePrefix": "",
+    "ApiSuffix": ""
   },
   "Configuration": {
     "ApplicationName": "DFC-Api-AppRegistry",
