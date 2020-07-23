@@ -67,6 +67,9 @@
         },
         "PathsCollectionName": {
             "value": "a-comsmos-collection"
+        },
+        "ApiTitleSuffix": {
+            "value": "a-comsmos-collection"
         }
     }
 }

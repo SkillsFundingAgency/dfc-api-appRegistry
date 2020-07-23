@@ -82,6 +82,9 @@
         },
         "PathsCollectionName": {
             "value": "__PathsCollectionName__"
+        },
+        "ApiTitleSuffix": {
+            "value": "__ApiTitleSuffix__"
         }
     }
 }
