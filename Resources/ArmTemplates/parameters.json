@@ -67,6 +67,24 @@
         },
         "enableAlerts": {
             "value": __EnableAzureMonitorAlerting__
+        },
+        "RegionClientOptionsBaseAddress": {
+            "value": "__RegionClientOptionsBaseAddress__"
+        },
+        "PathClientOptionsBaseAddress": {
+            "value": "__PathClientOptionsBaseAddress__"
+        },
+        "SubscriptionSettingsEndpoint": {
+            "value": "__SubscriptionSettingsEndpoint__"
+        },
+        "RegionsCollectionName": {
+            "value": "__RegionsCollectionName__"
+        },
+        "PathsCollectionName": {
+            "value": "__PathsCollectionName__"
+        },
+        "ApiTitleSuffix": {
+            "value": "__ApiTitleSuffix__"
         }
     }
 }
