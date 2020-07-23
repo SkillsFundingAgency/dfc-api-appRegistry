@@ -26,6 +26,13 @@
     "ApimContentKey": {
       "type": "string"
     },
+    "ApiTitleSuffix": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The suffix to add after the API title. Used for draft environments to seperate API instances"
+      }
+    },
     "AseHostingEnvironmentName": {
       "type": "string",
       "defaultValue": ""
@@ -348,6 +355,10 @@
               {
                 "name": "PagesClientOptions_ApiKey",
                 "value": "[parameters('ApimContentKey')]"
+              },
+              {
+                "name": "ApiSuffix",
+                "value": "[parameters('ApiTitleSuffix')]"
               }
             ]
           }
