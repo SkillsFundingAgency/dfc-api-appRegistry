@@ -20,8 +20,8 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
     {
         private static readonly List<PageModel> PageModels = new List<PageModel>()
         {
-            new PageModel { Id = Guid.NewGuid(), Url = new Uri("http://somewhere.com/1"), Location = "/here/a-name", RedirectLocations = new List<string> { "/somewhere/somewhere-else" } },
-            new PageModel { Id = Guid.NewGuid(), Url = new Uri("http://somewhere.com/1"), Location = "/here/a-name-2", RedirectLocations = new List<string> { "/somewhere/somewhere-else-2" } },
+            new PageModel { Locations = new List<string> { "/somewhere/somewhere-else" } },
+            new PageModel { Locations = new List<string> { "/somewhere/somewhere-else-2" } },
         };
 
         private readonly ILogger<PagesDataLoadService> logger = A.Fake<ILogger<PagesDataLoadService>>();
