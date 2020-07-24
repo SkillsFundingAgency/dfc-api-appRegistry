@@ -73,7 +73,7 @@ namespace DFC.Api.AppRegistry
 
             builder.Services
                 .AddPolicies(policyRegistry, nameof(PagesClientOptions), policyOptions)
-                .AddHttpClient<IPagesDataLoadService, PagesDataLoadService, PagesClientOptions>(configuration, nameof(RegionClientOptions), nameof(PolicyOptions.HttpRetry), nameof(PolicyOptions.HttpCircuitBreaker));
+                .AddHttpClient<IPagesDataLoadService, PagesDataLoadService, PagesClientOptions>(configuration, nameof(PagesClientOptions), nameof(PolicyOptions.HttpRetry), nameof(PolicyOptions.HttpCircuitBreaker));
         }
     }
 }

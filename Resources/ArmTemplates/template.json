@@ -26,6 +26,13 @@
     "ApimContentKey": {
       "type": "string"
     },
+    "ApiTitleSuffix": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "The suffix to add after the API title. Used for draft environments to seperate API instances"
+      }
+    },
     "AseHostingEnvironmentName": {
       "type": "string",
       "defaultValue": ""
@@ -76,6 +83,33 @@
       "metadata": {
         "description": "Enable or disable alerting"
       }
+    },
+    "RegionClientOptionsBaseAddress": {
+      "type": "string"
+    },
+    "PathClientOptionsBaseAddress": {
+      "type": "string"
+    },
+    "SubscriptionSettingsEndpoint": {
+      "type": "string"
+    },
+    "RegionsCollectionName": {
+      "type": "string"
+    },
+    "PathsCollectionName": {
+      "type": "string"
+    },
+    "PagesClientOptionsBaseAddress": {
+      "type": "string"
+    },
+    "ApimPagesKey": {
+      "type": "string"
+    },
+    "PathsLeaseCollectionName": {
+      "type": "string"
+    },
+    "RegionsLeaseCollectionName": {
+      "type": "string"
     }
   },
   "variables": {
@@ -232,19 +266,19 @@
               },
               {
                 "name": "RegionsCollectionName",
-                "value": "regions"
+                "value": "[parameters('RegionsCollectionName')]"
               },
               {
                 "name": "PathsCollectionName",
-                "value": "paths"
+                "value": "[parameters('PathsCollectionName')]"
               },
               {
                 "name": "RegionsLeaseCollectionName",
-                "value": "regions_lease"
+                "value": "[parameters('RegionsLeaseCollectionName')]"
               },
               {
                 "name": "PathsLeaseCollectionName",
-                "value": "paths_lease"
+                "value": "[parameters('PathsLeaseCollectionName')]"
               },
               {
                 "name": "LegacyDatabaseName",
@@ -284,7 +318,7 @@
               },
               {
                 "name": "PathClientOptions__BaseAddress",
-                "value": "[concat(parameters('ApimProxyAddress'), '/composite-ui-paths/')]"
+                "value": "[parameters('PathClientOptionsBaseAddress')]"
               },
               {
                 "name": "PathClientOptions__ApiKey",
@@ -292,7 +326,7 @@
               },
               {
                 "name": "RegionClientOptions__BaseAddress",
-                "value": "[concat(parameters('ApimProxyAddress'), '/composite-ui-regions/')]"
+                "value": "[parameters('RegionClientOptionsBaseAddress')]"
               },
               {
                 "name": "RegionClientOptions__ApiKey",
@@ -316,7 +350,7 @@
               },
               {
                 "name": "SubscriptionSettings__Endpoint",
-                "value": "[concat(parameters('ApimProxyAddress'), '/composite-ui-appRegistry/pages/webhook')]"
+                "value": "[parameters('SubscriptionSettingsEndpoint')]"
               },
               {
                 "name": "SubscriptionSettings__SubscriptionServiceEndpoint",
@@ -328,11 +362,15 @@
               },
               {
                 "name": "PagesClientOptions__BaseAddress",
-                "value": "[concat(parameters('ApimProxyAddress'), '/content/GetAllPages/')]"
+                "value": "[parameters('PagesClientOptionsBaseAddress')]"
               },
               {
-                "name": "PagesClientOptions_ApiKey",
-                "value": "[parameters('ApimContentKey')]"
+                "name": "PagesClientOptions__ApiKey",
+                "value": "[parameters('ApimPagesKey')]"
+              },
+              {
+                "name": "ApiSuffix",
+                "value": "[parameters('ApiTitleSuffix')]"
               }
             ]
           }

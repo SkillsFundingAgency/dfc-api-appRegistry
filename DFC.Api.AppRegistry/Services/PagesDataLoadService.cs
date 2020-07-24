@@ -13,6 +13,8 @@ namespace DFC.Api.AppRegistry.Services
 {
     public class PagesDataLoadService : IPagesDataLoadService
     {
+        public const string AppRegistryPathNameForPagesApp = "pages";
+
         private readonly ILogger<PagesDataLoadService> logger;
         private readonly HttpClient httpClient;
         private readonly PagesClientOptions pagesClientOptions;
@@ -37,7 +39,7 @@ namespace DFC.Api.AppRegistry.Services
         {
             logger.LogInformation($"Load Page {contentId} into App Registration Started");
 
-            var appRegistration = await legacyDataLoadService.GetAppRegistrationByPathAsync("pages").ConfigureAwait(false);
+            var appRegistration = await legacyDataLoadService.GetAppRegistrationByPathAsync(AppRegistryPathNameForPagesApp).ConfigureAwait(false);
 
             if (appRegistration == null)
             {
@@ -52,12 +54,23 @@ namespace DFC.Api.AppRegistry.Services
                 return HttpStatusCode.NotFound;
             }
 
-            if (!appRegistration.Locations.Any(x => x == page.Url!.ToString()))
+            if (page.Locations != null && page.Locations.Any())
             {
-                appRegistration.Locations!.Add(page.Url!.ToString());
+                if (appRegistration.Locations == null)
+                {
+                    appRegistration.Locations = page.Locations;
+                }
+                else
+                {
+                    appRegistration.Locations.AddRange(page.Locations);
+                }
+
                 appRegistration.LastModifiedDate = DateTime.UtcNow;
+
                 await legacyDataLoadService.UpdateAppRegistrationAsync(appRegistration).ConfigureAwait(false);
             }
+
+            logger.LogInformation($"Load Page {contentId} into App Registration Completed");
 
             return HttpStatusCode.OK;
         }
@@ -66,7 +79,7 @@ namespace DFC.Api.AppRegistry.Services
         {
             logger.LogInformation($"Load Pages into App Registration Started");
 
-            var appRegistration = await legacyDataLoadService.GetAppRegistrationByPathAsync("pages").ConfigureAwait(false);
+            var appRegistration = await legacyDataLoadService.GetAppRegistrationByPathAsync(AppRegistryPathNameForPagesApp).ConfigureAwait(false);
 
             if (appRegistration == null)
             {
@@ -81,7 +94,7 @@ namespace DFC.Api.AppRegistry.Services
                 return;
             }
 
-            appRegistration.Locations = pages.Where(x => x.Url != null).Select(y => y.Url!.ToString()).ToList();
+            appRegistration.Locations = pages.SelectMany(x => x.Locations).ToList();
             appRegistration.LastModifiedDate = DateTime.UtcNow;
 
             await legacyDataLoadService.UpdateAppRegistrationAsync(appRegistration).ConfigureAwait(false);
@@ -93,18 +106,24 @@ namespace DFC.Api.AppRegistry.Services
         {
             logger.LogInformation($"Remove page {contentId} from App Registration");
 
-            var appRegistration = await legacyDataLoadService.GetAppRegistrationByPathAsync("pages").ConfigureAwait(false);
+            var appRegistration = await legacyDataLoadService.GetAppRegistrationByPathAsync(AppRegistryPathNameForPagesApp).ConfigureAwait(false);
 
             if (appRegistration == null)
             {
                 return HttpStatusCode.NotFound;
             }
 
-            var locationToRemove = appRegistration.Locations.FirstOrDefault(x => x.Contains(contentId.ToString(), StringComparison.OrdinalIgnoreCase));
+            var page = await GetPageAsync(contentId.ToString()).ConfigureAwait(false);
 
-            if (locationToRemove != null)
+            if (page == null)
             {
-                appRegistration!.Locations!.Remove(locationToRemove);
+                logger.LogError($"Page {contentId} returned null from Pages API");
+                return HttpStatusCode.NotFound;
+            }
+
+            if (page.Locations != null && page.Locations.Any() && appRegistration.Locations != null && appRegistration.Locations.Any())
+            {
+                page.Locations.ForEach(f => appRegistration.Locations.Remove(f));
                 appRegistration.LastModifiedDate = DateTime.UtcNow;
 
                 await legacyDataLoadService.UpdateAppRegistrationAsync(appRegistration).ConfigureAwait(false);

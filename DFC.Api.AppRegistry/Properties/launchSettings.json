@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DFC.Api.AppRegistry": {
+      "commandName": "Project",
+      "commandLineArgs": "host start --port 7073"
+    }
+  }
+}
