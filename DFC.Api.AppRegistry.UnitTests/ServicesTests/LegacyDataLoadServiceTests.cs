@@ -287,7 +287,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         public async Task GetAppRegistrationByPathAsyncReturnsAppRegistrationModel()
         {
             // Arrange
-            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(new List<AppRegistrationModel> { new AppRegistrationModel { Path = "pages" } });
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(new List<AppRegistrationModel> { new AppRegistrationModel { Path = PagesDataLoadService.AppRegistryPathNameForPagesApp } });
 
             // Act
             var result = await legacyDataLoadService.GetAppRegistrationByPathAsync("a-path").ConfigureAwait(false);

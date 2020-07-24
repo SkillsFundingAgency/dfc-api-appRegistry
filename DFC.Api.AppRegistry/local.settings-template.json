@@ -9,9 +9,10 @@
     "PathsCollectionName": "paths",
     "LegacyDatabaseName": "composition",
     "RegionsLeaseCollectionName": "regions_lease",
-    "RegionsLeaseCollectionNamePrefix": "",
+    "RegionsLeaseCollectionNamePrefix": "ls",
     "PathsLeaseCollectionName": "paths_lease",
-    "PathsLeaseCollectionNamePrefix": ""
+    "PathsLeaseCollectionNamePrefix": "ls",
+    "ApiSuffix": ""
   },
   "Configuration": {
     "ApplicationName": "DFC-Api-AppRegistry",

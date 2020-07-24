@@ -86,7 +86,7 @@ namespace DFC.Api.AppRegistry.Models
         [Display(Description = "List of Regions registered to the application.")]
         public List<RegionModel>? Regions { get; set; }
 
-        [Display(Description = "List of page location supported byt eh application.")]
+        [Display(Description = "List of page location supported by the application.")]
         public List<string>? Locations { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
