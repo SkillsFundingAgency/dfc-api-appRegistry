@@ -365,7 +365,7 @@
                 "value": "[parameters('PagesClientOptionsBaseAddress')]"
               },
               {
-                "name": "PagesClientOptions_ApiKey",
+                "name": "PagesClientOptions__ApiKey",
                 "value": "[parameters('ApimPagesKey')]"
               },
               {
