@@ -1,5 +1,6 @@
 ﻿using DFC.Api.AppRegistry.Common;
 using DFC.Api.AppRegistry.Enums;
+using DFC.Api.AppRegistry.Models.Pages;
 using DFC.Compui.Cosmos.Contracts;
 using DFC.Swagger.Standard.Annotations;
 using HtmlAgilityPack;
@@ -87,7 +88,7 @@ namespace DFC.Api.AppRegistry.Models
         public List<RegionModel>? Regions { get; set; }
 
         [Display(Description = "List of page location supported by the application.")]
-        public List<string>? Locations { get; set; }
+        public Dictionary<Guid, PageLocationModel>? PageLocations { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
