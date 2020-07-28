@@ -20,9 +20,6 @@
         "ApimCompositeKey": {
             "value": "123456789"
         },
-        "ApimContentKey": {
-            "value": "123456789"
-        },
         "CompositeUiSharedResourceGroup": {
             "value": "dfc-dev-compui-shared-rg"
         },
@@ -72,9 +69,6 @@
             "value": "a-comsmos-collection"
         },
         "PagesClientOptionsBaseAddress": {
-            "value": "tbc"
-        },
-        "ApimPagesKey": {
             "value": "tbc"
         },
         "PathsLeaseCollectionName": {

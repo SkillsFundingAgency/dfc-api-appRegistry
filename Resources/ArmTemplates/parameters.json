@@ -20,9 +20,6 @@
         "ApimCompositeKey": {
             "value": "__ApimCompositeKey__"
         },
-        "ApimContentKey": {
-            "value": "__ApimContentKey__"
-        },
         "AseHostingEnvironmentName": {
             "value": "__AseHostingEnvironmentName__"
         },
@@ -88,9 +85,6 @@
         },
         "PagesClientOptionsBaseAddress": {
             "value": "__PagesClientOptionsBaseAddress__"
-        },
-        "ApimPagesKey": {
-            "value": "__ApimPagesKey__"
         },
         "PathsLeaseCollectionName": {
             "value": "__PathsLeaseCollectionName__"
