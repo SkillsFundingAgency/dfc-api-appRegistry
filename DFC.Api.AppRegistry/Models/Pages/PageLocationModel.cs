@@ -2,7 +2,7 @@
 
 namespace DFC.Api.AppRegistry.Models.Pages
 {
-    public class PageModel
+    public class PageLocationModel
     {
         public List<string>? Locations { get; set; }
     }
