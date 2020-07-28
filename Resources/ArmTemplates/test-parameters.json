@@ -71,9 +71,6 @@
         "PagesClientOptionsBaseAddress": {
             "value": "tbc"
         },
-        "ApimPagesKey": {
-            "value": "tbc"
-        },
         "PathsLeaseCollectionName": {
             "value": "tbc"
         },

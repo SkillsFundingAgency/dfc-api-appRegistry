@@ -99,9 +99,6 @@
     "PagesClientOptionsBaseAddress": {
       "type": "string"
     },
-    "ApimPagesKey": {
-      "type": "string"
-    },
     "PathsLeaseCollectionName": {
       "type": "string"
     },
