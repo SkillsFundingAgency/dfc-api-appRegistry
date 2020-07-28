@@ -23,9 +23,6 @@
     "ApimCompositeKey": {
       "type": "string"
     },
-    "ApimContentKey": {
-      "type": "string"
-    },
     "ApiTitleSuffix": {
       "type": "string",
       "defaultValue": "",
@@ -363,10 +360,6 @@
               {
                 "name": "PagesClientOptions__BaseAddress",
                 "value": "[parameters('PagesClientOptionsBaseAddress')]"
-              },
-              {
-                "name": "PagesClientOptions__ApiKey",
-                "value": "[parameters('ApimPagesKey')]"
               },
               {
                 "name": "ApiSuffix",
