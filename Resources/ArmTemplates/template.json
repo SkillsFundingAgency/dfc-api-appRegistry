@@ -104,6 +104,9 @@
     },
     "RegionsLeaseCollectionName": {
       "type": "string"
+    },
+    "SubscriptionSettingsFilterBeginsWith": {
+      "type": "string"
     }
   },
   "variables": {
@@ -328,7 +331,7 @@
               },
               {
                 "name": "SubscriptionSettings__Filter__BeginsWith",
-                "value": "/dfc-app-pages/"
+                "value": "[parameters('SubscriptionSettingsFilterBeginsWith')]"
               },
               {
                 "name": "SubscriptionSettings__Filter__IncludeEventTypes__0",
