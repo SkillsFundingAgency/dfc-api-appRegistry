@@ -91,6 +91,9 @@
         },
         "RegionsLeaseCollectionName": {
             "value": "__RegionsLeaseCollectionName__"
+        },
+        "SubscriptionSettingsFilterBeginsWith": {
+            "value": "__SubscriptionSettingsFilterBeginsWith__"
         }
     }
 }
