@@ -37,7 +37,16 @@ namespace DFC.Api.AppRegistry.Functions
 
             try
             {
-                await subscriptionRegistrationService.RegisterSubscription("DFC-Api-AppRegistry").ConfigureAwait(false);
+                var apiSuffix = Environment.GetEnvironmentVariable("ApiSuffix");
+                if (!string.IsNullOrWhiteSpace(apiSuffix))
+                {
+                    apiSuffix = "-" + apiSuffix
+                                .Replace("(", string.Empty, StringComparison.Ordinal)
+                                .Replace(")", string.Empty, StringComparison.Ordinal)
+                                .Replace(" ", "-", StringComparison.Ordinal).ToLowerInvariant();
+                }
+
+                await subscriptionRegistrationService.RegisterSubscription("DFC-Api-AppRegistry" + apiSuffix).ConfigureAwait(false);
                 return new OkResult();
             }
             catch (Exception ex)
