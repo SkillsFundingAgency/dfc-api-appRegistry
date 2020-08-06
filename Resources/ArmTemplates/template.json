@@ -107,6 +107,9 @@
     },
     "SubscriptionSettingsFilterBeginsWith": {
       "type": "string"
+    },
+    "ExceptionCountThreshold": {
+      "type": "string"
     }
   },
   "variables": {
@@ -433,7 +436,7 @@
             "value": "GreaterThan"
           },
           "threshold": {
-            "value": "0"
+            "value": "[parameters('ExceptionCountThreshold')]"
           },
           "aggregation": {
             "value": "Count"

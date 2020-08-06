@@ -79,6 +79,9 @@
         },
         "SubscriptionSettingsFilterBeginsWith": {
             "value": "avalue"
+        },
+        "ExceptionCountThreshold":{
+            "value": "0"
         }
     }
 }

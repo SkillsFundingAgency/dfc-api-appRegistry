@@ -94,6 +94,9 @@
         },
         "SubscriptionSettingsFilterBeginsWith": {
             "value": "__SubscriptionSettingsFilterBeginsWith__"
+        },
+        "ExceptionCountThreshold":{
+            "value": "__ExceptionCountThreshold__"
         }
     }
 }
