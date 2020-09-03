@@ -97,6 +97,9 @@
         },
         "ExceptionCountThreshold":{
             "value": "__ExceptionCountThreshold__"
+        },
+        "subscriptionUrl":{
+            "value": "__subscriptionUrl__"
         }
     }
 }
