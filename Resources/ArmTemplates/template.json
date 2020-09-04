@@ -17,9 +17,6 @@
     "ApiName": {
       "type": "string"
     },
-    "ApimProxyAddress": {
-      "type": "string"
-    },
     "ApimCompositeKey": {
       "type": "string"
     },
@@ -109,6 +106,9 @@
       "type": "string"
     },
     "ExceptionCountThreshold": {
+      "type": "string"
+    },
+    "subscriptionUrl": {
       "type": "string"
     }
   },
@@ -354,11 +354,7 @@
               },
               {
                 "name": "SubscriptionSettings__SubscriptionServiceEndpoint",
-                "value": "[concat(parameters('ApimProxyAddress'), '/content/Subscription/api/Execute/')]"
-              },
-              {
-                "name": "SubscriptionSettings__ApiKey",
-                "value": "[parameters('apimCompositeKey')]"
+                "value": "[parameters('subscriptionUrl')]"
               },
               {
                 "name": "PagesClientOptions__BaseAddress",

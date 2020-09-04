@@ -44,9 +44,6 @@
         "CosmosDbCollectionName": {
             "value": "a-comsmos-collection"
         },
-        "ApimProxyAddress": {
-            "value": "-a-test-suffix"
-        },
         "enableAlerts": {
             "value": false
         },
@@ -82,6 +79,9 @@
         },
         "ExceptionCountThreshold":{
             "value": "0"
+        },
+        "subscriptionUrl":{
+            "value": "url"
         }
     }
 }

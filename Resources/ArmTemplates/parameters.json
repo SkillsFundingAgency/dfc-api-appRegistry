@@ -59,9 +59,6 @@
         "CosmosDbCollectionName": {
             "value": "__CosmosCollectionId__"
         },
-        "ApimProxyAddress": {
-            "value": "__ApimProxyAddress__"
-        },
         "enableAlerts": {
             "value": __EnableAzureMonitorAlerting__
         },
@@ -97,6 +94,9 @@
         },
         "ExceptionCountThreshold":{
             "value": "__ExceptionCountThreshold__"
+        },
+        "subscriptionUrl":{
+            "value": "__subscriptionUrl__"
         }
     }
 }
