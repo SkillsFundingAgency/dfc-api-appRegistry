@@ -20,9 +20,6 @@
         "ApimCompositeKey": {
             "value": "__ApimCompositeKey__"
         },
-        "ApimContentKey": {
-            "value": "__ApimContentKey__"
-        },
         "AseHostingEnvironmentName": {
             "value": "__AseHostingEnvironmentName__"
         },
@@ -62,9 +59,6 @@
         "CosmosDbCollectionName": {
             "value": "__CosmosCollectionId__"
         },
-        "ApimProxyAddress": {
-            "value": "__ApimProxyAddress__"
-        },
         "enableAlerts": {
             "value": __EnableAzureMonitorAlerting__
         },
@@ -89,14 +83,20 @@
         "PagesClientOptionsBaseAddress": {
             "value": "__PagesClientOptionsBaseAddress__"
         },
-        "ApimPagesKey": {
-            "value": "__ApimPagesKey__"
-        },
         "PathsLeaseCollectionName": {
             "value": "__PathsLeaseCollectionName__"
         },
         "RegionsLeaseCollectionName": {
             "value": "__RegionsLeaseCollectionName__"
+        },
+        "SubscriptionSettingsFilterBeginsWith": {
+            "value": "__SubscriptionSettingsFilterBeginsWith__"
+        },
+        "ExceptionCountThreshold":{
+            "value": "__ExceptionCountThreshold__"
+        },
+        "subscriptionUrl":{
+            "value": "__subscriptionUrl__"
         }
     }
 }

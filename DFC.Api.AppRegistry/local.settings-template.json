@@ -48,13 +48,12 @@
   },
   "PagesClientOptions": {
     "BaseAddress": "http://localhost/",
-    "Timeout": "00:00:30",
-    "ApiKey": "[ API key ]"
+    "Timeout": "00:00:30"
   },
   "SubscriptionSettings": {
-    "Endpoint": "https://dfc-dev-app-contactus-as.azurewebsites.net/api/webhook/ReceiveEvents",
-    "SubscriptionServiceEndpoint": "https://dev.api.nationalcareersservice.org.uk/content/Subscription/api/Execute/",
-    "ApiKey": "8ded18f89f5b482d88e345c5dceb96a3",
+    "Endpoint": "http://localhost/webhook",
+    "SubscriptionServiceEndpoint": "http://localhost/Subscription/",
+    "ApiKey": "[ API key ]",
     "Filter": {
       "BeginsWith": "/dfc-app-pages/",
       "IncludeEventTypes": [ "published", "unpublished", "deleted" ]

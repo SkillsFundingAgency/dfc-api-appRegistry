@@ -37,7 +37,7 @@ namespace DFC.Api.AppRegistry.Services
 
         public async Task<HttpStatusCode> CreateOrUpdateAsync(Guid contentId)
         {
-            logger.LogInformation($"Load Page {contentId} into App Registration Started");
+            logger.LogInformation($"Load page location {contentId} into App Registration started");
 
             var appRegistration = await legacyDataLoadService.GetAppRegistrationByPathAsync(AppRegistryPathNameForPagesApp).ConfigureAwait(false);
 
@@ -46,38 +46,38 @@ namespace DFC.Api.AppRegistry.Services
                 return HttpStatusCode.NotFound;
             }
 
-            var page = await GetPageAsync(contentId.ToString()).ConfigureAwait(false);
+            var pageLocation = await GetPageAsync(contentId).ConfigureAwait(false);
 
-            if (page == null)
+            if (pageLocation == null)
             {
                 logger.LogError($"Page {contentId} returned null from Pages API");
                 return HttpStatusCode.NotFound;
             }
 
-            if (page.Locations != null && page.Locations.Any())
+            appRegistration.PageLocations?.Remove(contentId);
+
+            if (pageLocation.Locations.Any())
             {
-                if (appRegistration.Locations == null)
+                if (appRegistration.PageLocations == null)
                 {
-                    appRegistration.Locations = page.Locations;
+                    appRegistration.PageLocations = new Dictionary<Guid, PageLocationModel>();
                 }
-                else
-                {
-                    appRegistration.Locations.AddRange(page.Locations);
-                }
+
+                appRegistration.PageLocations.Add(contentId, pageLocation);
 
                 appRegistration.LastModifiedDate = DateTime.UtcNow;
 
                 await legacyDataLoadService.UpdateAppRegistrationAsync(appRegistration).ConfigureAwait(false);
             }
 
-            logger.LogInformation($"Load Page {contentId} into App Registration Completed");
+            logger.LogInformation($"Load page location {contentId} into App Registration completed");
 
             return HttpStatusCode.OK;
         }
 
         public async Task LoadAsync()
         {
-            logger.LogInformation($"Load Pages into App Registration Started");
+            logger.LogInformation($"Load page locations into App Registration started");
 
             var appRegistration = await legacyDataLoadService.GetAppRegistrationByPathAsync(AppRegistryPathNameForPagesApp).ConfigureAwait(false);
 
@@ -86,25 +86,25 @@ namespace DFC.Api.AppRegistry.Services
                 return;
             }
 
-            var pages = await GetPagesAsync().ConfigureAwait(false);
+            var pageLocations = await GetPagesAsync().ConfigureAwait(false);
 
-            if (pages == null)
+            if (pageLocations == null)
             {
-                logger.LogInformation($"No pages returned from {nameof(GetPagesAsync)}");
+                logger.LogInformation($"No page locations returned from {nameof(GetPagesAsync)}");
                 return;
             }
 
-            appRegistration.Locations = pages.SelectMany(x => x.Locations).ToList();
+            appRegistration.PageLocations = pageLocations;
             appRegistration.LastModifiedDate = DateTime.UtcNow;
 
             await legacyDataLoadService.UpdateAppRegistrationAsync(appRegistration).ConfigureAwait(false);
 
-            logger.LogInformation($"Load Pages into AppRegistration Completed");
+            logger.LogInformation($"Load page locations into AppRegistration completed");
         }
 
         public async Task<HttpStatusCode> RemoveAsync(Guid contentId)
         {
-            logger.LogInformation($"Remove page {contentId} from App Registration");
+            logger.LogInformation($"Remove page location {contentId} from App Registration started");
 
             var appRegistration = await legacyDataLoadService.GetAppRegistrationByPathAsync(AppRegistryPathNameForPagesApp).ConfigureAwait(false);
 
@@ -113,44 +113,33 @@ namespace DFC.Api.AppRegistry.Services
                 return HttpStatusCode.NotFound;
             }
 
-            var page = await GetPageAsync(contentId.ToString()).ConfigureAwait(false);
+            appRegistration.PageLocations?.Remove(contentId);
+            appRegistration.LastModifiedDate = DateTime.UtcNow;
 
-            if (page == null)
-            {
-                logger.LogError($"Page {contentId} returned null from Pages API");
-                return HttpStatusCode.NotFound;
-            }
+            await legacyDataLoadService.UpdateAppRegistrationAsync(appRegistration).ConfigureAwait(false);
 
-            if (page.Locations != null && page.Locations.Any() && appRegistration.Locations != null && appRegistration.Locations.Any())
-            {
-                page.Locations.ForEach(f => appRegistration.Locations.Remove(f));
-                appRegistration.LastModifiedDate = DateTime.UtcNow;
-
-                await legacyDataLoadService.UpdateAppRegistrationAsync(appRegistration).ConfigureAwait(false);
-            }
-
-            logger.LogInformation($"Remove page {contentId} from App Registration completed");
+            logger.LogInformation($"Remove page location {contentId} from App Registration completed");
             return HttpStatusCode.OK;
         }
 
-        private async Task<PageModel?> GetPageAsync(string id)
+        private async Task<PageLocationModel?> GetPageAsync(Guid id)
         {
             logger.LogInformation($"Retrieving Page {id} data");
 
             var url = new Uri($"{pagesClientOptions.BaseAddress}{pagesClientOptions.Endpoint}/{id}", UriKind.Absolute);
-            var result = await apiDataService.GetAsync<PageModel>(httpClient, url).ConfigureAwait(false);
+            var result = await apiDataService.GetAsync<PageLocationModel>(httpClient, url).ConfigureAwait(false);
 
             logger.LogInformation($"Retrieved Page {id} data");
 
             return result;
         }
 
-        private async Task<IList<PageModel>?> GetPagesAsync()
+        private async Task<Dictionary<Guid, PageLocationModel>?> GetPagesAsync()
         {
             logger.LogInformation($"Retrieving Pages data");
 
             var url = new Uri($"{pagesClientOptions.BaseAddress}{pagesClientOptions.Endpoint}", UriKind.Absolute);
-            var result = await apiDataService.GetAsync<List<PageModel>>(httpClient, url).ConfigureAwait(false);
+            var result = await apiDataService.GetAsync<Dictionary<Guid, PageLocationModel>>(httpClient, url).ConfigureAwait(false);
 
             logger.LogInformation($"Retrieved Page data");
 
