@@ -20,9 +20,6 @@
         "ApimCompositeKey": {
             "value": "123456789"
         },
-        "ApimContentKey": {
-            "value": "123456789"
-        },
         "CompositeUiSharedResourceGroup": {
             "value": "dfc-dev-compui-shared-rg"
         },
@@ -46,9 +43,6 @@
         },
         "CosmosDbCollectionName": {
             "value": "a-comsmos-collection"
-        },
-        "ApimProxyAddress": {
-            "value": "-a-test-suffix"
         },
         "enableAlerts": {
             "value": false
@@ -74,14 +68,20 @@
         "PagesClientOptionsBaseAddress": {
             "value": "tbc"
         },
-        "ApimPagesKey": {
-            "value": "tbc"
-        },
         "PathsLeaseCollectionName": {
             "value": "tbc"
         },
         "RegionsLeaseCollectionName": {
             "value": "tbc"
+        },
+        "SubscriptionSettingsFilterBeginsWith": {
+            "value": "avalue"
+        },
+        "ExceptionCountThreshold":{
+            "value": "0"
+        },
+        "subscriptionUrl":{
+            "value": "url"
         }
     }
 }

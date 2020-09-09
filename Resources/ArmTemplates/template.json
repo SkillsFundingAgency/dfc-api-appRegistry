@@ -17,13 +17,7 @@
     "ApiName": {
       "type": "string"
     },
-    "ApimProxyAddress": {
-      "type": "string"
-    },
     "ApimCompositeKey": {
-      "type": "string"
-    },
-    "ApimContentKey": {
       "type": "string"
     },
     "ApiTitleSuffix": {
@@ -102,13 +96,19 @@
     "PagesClientOptionsBaseAddress": {
       "type": "string"
     },
-    "ApimPagesKey": {
-      "type": "string"
-    },
     "PathsLeaseCollectionName": {
       "type": "string"
     },
     "RegionsLeaseCollectionName": {
+      "type": "string"
+    },
+    "SubscriptionSettingsFilterBeginsWith": {
+      "type": "string"
+    },
+    "ExceptionCountThreshold": {
+      "type": "string"
+    },
+    "subscriptionUrl": {
       "type": "string"
     }
   },
@@ -334,7 +334,7 @@
               },
               {
                 "name": "SubscriptionSettings__Filter__BeginsWith",
-                "value": "/dfc-app-pages/"
+                "value": "[parameters('SubscriptionSettingsFilterBeginsWith')]"
               },
               {
                 "name": "SubscriptionSettings__Filter__IncludeEventTypes__0",
@@ -354,19 +354,11 @@
               },
               {
                 "name": "SubscriptionSettings__SubscriptionServiceEndpoint",
-                "value": "[concat(parameters('ApimProxyAddress'), '/content/Subscription/api/Execute/')]"
-              },
-              {
-                "name": "ApiKey",
-                "value": "[parameters('apimCompositeKey')]"
+                "value": "[parameters('subscriptionUrl')]"
               },
               {
                 "name": "PagesClientOptions__BaseAddress",
                 "value": "[parameters('PagesClientOptionsBaseAddress')]"
-              },
-              {
-                "name": "PagesClientOptions__ApiKey",
-                "value": "[parameters('ApimPagesKey')]"
               },
               {
                 "name": "ApiSuffix",
@@ -440,7 +432,7 @@
             "value": "GreaterThan"
           },
           "threshold": {
-            "value": "0"
+            "value": "[parameters('ExceptionCountThreshold')]"
           },
           "aggregation": {
             "value": "Count"
