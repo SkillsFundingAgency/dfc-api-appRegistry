@@ -63,7 +63,7 @@
 
                         <!-- Your custom logic here, for example forwarding to a downstream system -->
                         <!-- can be browsed at https://pipedream.com/r/en4co4ars2s5v/ -->
-                        <set-backend-service base-url="https://dfc-pp-api-appregistry-fa.ase-01.dfc.preprodazure.sfa.bis.gov.uk" />
+                        <set-backend-service base-url="__FunctionAppUrl__" />
                     </otherwise>
                 </choose>
             </otherwise>
