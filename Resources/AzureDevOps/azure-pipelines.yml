@@ -31,6 +31,15 @@ stages:
           ArmTemplateRoot: '${{ variables.ArmTemplateRoot }}'
           SolutionBaseName: '${{ variables.SolutionBaseName }}'
 
+    - job: PublishApimPolicy
+      displayName: Publish Apim Policy
+      steps:
+      - task: PublishPipelineArtifact@1
+        displayName: Publish Apim Policy
+        inputs:
+          targetPath: "$(System.DefaultWorkingDirectory)/Resources/ApimPolicy"
+          artifactName: DFC.Api.AppRegistry.Resources.ApimPolicies
+
     - job: BuildDotNetCore
       displayName: Build-DotNetCore
       steps:
