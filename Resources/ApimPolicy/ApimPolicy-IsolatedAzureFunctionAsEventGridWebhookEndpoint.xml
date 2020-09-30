@@ -1,22 +1,15 @@
-<!--
-    Forward Azure Event Grid Event
-    This policy will get the first event in a list of events and forward it to a downstream system.
-    If you want to support more, then you need to remove the choose that returns a 400 and implement this capability or simply pass the full list downstream.
-    In order to successfully subscribe to an Azure Event Grid Topic, this policy also handles the initial validation handshake to prove ownership.
-    Maintainer: @tomkerkhove
--->
 <policies>
     <inbound>
         <base />
         <set-variable name="Request" value="@(context.Request.Body.As<JArray>())" />
         <choose>
-            <when condition="@(context.Variables.GetValueOrDefault<JArray>("Request").Count != 1)">
+            <when condition="@(context.Variables.GetValueOrDefault<JArray>("Request").Count == 0)">
                 <return-response>
                     <set-status code="400" />
                     <set-header name="Content-Type" exists-action="override">
                         <value>application/json</value>
                     </set-header>
-                    <set-body>{"error":"We only support one event"}</set-body>
+                    <set-body>{"error":"No events passed"}</set-body>
                 </return-response>
             </when>
             <otherwise>
@@ -59,11 +52,8 @@
                         <set-header name="X-Event-Topic" exists-action="override">
                             <value>@(context.Variables.GetValueOrDefault<JObject>("Event")["topic"].ToString())</value>
                         </set-header>
-                        <set-body>@(context.Variables.GetValueOrDefault<JObject>("Event")["data"].ToString())</set-body>
-
-                        <!-- Your custom logic here, for example forwarding to a downstream system -->
-                        <!-- can be browsed at https://pipedream.com/r/en4co4ars2s5v/ -->
-                        <set-backend-service base-url="__FunctionAppUrl__" />
+                        <set-body>@(context.Variables.GetValueOrDefault<JArray>("Request").ToString())</set-body>
+                        <set-backend-service base-url="__applicationUrl__" />
                     </otherwise>
                 </choose>
             </otherwise>
