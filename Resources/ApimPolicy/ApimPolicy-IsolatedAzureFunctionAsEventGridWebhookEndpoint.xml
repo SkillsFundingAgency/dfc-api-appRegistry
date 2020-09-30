@@ -53,7 +53,7 @@
                             <value>@(context.Variables.GetValueOrDefault<JObject>("Event")["topic"].ToString())</value>
                         </set-header>
                         <set-body>@(context.Variables.GetValueOrDefault<JArray>("Request").ToString())</set-body>
-                        <set-backend-service base-url="__applicationUrl__" />
+                        <set-backend-service base-url="__FunctionAppUrl__" />
                     </otherwise>
                 </choose>
             </otherwise>
