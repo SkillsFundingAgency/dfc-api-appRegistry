@@ -1,5 +1,4 @@
-﻿using Castle.Core.Logging;
-using DFC.Api.AppRegistry.Contracts;
+﻿using DFC.Api.AppRegistry.Contracts;
 using DFC.Api.AppRegistry.Services;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
@@ -61,6 +60,5 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             // Assert
             Assert.Equal(HttpStatusCode.OK, result);
         }
-
     }
 }

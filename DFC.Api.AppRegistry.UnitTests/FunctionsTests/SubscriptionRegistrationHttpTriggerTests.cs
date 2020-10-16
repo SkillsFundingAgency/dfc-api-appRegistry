@@ -15,6 +15,7 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
     {
         private readonly ILogger<SubscriptionRegistrationHttpTrigger> logger;
         private readonly ISubscriptionRegistrationService subscriptionRegistrationService;
+
         public SubscriptionRegistrationHttpTriggerTests()
         {
             logger = A.Fake<ILogger<SubscriptionRegistrationHttpTrigger>>();
