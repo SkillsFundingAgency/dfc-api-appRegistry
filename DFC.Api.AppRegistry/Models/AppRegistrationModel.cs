@@ -15,7 +15,7 @@ using System.Text.RegularExpressions;
 namespace DFC.Api.AppRegistry.Models
 {
     [ExcludeFromCodeCoverage]
-    public class AppRegistrationModel : DocumentModel
+    public class AppRegistrationModel : DocumentModel, IValidatableObject
     {
         [Display(Description = "The path of the application. This should match the url value immediately after the domain. i.e. https://nationalcareeers.service.gov.uk/explore-careers.")]
         [Example(Description = "explore-careers")]
