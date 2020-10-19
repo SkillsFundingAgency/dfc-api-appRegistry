@@ -24,20 +24,6 @@ namespace DFC.Api.AppRegistry.Extensions
                 return default;
             }
 
-            if (!body.IsValid)
-            {
-                if (body.ValidationResults != null && body.ValidationResults.Any())
-                {
-                    logger.LogWarning($"Validation Failed with {body.ValidationResults.Count()} errors");
-                    foreach (var validationResult in body.ValidationResults)
-                    {
-                        logger.LogWarning($"Validation Failed: {validationResult.ErrorMessage}: {string.Join(",", validationResult.MemberNames)}");
-                    }
-                }
-
-                return default;
-            }
-
             return body.Value;
         }
 

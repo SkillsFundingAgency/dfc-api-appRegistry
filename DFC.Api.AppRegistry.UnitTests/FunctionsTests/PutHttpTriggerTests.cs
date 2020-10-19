@@ -178,14 +178,15 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
         }
 
         [Fact]
-        public async Task PutReturnsUnprocessableEntityWhenUpsertFails()
+        public async Task PutReturnsUnprocessableEntityWhenValidationFails()
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.UnprocessableEntity;
-            var validAppRegistrationModel = ValidAppRegistrationModel(PathName);
-            var request = BuildRequestWithMmodel(validAppRegistrationModel);
+            var validAppRegistrationModels = ValidAppRegistrationModels();
+            var request = BuildRequestWithMmodel(validAppRegistrationModels.First());
             var function = new PutHttpTrigger(fakeLogger, fakeDocumentService);
 
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(validAppRegistrationModels);
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).Returns(expectedResult);
 
             // Act
@@ -205,10 +206,11 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.UnprocessableEntity;
-            var validAppRegistrationModel = ValidAppRegistrationModel(PathName);
-            var request = BuildRequestWithMmodel(validAppRegistrationModel);
+            var validAppRegistrationModels = ValidAppRegistrationModels();
+            var request = BuildRequestWithMmodel(validAppRegistrationModels.First());
             var function = new PutHttpTrigger(fakeLogger, fakeDocumentService);
 
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(validAppRegistrationModels);
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).Throws<Exception>();
 
             // Act

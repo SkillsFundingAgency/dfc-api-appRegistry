@@ -33,7 +33,7 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
             // Arrange
             var expectedResult = HttpStatusCode.Created;
             var validAppRegistrationModels = ValidAppRegistrationModels();
-            var request = BuildRequestWithMmodel(validAppRegistrationModels.First());
+            var request = BuildRequestWithModel(validAppRegistrationModels.First());
             var function = new PostHttpTrigger(fakeLogger, fakeDocumentService);
 
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).Returns(expectedResult);
@@ -59,7 +59,7 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
             // Arrange
             var expectedResult = HttpStatusCode.OK;
             var validAppRegistrationModels = ValidAppRegistrationModels();
-            var request = BuildRequestWithMmodel(validAppRegistrationModels.First());
+            var request = BuildRequestWithModel(validAppRegistrationModels.First());
             var function = new PostHttpTrigger(fakeLogger, fakeDocumentService);
 
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).Returns(expectedResult);
@@ -118,32 +118,12 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
         }
 
         [Fact]
-        public async Task PostReturnsBadRequestWhenInvalidBodyObject()
-        {
-            // Arrange
-            const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;
-            var request = BuildRequestWithMmodel(InvalidAppRegistrationModel());
-            var function = new PostHttpTrigger(fakeLogger, fakeDocumentService);
-
-            // Act
-            var result = await function.Run(request).ConfigureAwait(false);
-
-            // Assert
-            A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
-            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustNotHaveHappened();
-
-            var statusResult = Assert.IsType<BadRequestResult>(result);
-
-            Assert.Equal((int)expectedResult, statusResult.StatusCode);
-        }
-
-        [Fact]
         public async Task PostReturnsUnprocessableEntityWhenUpsertFails()
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.UnprocessableEntity;
             var validAppRegistrationModel = ValidAppRegistrationModel(PathName);
-            var request = BuildRequestWithMmodel(validAppRegistrationModel);
+            var request = BuildRequestWithModel(validAppRegistrationModel);
             var function = new PostHttpTrigger(fakeLogger, fakeDocumentService);
 
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).Returns(expectedResult);
@@ -166,7 +146,7 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.UnprocessableEntity;
             var validAppRegistrationModel = ValidAppRegistrationModel(PathName);
-            var request = BuildRequestWithMmodel(validAppRegistrationModel);
+            var request = BuildRequestWithModel(validAppRegistrationModel);
             var function = new PostHttpTrigger(fakeLogger, fakeDocumentService);
 
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).Throws<Exception>();
@@ -221,7 +201,7 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
             return new AppRegistrationModel();
         }
 
-        private static HttpRequest BuildRequestWithMmodel<TModel>(TModel model)
+        private static HttpRequest BuildRequestWithModel<TModel>(TModel model)
           where TModel : class
         {
             return new DefaultHttpRequest(new DefaultHttpContext())

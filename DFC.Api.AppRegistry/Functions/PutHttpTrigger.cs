@@ -4,11 +4,13 @@ using DFC.Compui.Cosmos.Contracts;
 using DFC.Swagger.Standard.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Documents.SystemFunctions;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -69,7 +71,7 @@ namespace DFC.Api.AppRegistry.Functions
 
             logger.LogInformation($"Attempting to get app registration for: {path}");
             var existingAppRegistration = await documentService.GetAsync(p => p.Path == path).ConfigureAwait(false);
-            if (existingAppRegistration == null)
+            if (existingAppRegistration == null || !existingAppRegistration.Any())
             {
                 logger.LogWarning($"No app registration exists for path: {path}");
                 return new NoContentResult();
@@ -79,8 +81,22 @@ namespace DFC.Api.AppRegistry.Functions
             {
                 logger.LogInformation($"Attempting to update app registration for: {appRegistrationModel.Path}");
 
+                appRegistrationModel.Id = existingAppRegistration.First().Id;
+                appRegistrationModel.Etag = existingAppRegistration.First().Etag;
                 appRegistrationModel.Regions?.ForEach(f => f.LastModifiedDate = DateTime.UtcNow);
                 appRegistrationModel.LastModifiedDate = DateTime.UtcNow;
+
+                var validationResults = appRegistrationModel.Validate(new ValidationContext(appRegistrationModel));
+                if (validationResults != null && validationResults.Any())
+                {
+                    logger.LogWarning($"Validation Failed with {validationResults.Count()} errors");
+                    foreach (var validationResult in validationResults)
+                    {
+                        logger.LogWarning($"Validation Failed: {validationResult.ErrorMessage}: {string.Join(",", validationResult.MemberNames)}");
+                    }
+
+                    return new UnprocessableEntityResult();
+                }
 
                 var statusCode = await documentService.UpsertAsync(appRegistrationModel).ConfigureAwait(false);
 
