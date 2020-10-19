@@ -61,6 +61,7 @@ namespace DFC.Api.AppRegistry.Functions
             {
                 logger.LogInformation($"Attempting to create app registration for: {appRegistrationModel.Path}");
 
+                appRegistrationModel.Id = Guid.NewGuid();
                 appRegistrationModel.Regions?.ForEach(f => f.DateOfRegistration = DateTime.UtcNow);
                 appRegistrationModel.DateOfRegistration = DateTime.UtcNow;
 
