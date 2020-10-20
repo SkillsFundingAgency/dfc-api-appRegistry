@@ -70,8 +70,8 @@ namespace DFC.Api.AppRegistry.Functions
             }
 
             logger.LogInformation($"Attempting to get app registration for: {path}");
-            var existingAppRegistration = await documentService.GetAsync(p => p.Path == path).ConfigureAwait(false);
-            if (existingAppRegistration == null || !existingAppRegistration.Any())
+            var existingAppRegistrations = await documentService.GetAsync(p => p.Path == path).ConfigureAwait(false);
+            if (existingAppRegistrations == null || !existingAppRegistrations.Any())
             {
                 logger.LogWarning($"No app registration exists for path: {path}");
                 return new NoContentResult();
@@ -81,9 +81,13 @@ namespace DFC.Api.AppRegistry.Functions
             {
                 logger.LogInformation($"Attempting to update app registration for: {appRegistrationModel.Path}");
 
-                appRegistrationModel.Id = existingAppRegistration.First().Id;
-                appRegistrationModel.Etag = existingAppRegistration.First().Etag;
+                var existingAppRegistration = existingAppRegistrations.First();
+                appRegistrationModel.Id = existingAppRegistration.Id;
+                appRegistrationModel.Etag = existingAppRegistration.Etag;
+                appRegistrationModel.DateOfRegistration = existingAppRegistration.DateOfRegistration;
+                appRegistrationModel.PageLocations = existingAppRegistration.PageLocations;
                 appRegistrationModel.Regions?.ForEach(f => f.LastModifiedDate = DateTime.UtcNow);
+                appRegistrationModel.Regions?.ForEach(f => f.DateOfRegistration = existingAppRegistration.Regions.FirstOrDefault(r => r.PageRegion == f.PageRegion)?.DateOfRegistration);
                 appRegistrationModel.LastModifiedDate = DateTime.UtcNow;
 
                 var validationResults = appRegistrationModel.Validate(new ValidationContext(appRegistrationModel));
