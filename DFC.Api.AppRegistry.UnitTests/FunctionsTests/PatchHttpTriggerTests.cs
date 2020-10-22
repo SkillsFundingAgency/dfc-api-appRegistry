@@ -267,6 +267,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
                         new RegionModel
                         {
                             PageRegion = PageRegion.BodyTop,
+                            RegionEndpoint = "https://somewhere.com",
                         },
                     },
                 },
@@ -285,6 +286,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
                         new RegionModel
                         {
                             PageRegion = PageRegion.BodyTop,
+                            RegionEndpoint = "https://somewhere.com",
                         },
                     },
                 },

@@ -27,15 +27,9 @@ namespace DFC.Api.AppRegistry.Models
         [Example(Description = "explore-careers")]
         public override string? PartitionKey
         {
-            get
-            {
-                return Path;
-            }
+            get => Path;
 
-            set
-            {
-                Path = value;
-            }
+            set => Path = value;
         }
 
         [Display(Description = "Text value that appears on the Top Navigation section of the National Careers Service website. If this value is NOT present no menu option will be displayed.")]
@@ -87,6 +81,9 @@ namespace DFC.Api.AppRegistry.Models
         [Display(Description = "List of Regions registered to the application.")]
         public List<RegionModel>? Regions { get; set; }
 
+        [Display(Description = "List of Ajax Requests registered to the application.")]
+        public List<AjaxRequestModel>? AjaxRequests { get; set; }
+
         [Display(Description = "List of page location supported by the application.")]
         public Dictionary<Guid, PageLocationModel>? PageLocations { get; set; }
 
@@ -122,6 +119,22 @@ namespace DFC.Api.AppRegistry.Models
                 if (htmlDoc.ParseErrors.Any())
                 {
                     result.Add(new ValidationResult(string.Format(CultureInfo.InvariantCulture, ValidationMessages.MalformedHtml, nameof(PhaseBannerHtml))));
+                }
+            }
+
+            if (Regions != null && Regions.Any())
+            {
+                foreach (var region in Regions)
+                {
+                    result.AddRange(region.Validate(new ValidationContext(region)));
+                }
+            }
+
+            if (AjaxRequests != null && AjaxRequests.Any())
+            {
+                foreach (var ajaxRequests in AjaxRequests)
+                {
+                    result.AddRange(ajaxRequests.Validate(new ValidationContext(ajaxRequests)));
                 }
             }
 
