@@ -63,6 +63,7 @@ namespace DFC.Api.AppRegistry.Functions
 
                 appRegistrationModel.Id = Guid.NewGuid();
                 appRegistrationModel.Regions?.ForEach(f => f.DateOfRegistration = DateTime.UtcNow);
+                appRegistrationModel.AjaxRequests?.ForEach(f => f.DateOfRegistration = DateTime.UtcNow);
                 appRegistrationModel.DateOfRegistration = DateTime.UtcNow;
 
                 var validationResults = appRegistrationModel.Validate(new ValidationContext(appRegistrationModel));

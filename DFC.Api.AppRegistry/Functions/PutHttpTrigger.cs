@@ -88,6 +88,8 @@ namespace DFC.Api.AppRegistry.Functions
                 appRegistrationModel.PageLocations = existingAppRegistration.PageLocations;
                 appRegistrationModel.Regions?.ForEach(f => f.LastModifiedDate = DateTime.UtcNow);
                 appRegistrationModel.Regions?.ForEach(f => f.DateOfRegistration = existingAppRegistration.Regions.FirstOrDefault(r => r.PageRegion == f.PageRegion)?.DateOfRegistration);
+                appRegistrationModel.AjaxRequests?.ForEach(f => f.LastModifiedDate = DateTime.UtcNow);
+                appRegistrationModel.AjaxRequests?.ForEach(f => f.DateOfRegistration = existingAppRegistration.AjaxRequests.FirstOrDefault(r => r.Name == f.Name)?.DateOfRegistration);
                 appRegistrationModel.LastModifiedDate = DateTime.UtcNow;
 
                 var validationResults = appRegistrationModel.Validate(new ValidationContext(appRegistrationModel));

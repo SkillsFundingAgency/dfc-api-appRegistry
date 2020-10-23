@@ -6,5 +6,6 @@ namespace DFC.Api.AppRegistry.Common
     public static class ValidationRegularExpressions
     {
         public const string Path = @"^[a-zA-Z0-9](\w|[.,\/\-])*[a-zA-Z0-9]$";
+        public const string AjaxRequestName = @"^[a-zA-Z0-9](\w|[.,\-])*[a-zA-Z0-9]$";
     }
 }

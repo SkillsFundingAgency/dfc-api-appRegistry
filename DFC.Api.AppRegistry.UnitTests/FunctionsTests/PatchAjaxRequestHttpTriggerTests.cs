@@ -1,4 +1,3 @@
-using DFC.Api.AppRegistry.Enums;
 using DFC.Api.AppRegistry.Functions;
 using DFC.Api.AppRegistry.Models;
 using DFC.Compui.Cosmos.Contracts;
@@ -22,28 +21,31 @@ using Xunit;
 namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 {
     [Trait("Category", "Patch - Http trigger tests")]
-    public class PatchHttpTriggerTests
+    public class PatchAjaxRequestHttpTriggerTests
     {
         private const string PathName = "unit-tests";
-        private readonly ILogger<PatchHttpTrigger> fakeLogger = A.Fake<ILogger<PatchHttpTrigger>>();
+        private const string ValidNameValue = "Valid";
+        private const string InvalidNameValue = "Invalid";
+        private const string NonExistingNameValue = "NonExisting";
+        private readonly ILogger<PatchAjaxRequestHttpTrigger> fakeLogger = A.Fake<ILogger<PatchAjaxRequestHttpTrigger>>();
         private readonly IDocumentService<AppRegistrationModel> fakeDocumentService = A.Fake<IDocumentService<AppRegistrationModel>>();
 
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
-        public async Task PatchReturnsSuccessWhenValid(bool isOnline)
+        public async Task PatchReturnsSuccessWhenValid(bool isHealthy)
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.OK;
             var validAppRegistrationModels = ValidAppRegistrationModels();
-            var request = BuildRequestWithPatchObject<AppRegistrationModel, bool>(x => x.IsOnline, isOnline);
-            var function = new PatchHttpTrigger(fakeLogger, fakeDocumentService);
+            var request = BuildRequestWithPatchObject<AjaxRequestModel, bool>(x => x.IsHealthy, isHealthy);
+            var function = new PatchAjaxRequestHttpTrigger(fakeLogger, fakeDocumentService);
 
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(validAppRegistrationModels);
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).Returns(expectedResult);
 
             // Act
-            var result = await function.Run(request, PathName).ConfigureAwait(false);
+            var result = await function.Run(request, PathName, ValidNameValue).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
@@ -52,7 +54,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             var statusResult = Assert.IsType<OkObjectResult>(result);
 
             Assert.Equal((int)expectedResult, statusResult.StatusCode);
-            Assert.Equal(isOnline, validAppRegistrationModels.First().IsOnline);
+            Assert.Equal(isHealthy, validAppRegistrationModels.First().AjaxRequests.FirstOrDefault(f => f.Name == ValidNameValue).IsHealthy);
         }
 
         [Fact]
@@ -61,10 +63,10 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;
             HttpRequest? request = null;
-            var function = new PatchHttpTrigger(fakeLogger, fakeDocumentService);
+            var function = new PatchAjaxRequestHttpTrigger(fakeLogger, fakeDocumentService);
 
             // Act
-            var result = await function.Run(request, PathName).ConfigureAwait(false);
+            var result = await function.Run(request, PathName, ValidNameValue).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustNotHaveHappened();
@@ -81,10 +83,10 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;
             var request = new DefaultHttpRequest(new DefaultHttpContext());
-            var function = new PatchHttpTrigger(fakeLogger, fakeDocumentService);
+            var function = new PatchAjaxRequestHttpTrigger(fakeLogger, fakeDocumentService);
 
             // Act
-            var result = await function.Run(request, PathName).ConfigureAwait(false);
+            var result = await function.Run(request, PathName, ValidNameValue).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustNotHaveHappened();
@@ -100,11 +102,31 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;
-            var request = BuildRequestWithPatchObject<AppRegistrationModel, bool>(x => x.IsOnline, true);
-            var function = new PatchHttpTrigger(fakeLogger, fakeDocumentService);
+            var request = BuildRequestWithPatchObject<AjaxRequestModel, bool>(x => x.IsHealthy, true);
+            var function = new PatchAjaxRequestHttpTrigger(fakeLogger, fakeDocumentService);
 
             // Act
-            var result = await function.Run(request, string.Empty).ConfigureAwait(false);
+            var result = await function.Run(request, string.Empty, ValidNameValue).ConfigureAwait(false);
+
+            // Assert
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
+
+            var statusResult = Assert.IsType<BadRequestResult>(result);
+
+            Assert.Equal((int)expectedResult, statusResult.StatusCode);
+        }
+
+        [Fact]
+        public async Task PatchReturnsBadRequestWhenInvalidName()
+        {
+            // Arrange
+            const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;
+            var request = BuildRequestWithPatchObject<AjaxRequestModel, bool>(x => x.IsHealthy, true);
+            var function = new PatchAjaxRequestHttpTrigger(fakeLogger, fakeDocumentService);
+
+            // Act
+            var result = await function.Run(request, PathName, string.Empty).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustNotHaveHappened();
@@ -121,10 +143,10 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;
             var request = BuildRequestWithInvalidBody(string.Empty);
-            var function = new PatchHttpTrigger(fakeLogger, fakeDocumentService);
+            var function = new PatchAjaxRequestHttpTrigger(fakeLogger, fakeDocumentService);
 
             // Act
-            var result = await function.Run(request, PathName).ConfigureAwait(false);
+            var result = await function.Run(request, PathName, ValidNameValue).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustNotHaveHappened();
@@ -141,10 +163,10 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;
             var request = BuildRequestWithInvalidBody("some rubbish patch string");
-            var function = new PatchHttpTrigger(fakeLogger, fakeDocumentService);
+            var function = new PatchAjaxRequestHttpTrigger(fakeLogger, fakeDocumentService);
 
             // Act
-            var result = await function.Run(request, PathName).ConfigureAwait(false);
+            var result = await function.Run(request, PathName, ValidNameValue).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustNotHaveHappened();
@@ -160,14 +182,14 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.NoContent;
-            IEnumerable<AppRegistrationModel>? invalidAppRegistrationModel = null;
-            var request = BuildRequestWithPatchObject<AppRegistrationModel, bool>(x => x.IsOnline, true);
-            var function = new PatchHttpTrigger(fakeLogger, fakeDocumentService);
+            IEnumerable<AppRegistrationModel>? invalidAppRegistrationModels = null;
+            var request = BuildRequestWithPatchObject<AjaxRequestModel, bool>(x => x.IsHealthy, true);
+            var function = new PatchAjaxRequestHttpTrigger(fakeLogger, fakeDocumentService);
 
-            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(invalidAppRegistrationModel);
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(invalidAppRegistrationModels);
 
             // Act
-            var result = await function.Run(request, PathName).ConfigureAwait(false);
+            var result = await function.Run(request, PathName, ValidNameValue).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
@@ -179,18 +201,41 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         }
 
         [Fact]
-        public async Task PatchReturnsBadRequestWhenValidationErrorsExist()
+        public async Task PatchReturnsNoContentWhenAjaxRequestDoesNotExist()
+        {
+            // Arrange
+            const HttpStatusCode expectedResult = HttpStatusCode.NoContent;
+            var validAppRegistrationModels = ValidAppRegistrationModels();
+            var request = BuildRequestWithPatchObject<AjaxRequestModel, bool>(x => x.IsHealthy, true);
+            var function = new PatchAjaxRequestHttpTrigger(fakeLogger, fakeDocumentService);
+
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(validAppRegistrationModels);
+
+            // Act
+            var result = await function.Run(request, PathName, NonExistingNameValue).ConfigureAwait(false);
+
+            // Assert
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
+
+            var statusResult = Assert.IsType<NoContentResult>(result);
+
+            Assert.Equal((int)expectedResult, statusResult.StatusCode);
+        }
+
+        [Fact]
+        public async Task PatchReturnsUnprocessableEntityWhenValidationErrorsExist()
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.UnprocessableEntity;
-            var invalidAppRegistrationModels = ValidAppRegistrationModels();
-            var request = BuildRequestWithPatchObject<AppRegistrationModel, string?>(x => x.Path, string.Empty);
-            var function = new PatchHttpTrigger(fakeLogger, fakeDocumentService);
+            var validAppRegistrationModels = ValidAppRegistrationModels();
+            var request = BuildRequestWithPatchObject<AjaxRequestModel, bool>(x => x.IsHealthy, true);
+            var function = new PatchAjaxRequestHttpTrigger(fakeLogger, fakeDocumentService);
 
-            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(invalidAppRegistrationModels);
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(validAppRegistrationModels);
 
             // Act
-            var result = await function.Run(request, PathName).ConfigureAwait(false);
+            var result = await function.Run(request, PathName, InvalidNameValue).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
@@ -207,13 +252,13 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;
             var validAppRegistrationModels = ValidAppRegistrationModels();
-            var request = BuildRequestWithPatchObject<AppRegistrationModel, Guid?>(x => x.Id, null);
-            var function = new PatchHttpTrigger(fakeLogger, fakeDocumentService);
+            var request = BuildRequestWithPatchObject<AjaxRequestModel, bool?>(x => x.IsHealthy, null);
+            var function = new PatchAjaxRequestHttpTrigger(fakeLogger, fakeDocumentService);
 
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(validAppRegistrationModels);
 
             // Act
-            var result = await function.Run(request, PathName).ConfigureAwait(false);
+            var result = await function.Run(request, PathName, ValidNameValue).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
@@ -230,14 +275,14 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.UnprocessableEntity;
             var validAppRegistrationModels = ValidAppRegistrationModels();
-            var request = BuildRequestWithPatchObject<AppRegistrationModel, bool>(x => x.IsOnline, true);
-            var function = new PatchHttpTrigger(fakeLogger, fakeDocumentService);
+            var request = BuildRequestWithPatchObject<AjaxRequestModel, bool>(x => x.IsHealthy, true);
+            var function = new PatchAjaxRequestHttpTrigger(fakeLogger, fakeDocumentService);
 
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(validAppRegistrationModels);
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).ThrowsAsync(new ApplicationException());
 
             // Act
-            var result = await function.Run(request, PathName).ConfigureAwait(false);
+            var result = await function.Run(request, PathName, ValidNameValue).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
@@ -254,39 +299,35 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             {
                 new AppRegistrationModel
                 {
-                    Id = Guid.NewGuid(),
                     Path = PathName,
-                    Regions = new List<RegionModel>
+                    AjaxRequests = new List<AjaxRequestModel>
                     {
-                        new RegionModel
+                        new AjaxRequestModel
                         {
-                            PageRegion = PageRegion.Body,
-                            RegionEndpoint = "https://somewhere.com",
+                            Name = ValidNameValue,
+                            AjaxEndpoint = "https://somewhere.com",
                             HealthCheckRequired = true,
                         },
-                        new RegionModel
+                        new AjaxRequestModel
                         {
-                            PageRegion = PageRegion.BodyTop,
-                            RegionEndpoint = "https://somewhere.com",
+                            Name = InvalidNameValue,
                         },
                     },
                 },
                 new AppRegistrationModel
                 {
-                    Id = Guid.NewGuid(),
-                    Path = PathName + "-2",
-                    Regions = new List<RegionModel>
+                    Path = PathName + "-1",
+                    AjaxRequests = new List<AjaxRequestModel>
                     {
-                        new RegionModel
+                        new AjaxRequestModel
                         {
-                            PageRegion = PageRegion.Body,
-                            RegionEndpoint = "https://somewhere.com",
+                            Name = ValidNameValue,
+                            AjaxEndpoint = "https://somewhere.com",
                             HealthCheckRequired = true,
                         },
-                        new RegionModel
+                        new AjaxRequestModel
                         {
-                            PageRegion = PageRegion.BodyTop,
-                            RegionEndpoint = "https://somewhere.com",
+                            Name = InvalidNameValue,
                         },
                     },
                 },

@@ -12,7 +12,7 @@ using System.Linq;
 namespace DFC.Api.AppRegistry.Models
 {
     [ExcludeFromCodeCoverage]
-    public class RegionModel
+    public class RegionModel : IValidatableObject
     {
         [Display(Description = "The region on a page to which the application endpoint will supply data for.")]
         [Example(Description = "5")]
