@@ -1,3 +1,4 @@
+using DFC.Api.AppRegistry.Contracts;
 using DFC.Api.AppRegistry.Extensions;
 using DFC.Api.AppRegistry.Models;
 using DFC.Compui.Cosmos.Contracts;
@@ -11,25 +12,29 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography.Xml;
 using System.Threading.Tasks;
 
 namespace DFC.Api.AppRegistry.Functions
 {
-    public class PutHttpTrigger
+    public class CdnUpdatePostHttpTrigger
     {
-        private readonly ILogger<PutHttpTrigger> logger;
+        private readonly ILogger<CdnUpdatePostHttpTrigger> logger;
         private readonly IDocumentService<AppRegistrationModel> documentService;
+        private readonly IUpdateScriptHashCodes updateScriptHashCodes;
 
-        public PutHttpTrigger(
-           ILogger<PutHttpTrigger> logger,
-           IDocumentService<AppRegistrationModel> documentService)
+        public CdnUpdatePostHttpTrigger(
+           ILogger<CdnUpdatePostHttpTrigger> logger,
+           IDocumentService<AppRegistrationModel> documentService,
+           IUpdateScriptHashCodes updateScriptHashCodes)
         {
             this.logger = logger;
             this.documentService = documentService;
+            this.updateScriptHashCodes = updateScriptHashCodes;
         }
 
-        [FunctionName("Put")]
-        [Display(Name = "Put an app registration", Description = "Updates a resource of type 'AppRegistry'.")]
+        [FunctionName("Post")]
+        [Display(Name = "Post CDN update to the Shell's app registration", Description = "Updates a resource of type 'AppRegistry'.")]
         [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "App Registration updated", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.NoContent, Description = "Path does not exist", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
@@ -38,9 +43,11 @@ namespace DFC.Api.AppRegistry.Functions
         [Response(HttpStatusCode = (int)HttpStatusCode.UnprocessableEntity, Description = "AppRegistry validation error(s)", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.TooManyRequests, Description = "Too many requests being sent, by default the API supports 150 per minute.", ShowSchema = false)]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "appregistry/{path}")] HttpRequest? request, string path)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "appregistry/shell/cdn")] HttpRequest? request)
         {
-            logger.LogInformation("Validating Put AppRegistration for");
+            const string path = "shell";
+
+            logger.LogInformation("Validating Post CDN update");
 
             if (request == null)
             {
@@ -48,23 +55,11 @@ namespace DFC.Api.AppRegistry.Functions
                 return new BadRequestResult();
             }
 
-            if (string.IsNullOrWhiteSpace(path))
-            {
-                logger.LogWarning($"Missing value in request for '{nameof(path)}'");
-                return new BadRequestResult();
-            }
+            var cdnLocation = await request.GetModelFromBodyAsync<string>(logger).ConfigureAwait(false);
 
-            var appRegistrationModel = await request.GetModelFromBodyAsync<AppRegistrationModel>(logger).ConfigureAwait(false);
-
-            if (appRegistrationModel == null)
+            if (string.IsNullOrWhiteSpace(cdnLocation))
             {
                 logger.LogWarning($"Request.Body is malformed");
-                return new BadRequestResult();
-            }
-
-            if (!string.Equals(path, appRegistrationModel.Path, StringComparison.OrdinalIgnoreCase))
-            {
-                logger.LogWarning($"Path parameter ({path}) does not match request value Path ({appRegistrationModel.Path})");
                 return new BadRequestResult();
             }
 
@@ -78,17 +73,10 @@ namespace DFC.Api.AppRegistry.Functions
 
             try
             {
-                logger.LogInformation($"Attempting to update app registration for: {appRegistrationModel.Path}");
+                logger.LogInformation($"Attempting to update app registration for: {path}");
 
-                var existingAppRegistration = existingAppRegistrations.First();
-                appRegistrationModel.Id = existingAppRegistration.Id;
-                appRegistrationModel.Etag = existingAppRegistration.Etag;
-                appRegistrationModel.DateOfRegistration = existingAppRegistration.DateOfRegistration;
-                appRegistrationModel.PageLocations = existingAppRegistration.PageLocations;
-                appRegistrationModel.Regions?.ForEach(f => f.LastModifiedDate = DateTime.UtcNow);
-                appRegistrationModel.Regions?.ForEach(f => f.DateOfRegistration = existingAppRegistration.Regions.FirstOrDefault(r => r.PageRegion == f.PageRegion)?.DateOfRegistration);
-                appRegistrationModel.AjaxRequests?.ForEach(f => f.LastModifiedDate = DateTime.UtcNow);
-                appRegistrationModel.AjaxRequests?.ForEach(f => f.DateOfRegistration = existingAppRegistration.AjaxRequests.FirstOrDefault(r => r.Name == f.Name)?.DateOfRegistration);
+                var appRegistrationModel = existingAppRegistrations.First();
+                appRegistrationModel.CdnLocation = cdnLocation;
                 appRegistrationModel.LastModifiedDate = DateTime.UtcNow;
 
                 var validationResults = appRegistrationModel.Validate(new ValidationContext(appRegistrationModel));
@@ -107,16 +95,26 @@ namespace DFC.Api.AppRegistry.Functions
 
                 if (statusCode == HttpStatusCode.OK)
                 {
-                    logger.LogInformation($"Upserted app registration with Put for: {appRegistrationModel.Path}: Status code {statusCode}");
-                    return new OkResult();
+                    logger.LogInformation($"Upserted app registration with Post for: {appRegistrationModel.Path}: Status code {statusCode}");
+
+                    updateScriptHashCodes.CdnLocation = appRegistrationModel.CdnLocation;
+
+                    var statusCodeHashcodeUpdate = await updateScriptHashCodes.UpdateAllAsync().ConfigureAwait(false);
+
+                    if (statusCodeHashcodeUpdate == HttpStatusCode.OK || statusCodeHashcodeUpdate == HttpStatusCode.NoContent)
+                    {
+                        logger.LogInformation($"Updated app registration script hash codes with Post for: {appRegistrationModel.Path}: Status code {statusCodeHashcodeUpdate}");
+
+                        return new OkResult();
+                    }
                 }
 
-                logger.LogError($"Error updating app registration with Put for: {appRegistrationModel.Path}: Status code {statusCode}");
+                logger.LogError($"Error updating app registration with Post for: {appRegistrationModel.Path}: Status code {statusCode}");
                 return new UnprocessableEntityResult();
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"Error updating app registration with Put for: {appRegistrationModel.Path}");
+                logger.LogError(ex, $"Error updating app registration with Post for: {path}");
                 return new UnprocessableEntityResult();
             }
         }
