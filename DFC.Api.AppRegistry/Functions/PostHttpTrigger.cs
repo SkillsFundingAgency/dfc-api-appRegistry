@@ -61,8 +61,21 @@ namespace DFC.Api.AppRegistry.Functions
             {
                 logger.LogInformation($"Attempting to create app registration for: {appRegistrationModel.Path}");
 
+                appRegistrationModel.Id = Guid.NewGuid();
                 appRegistrationModel.Regions?.ForEach(f => f.DateOfRegistration = DateTime.UtcNow);
                 appRegistrationModel.DateOfRegistration = DateTime.UtcNow;
+
+                var validationResults = appRegistrationModel.Validate(new ValidationContext(appRegistrationModel));
+                if (validationResults != null && validationResults.Any())
+                {
+                    logger.LogWarning($"Validation Failed with {validationResults.Count()} errors");
+                    foreach (var validationResult in validationResults)
+                    {
+                        logger.LogWarning($"Validation Failed: {validationResult.ErrorMessage}: {string.Join(",", validationResult.MemberNames)}");
+                    }
+
+                    return new UnprocessableEntityResult();
+                }
 
                 var statusCode = await documentService.UpsertAsync(appRegistrationModel).ConfigureAwait(false);
 

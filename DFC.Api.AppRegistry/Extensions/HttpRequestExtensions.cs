@@ -5,7 +5,6 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace DFC.Api.AppRegistry.Extensions
@@ -21,20 +20,6 @@ namespace DFC.Api.AppRegistry.Extensions
             if (body?.Value == null)
             {
                 logger.LogWarning($"Request.Body is malformed");
-                return default;
-            }
-
-            if (!body.IsValid)
-            {
-                if (body.ValidationResults != null && body.ValidationResults.Any())
-                {
-                    logger.LogWarning($"Validation Failed with {body.ValidationResults.Count()} errors");
-                    foreach (var validationResult in body.ValidationResults)
-                    {
-                        logger.LogWarning($"Validation Failed: {validationResult.ErrorMessage}: {string.Join(",", validationResult.MemberNames)}");
-                    }
-                }
-
                 return default;
             }
 
