@@ -12,7 +12,6 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
-using System.Security.Cryptography.Xml;
 using System.Threading.Tasks;
 
 namespace DFC.Api.AppRegistry.Functions
@@ -33,7 +32,7 @@ namespace DFC.Api.AppRegistry.Functions
             this.updateScriptHashCodes = updateScriptHashCodes;
         }
 
-        [FunctionName("Post")]
+        [FunctionName("PostCdn")]
         [Display(Name = "Post CDN update to the Shell's app registration", Description = "Updates a resource of type 'AppRegistry'.")]
         [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "App Registration updated", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.NoContent, Description = "Path does not exist", ShowSchema = false)]
@@ -55,7 +54,7 @@ namespace DFC.Api.AppRegistry.Functions
                 return new BadRequestResult();
             }
 
-            var cdnLocation = await request.GetModelFromBodyAsync<string>(logger).ConfigureAwait(false);
+            var cdnLocation = await request.GetModelFromBodyAsync<string>().ConfigureAwait(false);
 
             if (string.IsNullOrWhiteSpace(cdnLocation))
             {

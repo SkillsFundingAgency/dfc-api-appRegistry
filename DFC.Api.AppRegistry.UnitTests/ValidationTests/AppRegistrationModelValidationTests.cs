@@ -169,7 +169,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ValidationTests
                 {
                     new RegionModel
                     {
-                        PageRegion= PageRegion.Body,
+                        PageRegion = PageRegion.Body,
                         RegionEndpoint = "https://somewhere.com",
                     },
                 },

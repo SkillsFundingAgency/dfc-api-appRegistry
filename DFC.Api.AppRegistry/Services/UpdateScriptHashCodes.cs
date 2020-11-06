@@ -23,7 +23,7 @@ namespace DFC.Api.AppRegistry.Services
             this.documentService = documentService;
         }
 
-        public string CdnLocation { get; set; }
+        public string? CdnLocation { get; set; }
 
         public async Task<HttpStatusCode> UpdateAllAsync()
         {
@@ -55,7 +55,7 @@ namespace DFC.Api.AppRegistry.Services
 
             foreach(var javaScriptName in appRegistration.JavaScriptNames)
             {
-                var hashcode = await GetHashcode(javaScriptName).ConfigureAwait(false);
+     //           var hashcode = await GetHashcode(javaScriptName).ConfigureAwait(false);
             }
 
             logger.LogInformation($"Updated app registration JavaScript hash codes for: {appRegistration.Path}");
