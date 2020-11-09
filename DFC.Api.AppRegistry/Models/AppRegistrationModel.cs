@@ -92,7 +92,7 @@ namespace DFC.Api.AppRegistry.Models
         public Dictionary<Guid, PageLocationModel>? PageLocations { get; set; }
 
         [Display(Description = "List of JavaScripts required by the application.")]
-        public Dictionary<string, string>? JavaScriptNames { get; set; }
+        public Dictionary<string, string?>? JavaScriptNames { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

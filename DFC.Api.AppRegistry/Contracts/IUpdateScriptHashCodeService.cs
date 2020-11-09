@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 
 namespace DFC.Api.AppRegistry.Contracts
 {
-    public interface IUpdateScriptHashCodes
+    public interface IUpdateScriptHashCodeService
     {
-        string CdnLocation { get; set; }
+        string? CdnLocation { get; set; }
 
         Task<HttpStatusCode> UpdateAllAsync();
     }

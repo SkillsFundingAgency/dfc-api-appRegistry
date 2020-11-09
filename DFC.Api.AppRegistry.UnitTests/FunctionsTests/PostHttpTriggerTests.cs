@@ -98,7 +98,7 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
         }
 
         [Fact]
-        public async Task PatchReturnsBadRequestWhenNullBody()
+        public async Task PostReturnsBadRequestWhenNullBody()
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;

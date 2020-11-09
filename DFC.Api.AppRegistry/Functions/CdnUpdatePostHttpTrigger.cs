@@ -20,12 +20,12 @@ namespace DFC.Api.AppRegistry.Functions
     {
         private readonly ILogger<CdnUpdatePostHttpTrigger> logger;
         private readonly IDocumentService<AppRegistrationModel> documentService;
-        private readonly IUpdateScriptHashCodes updateScriptHashCodes;
+        private readonly IUpdateScriptHashCodeService updateScriptHashCodes;
 
         public CdnUpdatePostHttpTrigger(
            ILogger<CdnUpdatePostHttpTrigger> logger,
            IDocumentService<AppRegistrationModel> documentService,
-           IUpdateScriptHashCodes updateScriptHashCodes)
+           IUpdateScriptHashCodeService updateScriptHashCodes)
         {
             this.logger = logger;
             this.documentService = documentService;
@@ -54,9 +54,9 @@ namespace DFC.Api.AppRegistry.Functions
                 return new BadRequestResult();
             }
 
-            var cdnLocation = await request.GetModelFromBodyAsync<string>().ConfigureAwait(false);
+            var cdnPostModel = await request.GetModelFromBodyAsync<CdnPostModel>().ConfigureAwait(false);
 
-            if (string.IsNullOrWhiteSpace(cdnLocation))
+            if (string.IsNullOrWhiteSpace(cdnPostModel?.Cdn))
             {
                 logger.LogWarning($"Request.Body is malformed");
                 return new BadRequestResult();
@@ -75,27 +75,15 @@ namespace DFC.Api.AppRegistry.Functions
                 logger.LogInformation($"Attempting to update app registration for: {path}");
 
                 var appRegistrationModel = existingAppRegistrations.First();
-                appRegistrationModel.CdnLocation = cdnLocation;
+                appRegistrationModel.CdnLocation = cdnPostModel.Cdn;
                 appRegistrationModel.LastModifiedDate = DateTime.UtcNow;
-
-                var validationResults = appRegistrationModel.Validate(new ValidationContext(appRegistrationModel));
-                if (validationResults != null && validationResults.Any())
-                {
-                    logger.LogWarning($"Validation Failed with {validationResults.Count()} errors");
-                    foreach (var validationResult in validationResults)
-                    {
-                        logger.LogWarning($"Validation Failed: {validationResult.ErrorMessage}: {string.Join(",", validationResult.MemberNames)}");
-                    }
-
-                    return new UnprocessableEntityResult();
-                }
 
                 var statusCode = await documentService.UpsertAsync(appRegistrationModel).ConfigureAwait(false);
 
                 if (statusCode == HttpStatusCode.OK)
                 {
                     logger.LogInformation($"Upserted app registration with Post for: {appRegistrationModel.Path}: Status code {statusCode}");
-
+ 
                     updateScriptHashCodes.CdnLocation = appRegistrationModel.CdnLocation;
 
                     var statusCodeHashcodeUpdate = await updateScriptHashCodes.UpdateAllAsync().ConfigureAwait(false);
