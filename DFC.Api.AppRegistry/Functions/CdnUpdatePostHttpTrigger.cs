@@ -83,7 +83,7 @@ namespace DFC.Api.AppRegistry.Functions
                 if (statusCode == HttpStatusCode.OK)
                 {
                     logger.LogInformation($"Upserted app registration with Post for: {appRegistrationModel.Path}: Status code {statusCode}");
- 
+
                     updateScriptHashCodes.CdnLocation = appRegistrationModel.CdnLocation;
 
                     var statusCodeHashcodeUpdate = await updateScriptHashCodes.UpdateAllAsync().ConfigureAwait(false);

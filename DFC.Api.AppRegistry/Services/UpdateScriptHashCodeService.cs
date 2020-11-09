@@ -96,7 +96,7 @@ namespace DFC.Api.AppRegistry.Services
 
                 var hashcode = await GetFileHashAsync(new Uri(fullUrlPath, UriKind.Absolute)).ConfigureAwait(false);
 
-                if (!string.IsNullOrEmpty(hashcode) && (appRegistrationModel.JavaScriptNames[key] == null || !appRegistrationModel.JavaScriptNames[key]!.Equals(hashcode, StringComparison.OrdinalIgnoreCase)))
+                if (!string.IsNullOrEmpty(hashcode) && (appRegistrationModel.JavaScriptNames[key] == null || !appRegistrationModel.JavaScriptNames[key].Equals(hashcode, StringComparison.OrdinalIgnoreCase)))
                 {
                     appRegistrationModel.JavaScriptNames[key] = hashcode;
                     updatedHashcodeCount++;
