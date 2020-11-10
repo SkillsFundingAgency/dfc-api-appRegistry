@@ -1,4 +1,5 @@
-﻿using DFC.Api.AppRegistry.Enums;
+﻿using DFC.Api.AppRegistry.Contracts;
+using DFC.Api.AppRegistry.Enums;
 using DFC.Api.AppRegistry.Functions;
 using DFC.Api.AppRegistry.Models;
 using DFC.Compui.Cosmos.Contracts;
@@ -26,6 +27,7 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
         private const string PathName = "unit-tests";
         private readonly ILogger<PutHttpTrigger> fakeLogger = A.Fake<ILogger<PutHttpTrigger>>();
         private readonly IDocumentService<AppRegistrationModel> fakeDocumentService = A.Fake<IDocumentService<AppRegistrationModel>>();
+        private readonly IUpdateScriptHashCodeService fakeUpdateScriptHashCodeService = A.Fake<IUpdateScriptHashCodeService>();
 
         [Fact]
         public async Task PutReturnsSuccessWhenValidAndUpdated()
@@ -33,8 +35,8 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
             // Arrange
             var expectedResult = HttpStatusCode.OK;
             var validAppRegistrationModels = ValidAppRegistrationModels();
-            var request = BuildRequestWithMmodel(validAppRegistrationModels.First());
-            var function = new PutHttpTrigger(fakeLogger, fakeDocumentService);
+            var request = BuildRequestWithModel(validAppRegistrationModels.First());
+            var function = new PutHttpTrigger(fakeLogger, fakeDocumentService, fakeUpdateScriptHashCodeService);
 
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(validAppRegistrationModels);
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).Returns(expectedResult);
@@ -43,7 +45,7 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
             var result = await function.Run(request, PathName).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedTwiceExactly();
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustHaveHappenedOnceExactly();
 
             var statusResult = Assert.IsType<OkResult>(result);
@@ -57,7 +59,7 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;
             HttpRequest? request = null;
-            var function = new PutHttpTrigger(fakeLogger, fakeDocumentService);
+            var function = new PutHttpTrigger(fakeLogger, fakeDocumentService, fakeUpdateScriptHashCodeService);
 
             // Act
             var result = await function.Run(request, PathName).ConfigureAwait(false);
@@ -77,8 +79,8 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;
             var validAppRegistrationModel = ValidAppRegistrationModel(PathName);
-            var request = BuildRequestWithMmodel(validAppRegistrationModel);
-            var function = new PutHttpTrigger(fakeLogger, fakeDocumentService);
+            var request = BuildRequestWithModel(validAppRegistrationModel);
+            var function = new PutHttpTrigger(fakeLogger, fakeDocumentService, fakeUpdateScriptHashCodeService);
 
             // Act
             var result = await function.Run(request, string.Empty).ConfigureAwait(false);
@@ -98,7 +100,7 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;
             var request = new DefaultHttpRequest(new DefaultHttpContext());
-            var function = new PutHttpTrigger(fakeLogger, fakeDocumentService);
+            var function = new PutHttpTrigger(fakeLogger, fakeDocumentService, fakeUpdateScriptHashCodeService);
 
             // Act
             var result = await function.Run(request, PathName).ConfigureAwait(false);
@@ -117,8 +119,8 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
         {
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;
-            var request = BuildRequestWithMmodel(InvalidAppRegistrationModel());
-            var function = new PutHttpTrigger(fakeLogger, fakeDocumentService);
+            var request = BuildRequestWithModel(InvalidAppRegistrationModel());
+            var function = new PutHttpTrigger(fakeLogger, fakeDocumentService, fakeUpdateScriptHashCodeService);
 
             // Act
             var result = await function.Run(request, PathName).ConfigureAwait(false);
@@ -138,8 +140,8 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.BadRequest;
             var validAppRegistrationModel = ValidAppRegistrationModel(PathName);
-            var request = BuildRequestWithMmodel(validAppRegistrationModel);
-            var function = new PutHttpTrigger(fakeLogger, fakeDocumentService);
+            var request = BuildRequestWithModel(validAppRegistrationModel);
+            var function = new PutHttpTrigger(fakeLogger, fakeDocumentService, fakeUpdateScriptHashCodeService);
 
             // Act
             var result = await function.Run(request, PathName + "-bad-path").ConfigureAwait(false);
@@ -160,8 +162,8 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
             const HttpStatusCode expectedResult = HttpStatusCode.NoContent;
             var validAppRegistrationModel = ValidAppRegistrationModel(PathName);
             IEnumerable<AppRegistrationModel>? nullAppRegistrationModel = null;
-            var request = BuildRequestWithMmodel(validAppRegistrationModel);
-            var function = new PutHttpTrigger(fakeLogger, fakeDocumentService);
+            var request = BuildRequestWithModel(validAppRegistrationModel);
+            var function = new PutHttpTrigger(fakeLogger, fakeDocumentService, fakeUpdateScriptHashCodeService);
 
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(nullAppRegistrationModel);
 
@@ -183,8 +185,8 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.UnprocessableEntity;
             var validAppRegistrationModels = ValidAppRegistrationModels();
-            var request = BuildRequestWithMmodel(validAppRegistrationModels.First());
-            var function = new PutHttpTrigger(fakeLogger, fakeDocumentService);
+            var request = BuildRequestWithModel(validAppRegistrationModels.First());
+            var function = new PutHttpTrigger(fakeLogger, fakeDocumentService, fakeUpdateScriptHashCodeService);
 
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(validAppRegistrationModels);
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).Returns(expectedResult);
@@ -193,7 +195,7 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
             var result = await function.Run(request, PathName).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedTwiceExactly();
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustHaveHappenedOnceExactly();
 
             var statusResult = Assert.IsType<UnprocessableEntityResult>(result);
@@ -207,8 +209,8 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
             // Arrange
             const HttpStatusCode expectedResult = HttpStatusCode.UnprocessableEntity;
             var validAppRegistrationModels = ValidAppRegistrationModels();
-            var request = BuildRequestWithMmodel(validAppRegistrationModels.First());
-            var function = new PutHttpTrigger(fakeLogger, fakeDocumentService);
+            var request = BuildRequestWithModel(validAppRegistrationModels.First());
+            var function = new PutHttpTrigger(fakeLogger, fakeDocumentService, fakeUpdateScriptHashCodeService);
 
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(validAppRegistrationModels);
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).Throws<Exception>();
@@ -217,7 +219,7 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
             var result = await function.Run(request, PathName).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedTwiceExactly();
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustHaveHappenedOnceExactly();
 
             var statusResult = Assert.IsType<UnprocessableEntityResult>(result);
@@ -255,6 +257,10 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
                         HealthCheckRequired = true,
                     },
                 },
+                JavaScriptNames = new Dictionary<string, string?>
+                {
+                    { "/a-name", null },
+                },
             };
         }
 
@@ -263,7 +269,7 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
             return new AppRegistrationModel();
         }
 
-        private static HttpRequest BuildRequestWithMmodel<TModel>(TModel model)
+        private static HttpRequest BuildRequestWithModel<TModel>(TModel model)
           where TModel : class
         {
             return new DefaultHttpRequest(new DefaultHttpContext())

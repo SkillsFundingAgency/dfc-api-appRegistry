@@ -1,4 +1,5 @@
-﻿using DFC.Api.AppRegistry.Contracts;
+﻿using DFC.Api.AppRegistry.Common;
+using DFC.Api.AppRegistry.Contracts;
 using DFC.Api.AppRegistry.Functions;
 using DFC.Api.AppRegistry.Models;
 using DFC.Compui.Cosmos.Contracts;
@@ -37,7 +38,7 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
 
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(existingAppRegistrations);
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).Returns(HttpStatusCode.OK);
-            A.CallTo(() => fakeUpdateScriptHashCodes.UpdateAllAsync()).Returns(HttpStatusCode.OK);
+            A.CallTo(() => fakeUpdateScriptHashCodes.UpdateAllAsync(A<string>.Ignored)).Returns(HttpStatusCode.OK);
 
             // Act
             var result = await function.Run(request).ConfigureAwait(false);
@@ -45,7 +46,7 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
             // Assert
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => fakeUpdateScriptHashCodes.UpdateAllAsync()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeUpdateScriptHashCodes.UpdateAllAsync(A<string>.Ignored)).MustHaveHappenedOnceExactly();
 
             var statusResult = Assert.IsType<OkResult>(result);
 
@@ -65,7 +66,7 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
             // Assert
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
-            A.CallTo(() => fakeUpdateScriptHashCodes.UpdateAllAsync()).MustNotHaveHappened();
+            A.CallTo(() => fakeUpdateScriptHashCodes.UpdateAllAsync(A<string>.Ignored)).MustNotHaveHappened();
 
             var statusResult = Assert.IsType<BadRequestResult>(result);
 
@@ -86,7 +87,7 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
             // Assert
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
-            A.CallTo(() => fakeUpdateScriptHashCodes.UpdateAllAsync()).MustNotHaveHappened();
+            A.CallTo(() => fakeUpdateScriptHashCodes.UpdateAllAsync(A<string>.Ignored)).MustNotHaveHappened();
 
             var statusResult = Assert.IsType<BadRequestResult>(result);
 
@@ -107,7 +108,7 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
             // Assert
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
-            A.CallTo(() => fakeUpdateScriptHashCodes.UpdateAllAsync()).MustNotHaveHappened();
+            A.CallTo(() => fakeUpdateScriptHashCodes.UpdateAllAsync(A<string>.Ignored)).MustNotHaveHappened();
 
             var statusResult = Assert.IsType<BadRequestResult>(result);
 
@@ -131,7 +132,7 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
             // Assert
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
-            A.CallTo(() => fakeUpdateScriptHashCodes.UpdateAllAsync()).MustNotHaveHappened();
+            A.CallTo(() => fakeUpdateScriptHashCodes.UpdateAllAsync(A<string>.Ignored)).MustNotHaveHappened();
 
             var statusResult = Assert.IsType<NoContentResult>(result);
 
@@ -156,7 +157,7 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
             // Assert
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => fakeUpdateScriptHashCodes.UpdateAllAsync()).MustNotHaveHappened();
+            A.CallTo(() => fakeUpdateScriptHashCodes.UpdateAllAsync(A<string>.Ignored)).MustNotHaveHappened();
 
             var statusResult = Assert.IsType<UnprocessableEntityResult>(result);
 
@@ -181,7 +182,7 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
             // Assert
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => fakeUpdateScriptHashCodes.UpdateAllAsync()).MustNotHaveHappened();
+            A.CallTo(() => fakeUpdateScriptHashCodes.UpdateAllAsync(A<string>.Ignored)).MustNotHaveHappened();
 
             var statusResult = Assert.IsType<UnprocessableEntityResult>(result);
 
@@ -199,7 +200,7 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
 
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(existingAppRegistrations);
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).Returns(HttpStatusCode.OK);
-            A.CallTo(() => fakeUpdateScriptHashCodes.UpdateAllAsync()).Returns(HttpStatusCode.BadRequest);
+            A.CallTo(() => fakeUpdateScriptHashCodes.UpdateAllAsync(A<string>.Ignored)).Returns(HttpStatusCode.BadRequest);
 
             // Act
             var result = await function.Run(request).ConfigureAwait(false);
@@ -207,7 +208,7 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
             // Assert
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => fakeUpdateScriptHashCodes.UpdateAllAsync()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeUpdateScriptHashCodes.UpdateAllAsync(A<string>.Ignored)).MustHaveHappenedOnceExactly();
 
             var statusResult = Assert.IsType<UnprocessableEntityResult>(result);
 
@@ -220,7 +221,7 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
             {
                 new AppRegistrationModel
                 {
-                    Path = "shell",
+                    Path = Constants.PathNameForShell,
                 },
             };
         }

@@ -17,6 +17,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
     [Trait("Category", "Update Script Hashcodes Service Unit Tests")]
     public class UpdateScriptHashCodeServiceTests
     {
+        private const string DefaultCdnLocation = "https://somewhere.com";
         private readonly ILogger<UpdateScriptHashCodeService> fakeLogger = A.Fake<ILogger<UpdateScriptHashCodeService>>();
         private readonly IDocumentService<AppRegistrationModel> fakeDocumentService = A.Fake<IDocumentService<AppRegistrationModel>>();
 
@@ -38,11 +39,26 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             var service = BuildServiceToTest();
 
             // act
-            var result = await service.UpdateAllAsync().ConfigureAwait(false);
+            var result = await service.UpdateAllAsync(DefaultCdnLocation).ConfigureAwait(false);
 
             // assert
             A.CallTo(() => fakeDocumentService.GetAllAsync(A<string>.Ignored)).MustHaveHappenedOnceExactly();
             Assert.Equal(expectedStatusCode, result);
+        }
+
+        [Fact]
+        public async Task UpdateAllAsyncReturnsExceptionWhenNoCdnLocation()
+        {
+            // arrange
+            var service = BuildServiceToTest();
+
+            // act
+            var exceptionResult = await Assert.ThrowsAsync<ArgumentNullException>(async () => await service.UpdateAllAsync(string.Empty).ConfigureAwait(false)).ConfigureAwait(false);
+
+            // assert
+            A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
+
+            Assert.Equal("Value cannot be null. (Parameter 'cdnLocation')", exceptionResult.Message);
         }
 
         [Fact]
@@ -57,7 +73,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             var service = BuildServiceToTest();
 
             // act
-            var result = await service.UpdateAllAsync().ConfigureAwait(false);
+            var result = await service.UpdateAllAsync(DefaultCdnLocation).ConfigureAwait(false);
 
             // assert
             A.CallTo(() => fakeDocumentService.GetAllAsync(A<string>.Ignored)).MustHaveHappenedOnceExactly();
@@ -82,7 +98,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             var service = BuildServiceToTest();
 
             // act
-            await service.UpdateHashCodesAsync(appRegistrationModel).ConfigureAwait(false);
+            await service.UpdateHashCodesAsync(appRegistrationModel, DefaultCdnLocation).ConfigureAwait(false);
 
             // assert
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustHaveHappenedOnceExactly();
@@ -97,12 +113,36 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             var service = BuildServiceToTest();
 
             // act
-            var exceptionResult = await Assert.ThrowsAsync<ArgumentNullException>(async () => await service.UpdateHashCodesAsync(nullAppRegistrationModel).ConfigureAwait(false)).ConfigureAwait(false);
+            var exceptionResult = await Assert.ThrowsAsync<ArgumentNullException>(async () => await service.UpdateHashCodesAsync(nullAppRegistrationModel, DefaultCdnLocation).ConfigureAwait(false)).ConfigureAwait(false);
 
             // assert
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
 
             Assert.Equal("Value cannot be null. (Parameter 'appRegistrationModel')", exceptionResult.Message);
+        }
+
+        [Fact]
+        public async Task UpdateHashCodesAsyncReturnsExceptionWhenNoCdnLocation()
+        {
+            // arrange
+            var appRegistrationModel = new AppRegistrationModel
+            {
+                Path = "a-path",
+                JavaScriptNames = new Dictionary<string, string?>
+                    {
+                        { "/a-file-location", null },
+                    },
+            };
+
+            var service = BuildServiceToTest();
+
+            // act
+            var exceptionResult = await Assert.ThrowsAsync<ArgumentNullException>(async () => await service.UpdateHashCodesAsync(appRegistrationModel, string.Empty).ConfigureAwait(false)).ConfigureAwait(false);
+
+            // assert
+            A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
+
+            Assert.Equal("Value cannot be null. (Parameter 'cdnLocation')", exceptionResult.Message);
         }
 
         [Fact]
@@ -123,7 +163,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             var service = BuildServiceToTest();
 
             // act
-            await service.UpdateHashCodesAsync(appRegistrationModel).ConfigureAwait(false);
+            await service.UpdateHashCodesAsync(appRegistrationModel, DefaultCdnLocation).ConfigureAwait(false);
 
             // assert
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustHaveHappenedOnceExactly();
@@ -144,7 +184,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             var service = BuildServiceToTest();
 
             // act
-            await service.UpdateHashCodesAsync(appRegistrationModel).ConfigureAwait(false);
+            await service.UpdateHashCodesAsync(appRegistrationModel, DefaultCdnLocation).ConfigureAwait(false);
 
             // assert
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
@@ -169,7 +209,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             var service = BuildServiceToTest();
 
             // act
-            var result = await service.RefreshHashcodesAsync(appRegistrationModel).ConfigureAwait(false);
+            var result = await service.RefreshHashcodesAsync(appRegistrationModel, DefaultCdnLocation).ConfigureAwait(false);
 
             // assert
             Assert.Equal(expectedCount, result);
@@ -191,7 +231,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             var service = BuildServiceToTest();
 
             // act
-            var result = await service.RefreshHashcodesAsync(appRegistrationModel).ConfigureAwait(false);
+            var result = await service.RefreshHashcodesAsync(appRegistrationModel, DefaultCdnLocation).ConfigureAwait(false);
 
             // assert
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
@@ -200,7 +240,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         }
 
         [Fact]
-        public async Task RefreshHashcodesAsyncReturnsNoContentWhenNoAppRegistrations()
+        public async Task RefreshHashcodesAsyncReturnsExceptionWhenNoAppRegistrations()
         {
             // arrange
             AppRegistrationModel? nullAppRegistrationModel = null;
@@ -208,12 +248,33 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             var service = BuildServiceToTest();
 
             // act
-            var exceptionResult = await Assert.ThrowsAsync<ArgumentNullException>(async () => await service.RefreshHashcodesAsync(nullAppRegistrationModel).ConfigureAwait(false)).ConfigureAwait(false);
+            var exceptionResult = await Assert.ThrowsAsync<ArgumentNullException>(async () => await service.RefreshHashcodesAsync(nullAppRegistrationModel, DefaultCdnLocation).ConfigureAwait(false)).ConfigureAwait(false);
 
             // assert
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
 
             Assert.Equal("Value cannot be null. (Parameter 'appRegistrationModel')", exceptionResult.Message);
+        }
+
+        [Fact]
+        public async Task RefreshHashcodesAsyncReturnsExceptionWhenNoCdnLocation()
+        {
+            // arrange
+            var appRegistrationModel = new AppRegistrationModel
+            {
+                Path = "a-path",
+                JavaScriptNames = new Dictionary<string, string?> { },
+            };
+
+            var service = BuildServiceToTest();
+
+            // act
+            var exceptionResult = await Assert.ThrowsAsync<ArgumentNullException>(async () => await service.RefreshHashcodesAsync(appRegistrationModel, string.Empty).ConfigureAwait(false)).ConfigureAwait(false);
+
+            // assert
+            A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
+
+            Assert.Equal("Value cannot be null. (Parameter 'cdnLocation')", exceptionResult.Message);
         }
 
         [Fact]
@@ -236,10 +297,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             var httpClient = new HttpClient(fakeHttpMessageHandler);
             var updateScriptHashCodeClientOptions = new UpdateScriptHashCodeClientOptions();
 
-            return new UpdateScriptHashCodeService(fakeLogger, httpClient, updateScriptHashCodeClientOptions, fakeDocumentService)
-            {
-                CdnLocation = "https://somewhere.com",
-            };
+            return new UpdateScriptHashCodeService(fakeLogger, httpClient, updateScriptHashCodeClientOptions, fakeDocumentService);
         }
     }
 }
