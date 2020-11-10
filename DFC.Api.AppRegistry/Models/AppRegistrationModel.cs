@@ -40,6 +40,10 @@ namespace DFC.Api.AppRegistry.Models
         [Example(Description = "200")]
         public int TopNavigationOrder { get; set; }
 
+        [Display(Description = "Location of CDN containing assets")]
+        [Example(Description = "https://dev-cdn.nationalcareersservice.org.uk")]
+        public string? CdnLocation { get; set; }
+
         [Display(Description = "Which page layout the application should us.")]
         [Example(Description = "FullWidth")]
         [Required]
@@ -86,6 +90,9 @@ namespace DFC.Api.AppRegistry.Models
 
         [Display(Description = "List of page location supported by the application.")]
         public Dictionary<Guid, PageLocationModel>? PageLocations { get; set; }
+
+        [Display(Description = "List of JavaScripts required by the application.")]
+        public Dictionary<string, string?>? JavaScriptNames { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

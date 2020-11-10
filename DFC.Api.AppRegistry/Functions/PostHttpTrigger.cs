@@ -49,7 +49,7 @@ namespace DFC.Api.AppRegistry.Functions
                 return new BadRequestResult();
             }
 
-            var appRegistrationModel = await request.GetModelFromBodyAsync<AppRegistrationModel>(logger).ConfigureAwait(false);
+            var appRegistrationModel = await request.GetModelFromBodyAsync<AppRegistrationModel>().ConfigureAwait(false);
 
             if (appRegistrationModel == null)
             {
@@ -66,15 +66,8 @@ namespace DFC.Api.AppRegistry.Functions
                 appRegistrationModel.AjaxRequests?.ForEach(f => f.DateOfRegistration = DateTime.UtcNow);
                 appRegistrationModel.DateOfRegistration = DateTime.UtcNow;
 
-                var validationResults = appRegistrationModel.Validate(new ValidationContext(appRegistrationModel));
-                if (validationResults != null && validationResults.Any())
+                if (!appRegistrationModel.Validate(logger))
                 {
-                    logger.LogWarning($"Validation Failed with {validationResults.Count()} errors");
-                    foreach (var validationResult in validationResults)
-                    {
-                        logger.LogWarning($"Validation Failed: {validationResult.ErrorMessage}: {string.Join(",", validationResult.MemberNames)}");
-                    }
-
                     return new UnprocessableEntityResult();
                 }
 

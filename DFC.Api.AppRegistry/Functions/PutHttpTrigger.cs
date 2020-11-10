@@ -4,7 +4,6 @@ using DFC.Compui.Cosmos.Contracts;
 using DFC.Swagger.Standard.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.Documents.SystemFunctions;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
@@ -55,7 +54,7 @@ namespace DFC.Api.AppRegistry.Functions
                 return new BadRequestResult();
             }
 
-            var appRegistrationModel = await request.GetModelFromBodyAsync<AppRegistrationModel>(logger).ConfigureAwait(false);
+            var appRegistrationModel = await request.GetModelFromBodyAsync<AppRegistrationModel>().ConfigureAwait(false);
 
             if (appRegistrationModel == null)
             {
@@ -84,6 +83,7 @@ namespace DFC.Api.AppRegistry.Functions
                 var existingAppRegistration = existingAppRegistrations.First();
                 appRegistrationModel.Id = existingAppRegistration.Id;
                 appRegistrationModel.Etag = existingAppRegistration.Etag;
+                appRegistrationModel.CdnLocation = existingAppRegistration.CdnLocation;
                 appRegistrationModel.DateOfRegistration = existingAppRegistration.DateOfRegistration;
                 appRegistrationModel.PageLocations = existingAppRegistration.PageLocations;
                 appRegistrationModel.Regions?.ForEach(f => f.LastModifiedDate = DateTime.UtcNow);
@@ -92,15 +92,8 @@ namespace DFC.Api.AppRegistry.Functions
                 appRegistrationModel.AjaxRequests?.ForEach(f => f.DateOfRegistration = existingAppRegistration.AjaxRequests.FirstOrDefault(r => r.Name == f.Name)?.DateOfRegistration);
                 appRegistrationModel.LastModifiedDate = DateTime.UtcNow;
 
-                var validationResults = appRegistrationModel.Validate(new ValidationContext(appRegistrationModel));
-                if (validationResults != null && validationResults.Any())
+                if (!appRegistrationModel.Validate(logger))
                 {
-                    logger.LogWarning($"Validation Failed with {validationResults.Count()} errors");
-                    foreach (var validationResult in validationResults)
-                    {
-                        logger.LogWarning($"Validation Failed: {validationResult.ErrorMessage}: {string.Join(",", validationResult.MemberNames)}");
-                    }
-
                     return new UnprocessableEntityResult();
                 }
 
