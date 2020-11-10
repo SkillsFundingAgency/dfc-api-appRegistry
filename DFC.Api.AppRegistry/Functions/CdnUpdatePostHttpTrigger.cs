@@ -1,3 +1,4 @@
+using DFC.Api.AppRegistry.Common;
 using DFC.Api.AppRegistry.Contracts;
 using DFC.Api.AppRegistry.Extensions;
 using DFC.Api.AppRegistry.Models;
@@ -44,7 +45,7 @@ namespace DFC.Api.AppRegistry.Functions
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "appregistry/shell/cdn")] HttpRequest? request)
         {
-            const string path = "shell";
+            const string path = Constants.PathNameForShell;
 
             logger.LogInformation("Validating Post CDN update");
 
@@ -84,9 +85,7 @@ namespace DFC.Api.AppRegistry.Functions
                 {
                     logger.LogInformation($"Upserted app registration with Post for: {appRegistrationModel.Path}: Status code {statusCode}");
 
-                    updateScriptHashCodes.CdnLocation = appRegistrationModel.CdnLocation;
-
-                    var statusCodeHashcodeUpdate = await updateScriptHashCodes.UpdateAllAsync().ConfigureAwait(false);
+                    var statusCodeHashcodeUpdate = await updateScriptHashCodes.UpdateAllAsync(appRegistrationModel.CdnLocation).ConfigureAwait(false);
 
                     if (statusCodeHashcodeUpdate == HttpStatusCode.OK || statusCodeHashcodeUpdate == HttpStatusCode.NoContent)
                     {

@@ -32,11 +32,14 @@ namespace DFC.Api.AppRegistry.Services
             this.documentService = documentService;
         }
 
-        public string? CdnLocation { get; set; }
-
-        public async Task<HttpStatusCode> UpdateAllAsync()
+        public async Task<HttpStatusCode> UpdateAllAsync(string? cdnLocation)
         {
-            logger.LogInformation($"Retrieving all app registrations to update their JavaScript hash codes ftom CDN: {CdnLocation}");
+            if (string.IsNullOrWhiteSpace(cdnLocation))
+            {
+                throw new ArgumentNullException(nameof(cdnLocation));
+            }
+
+            logger.LogInformation($"Retrieving all app registrations to update their JavaScript hash codes from CDN: {cdnLocation}");
 
             var appRegistrations = await documentService.GetAllAsync().ConfigureAwait(false);
 
@@ -47,7 +50,7 @@ namespace DFC.Api.AppRegistry.Services
 
             foreach (var appRegistration in appRegistrations.Where(w => w.JavaScriptNames != null && w.JavaScriptNames.Any()))
             {
-                await UpdateHashCodesAsync(appRegistration).ConfigureAwait(false);
+                await UpdateHashCodesAsync(appRegistration, cdnLocation).ConfigureAwait(false);
             }
 
             logger.LogInformation("Updated all app registrations with their JavaScript hash codes");
@@ -55,13 +58,18 @@ namespace DFC.Api.AppRegistry.Services
             return HttpStatusCode.OK;
         }
 
-        public async Task UpdateHashCodesAsync(AppRegistrationModel? appRegistrationModel)
+        public async Task UpdateHashCodesAsync(AppRegistrationModel? appRegistrationModel, string? cdnLocation)
         {
             _ = appRegistrationModel ?? throw new ArgumentNullException(nameof(appRegistrationModel));
 
+            if (string.IsNullOrWhiteSpace(cdnLocation))
+            {
+                throw new ArgumentNullException(nameof(cdnLocation));
+            }
+
             logger.LogInformation($"Attempting to update JavaScript hash codes in app registration for: {appRegistrationModel.Path}");
 
-            var updatedHashcodeCount = await RefreshHashcodesAsync(appRegistrationModel).ConfigureAwait(false);
+            var updatedHashcodeCount = await RefreshHashcodesAsync(appRegistrationModel, cdnLocation).ConfigureAwait(false);
 
             if (updatedHashcodeCount > 0)
             {
@@ -84,15 +92,20 @@ namespace DFC.Api.AppRegistry.Services
             }
         }
 
-        public async Task<int> RefreshHashcodesAsync(AppRegistrationModel? appRegistrationModel)
+        public async Task<int> RefreshHashcodesAsync(AppRegistrationModel? appRegistrationModel, string? cdnLocation)
         {
             _ = appRegistrationModel ?? throw new ArgumentNullException(nameof(appRegistrationModel));
+
+            if (string.IsNullOrWhiteSpace(cdnLocation))
+            {
+                throw new ArgumentNullException(nameof(cdnLocation));
+            }
 
             int updatedHashcodeCount = 0;
 
             foreach (var key in appRegistrationModel.JavaScriptNames!.Keys.ToList())
             {
-                var fullUrlPath = key.StartsWith("/", StringComparison.Ordinal) ? CdnLocation + key : key;
+                var fullUrlPath = key.StartsWith("/", StringComparison.Ordinal) ? cdnLocation + key : key;
 
                 var hashcode = await GetFileHashAsync(new Uri(fullUrlPath, UriKind.Absolute)).ConfigureAwait(false);
 

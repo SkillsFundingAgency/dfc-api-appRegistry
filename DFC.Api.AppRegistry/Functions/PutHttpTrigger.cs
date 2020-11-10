@@ -1,3 +1,5 @@
+using DFC.Api.AppRegistry.Common;
+using DFC.Api.AppRegistry.Contracts;
 using DFC.Api.AppRegistry.Extensions;
 using DFC.Api.AppRegistry.Models;
 using DFC.Compui.Cosmos.Contracts;
@@ -19,13 +21,16 @@ namespace DFC.Api.AppRegistry.Functions
     {
         private readonly ILogger<PutHttpTrigger> logger;
         private readonly IDocumentService<AppRegistrationModel> documentService;
+        private readonly IUpdateScriptHashCodeService updateScriptHashCodeService;
 
         public PutHttpTrigger(
            ILogger<PutHttpTrigger> logger,
-           IDocumentService<AppRegistrationModel> documentService)
+           IDocumentService<AppRegistrationModel> documentService,
+           IUpdateScriptHashCodeService updateScriptHashCodeService)
         {
             this.logger = logger;
             this.documentService = documentService;
+            this.updateScriptHashCodeService = updateScriptHashCodeService;
         }
 
         [FunctionName("Put")]
@@ -95,6 +100,12 @@ namespace DFC.Api.AppRegistry.Functions
                 if (!appRegistrationModel.Validate(logger))
                 {
                     return new UnprocessableEntityResult();
+                }
+
+                var shellAppRegistrations = await documentService.GetAsync(p => p.Path == Constants.PathNameForShell).ConfigureAwait(false);
+                if (shellAppRegistrations != null && shellAppRegistrations.Any() && !string.IsNullOrWhiteSpace(shellAppRegistrations.FirstOrDefault()?.CdnLocation))
+                {
+                    await updateScriptHashCodeService.RefreshHashcodesAsync(appRegistrationModel, shellAppRegistrations.First().CdnLocation).ConfigureAwait(false);
                 }
 
                 var statusCode = await documentService.UpsertAsync(appRegistrationModel).ConfigureAwait(false);
