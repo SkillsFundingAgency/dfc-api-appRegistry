@@ -94,6 +94,9 @@ namespace DFC.Api.AppRegistry.Models
         [Display(Description = "List of JavaScripts required by the application.")]
         public Dictionary<string, string?>? JavaScriptNames { get; set; }
 
+        [Display(Description = "List of CSS Scripts required by the application.")]
+        public Dictionary<string, string?>? CssScriptNames { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var result = new List<ValidationResult>();

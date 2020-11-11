@@ -4,6 +4,7 @@ using DFC.Api.AppRegistry.Models.ClientOptions;
 using DFC.Compui.Cosmos.Contracts;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
@@ -103,19 +104,40 @@ namespace DFC.Api.AppRegistry.Services
 
             int updatedHashcodeCount = 0;
 
+            if (appRegistrationModel.CssScriptNames != null && appRegistrationModel.CssScriptNames.Any())
+            {
+                updatedHashcodeCount += await RefreshHashcodesListAsync(appRegistrationModel.CssScriptNames, cdnLocation).ConfigureAwait(false);
+            }
+
             if (appRegistrationModel.JavaScriptNames != null && appRegistrationModel.JavaScriptNames.Any())
             {
-                foreach (var key in appRegistrationModel.JavaScriptNames.Keys.ToList())
+                updatedHashcodeCount += await RefreshHashcodesListAsync(appRegistrationModel.JavaScriptNames, cdnLocation).ConfigureAwait(false);
+            }
+
+            return updatedHashcodeCount;
+        }
+
+        public async Task<int> RefreshHashcodesListAsync(Dictionary<string, string?>? dict, string? cdnLocation)
+        {
+            _ = dict ?? throw new ArgumentNullException(nameof(dict));
+
+            if (string.IsNullOrWhiteSpace(cdnLocation))
+            {
+                throw new ArgumentNullException(nameof(cdnLocation));
+            }
+
+            int updatedHashcodeCount = 0;
+
+            foreach (var key in dict.Keys.ToList())
+            {
+                var fullUrlPath = key.StartsWith("/", StringComparison.Ordinal) ? cdnLocation + key : key;
+
+                var hashcode = await GetFileHashAsync(new Uri(fullUrlPath, UriKind.Absolute)).ConfigureAwait(false);
+
+                if (!string.IsNullOrEmpty(hashcode) && (dict[key] == null || !dict[key].Equals(hashcode, StringComparison.OrdinalIgnoreCase)))
                 {
-                    var fullUrlPath = key.StartsWith("/", StringComparison.Ordinal) ? cdnLocation + key : key;
-
-                    var hashcode = await GetFileHashAsync(new Uri(fullUrlPath, UriKind.Absolute)).ConfigureAwait(false);
-
-                    if (!string.IsNullOrEmpty(hashcode) && (appRegistrationModel.JavaScriptNames[key] == null || !appRegistrationModel.JavaScriptNames[key].Equals(hashcode, StringComparison.OrdinalIgnoreCase)))
-                    {
-                        appRegistrationModel.JavaScriptNames[key] = hashcode;
-                        updatedHashcodeCount++;
-                    }
+                    dict[key] = hashcode;
+                    updatedHashcodeCount++;
                 }
             }
 
