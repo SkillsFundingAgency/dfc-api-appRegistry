@@ -103,16 +103,19 @@ namespace DFC.Api.AppRegistry.Services
 
             int updatedHashcodeCount = 0;
 
-            foreach (var key in appRegistrationModel.JavaScriptNames!.Keys.ToList())
+            if (appRegistrationModel.JavaScriptNames != null && appRegistrationModel.JavaScriptNames.Any())
             {
-                var fullUrlPath = key.StartsWith("/", StringComparison.Ordinal) ? cdnLocation + key : key;
-
-                var hashcode = await GetFileHashAsync(new Uri(fullUrlPath, UriKind.Absolute)).ConfigureAwait(false);
-
-                if (!string.IsNullOrEmpty(hashcode) && (appRegistrationModel.JavaScriptNames[key] == null || !appRegistrationModel.JavaScriptNames[key].Equals(hashcode, StringComparison.OrdinalIgnoreCase)))
+                foreach (var key in appRegistrationModel.JavaScriptNames.Keys.ToList())
                 {
-                    appRegistrationModel.JavaScriptNames[key] = hashcode;
-                    updatedHashcodeCount++;
+                    var fullUrlPath = key.StartsWith("/", StringComparison.Ordinal) ? cdnLocation + key : key;
+
+                    var hashcode = await GetFileHashAsync(new Uri(fullUrlPath, UriKind.Absolute)).ConfigureAwait(false);
+
+                    if (!string.IsNullOrEmpty(hashcode) && (appRegistrationModel.JavaScriptNames[key] == null || !appRegistrationModel.JavaScriptNames[key].Equals(hashcode, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        appRegistrationModel.JavaScriptNames[key] = hashcode;
+                        updatedHashcodeCount++;
+                    }
                 }
             }
 

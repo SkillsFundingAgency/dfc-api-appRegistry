@@ -240,6 +240,29 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         }
 
         [Fact]
+        public async Task RefreshHashcodesAsyncReturnsSuccessfulZeroCountWhenNoScripts()
+        {
+            // arrange
+            const int expectedCount = 0;
+            var appRegistrationModel = new AppRegistrationModel
+            {
+                Path = "a-path",
+            };
+
+            A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).Returns(HttpStatusCode.OK);
+
+            var service = BuildServiceToTest();
+
+            // act
+            var result = await service.RefreshHashcodesAsync(appRegistrationModel, DefaultCdnLocation).ConfigureAwait(false);
+
+            // assert
+            A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
+
+            Assert.Equal(expectedCount, result);
+        }
+
+        [Fact]
         public async Task RefreshHashcodesAsyncReturnsExceptionWhenNoAppRegistrations()
         {
             // arrange
