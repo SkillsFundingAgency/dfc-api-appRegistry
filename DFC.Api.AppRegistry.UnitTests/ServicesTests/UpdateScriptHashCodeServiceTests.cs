@@ -194,17 +194,23 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         public async Task RefreshHashcodesAsyncReturnsSuccessfulCount()
         {
             // arrange
-            const int expectedCount = 3;
             var appRegistrationModel = new AppRegistrationModel
             {
                 Path = "a-path",
+                CssScriptNames = new Dictionary<string, string?>
+                {
+                    { "/a-file-location.css", null },
+                    { "/another-file-location.css", "a-hash-code" },
+                    { "http://somewhere.com//a-file-location.css", "a-hash-code" },
+                },
                 JavaScriptNames = new Dictionary<string, string?>
-                    {
-                        { "/a-file-location", null },
-                        { "/another-file-location", "a-hash-code" },
-                        { "http://somewhere.com//a-file-location", "a-hash-code" },
-                    },
+                {
+                    { "/a-file-location.js", null },
+                    { "/another-file-location.js", "a-hash-code" },
+                    { "http://somewhere.com//a-file-location.js", "a-hash-code" },
+                },
             };
+            int expectedCount = appRegistrationModel.CssScriptNames.Count + appRegistrationModel.JavaScriptNames.Count;
 
             var service = BuildServiceToTest();
 
@@ -219,12 +225,13 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         public async Task RefreshHashcodesAsyncReturnsSuccessfulZeroCount()
         {
             // arrange
-            const int expectedCount = 0;
             var appRegistrationModel = new AppRegistrationModel
             {
                 Path = "a-path",
+                CssScriptNames = new Dictionary<string, string?> { },
                 JavaScriptNames = new Dictionary<string, string?> { },
             };
+            int expectedCount = appRegistrationModel.CssScriptNames.Count + appRegistrationModel.JavaScriptNames.Count;
 
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).Returns(HttpStatusCode.OK);
 
@@ -293,6 +300,86 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 
             // act
             var exceptionResult = await Assert.ThrowsAsync<ArgumentNullException>(async () => await service.RefreshHashcodesAsync(appRegistrationModel, string.Empty).ConfigureAwait(false)).ConfigureAwait(false);
+
+            // assert
+            A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
+
+            Assert.Equal("Value cannot be null. (Parameter 'cdnLocation')", exceptionResult.Message);
+        }
+
+        [Fact]
+        public async Task RefreshHashcodesListAsyncReturnsSuccessfulCount()
+        {
+            // arrange
+            var dict = new Dictionary<string, string?>
+            {
+                { "/a-file-location.js", null },
+                { "/another-file-location.js", "a-hash-code" },
+                { "http://somewhere.com//a-file-location.js", "a-hash-code" },
+            };
+            int expectedCount = dict.Count;
+
+            var service = BuildServiceToTest();
+
+            // act
+            var result = await service.RefreshHashcodesListAsync(dict, DefaultCdnLocation).ConfigureAwait(false);
+
+            // assert
+            Assert.Equal(expectedCount, result);
+        }
+
+        [Fact]
+        public async Task RefreshHashcodesListAsyncReturnsSuccessfulZeroCount()
+        {
+            // arrange
+            var dict = new Dictionary<string, string?> { };
+            int expectedCount = dict.Count;
+
+            A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).Returns(HttpStatusCode.OK);
+
+            var service = BuildServiceToTest();
+
+            // act
+            var result = await service.RefreshHashcodesListAsync(dict, DefaultCdnLocation).ConfigureAwait(false);
+
+            // assert
+            A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
+
+            Assert.Equal(expectedCount, result);
+        }
+
+        [Fact]
+        public async Task RefreshHashcodesListAsyncReturnsExceptionWhenNullDictionary()
+        {
+            // arrange
+            Dictionary<string, string?>? nullDict = null;
+
+            var service = BuildServiceToTest();
+
+            // act
+            var exceptionResult = await Assert.ThrowsAsync<ArgumentNullException>(async () => await service.RefreshHashcodesListAsync(nullDict, DefaultCdnLocation).ConfigureAwait(false)).ConfigureAwait(false);
+
+            // assert
+            A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
+
+            Assert.Equal("Value cannot be null. (Parameter 'dict')", exceptionResult.Message);
+        }
+
+        [Fact]
+        public async Task RefreshHashcodesListAsyncReturnsExceptionWhenNoCdnLocation()
+        {
+            // arrange
+            var dict = new Dictionary<string, string?>
+            {
+                { "/a-file-location.js", null },
+                { "/another-file-location.js", "a-hash-code" },
+                { "http://somewhere.com//a-file-location.js", "a-hash-code" },
+            };
+
+            var service = BuildServiceToTest();
+
+            // act
+            var exceptionResult = await Assert.ThrowsAsync<ArgumentNullException>(async () => await service.RefreshHashcodesListAsync(dict, string.Empty).ConfigureAwait(false)).ConfigureAwait(false);
 
             // assert
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
