@@ -257,6 +257,15 @@ namespace DFC.Api.AppRegistry.UnitTests.FunctionsTests
                         HealthCheckRequired = true,
                     },
                 },
+                AjaxRequests = new List<AjaxRequestModel>
+                {
+                    new AjaxRequestModel
+                    {
+                         Name = "a-name",
+                         AjaxEndpoint = "https://somewhere.com/a-name",
+                         HealthCheckRequired = true,
+                    },
+                },
                 JavaScriptNames = new Dictionary<string, string?>
                 {
                     { "/a-name", null },
