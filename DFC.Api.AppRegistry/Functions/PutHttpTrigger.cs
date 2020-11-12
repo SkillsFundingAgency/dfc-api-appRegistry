@@ -92,9 +92,9 @@ namespace DFC.Api.AppRegistry.Functions
                 appRegistrationModel.DateOfRegistration = existingAppRegistration.DateOfRegistration ?? DateTime.UtcNow;
                 appRegistrationModel.PageLocations = existingAppRegistration.PageLocations;
                 appRegistrationModel.Regions?.ForEach(f => f.LastModifiedDate = DateTime.UtcNow);
-                appRegistrationModel.Regions?.ForEach(f => f.DateOfRegistration = existingAppRegistration.Regions.FirstOrDefault(r => r.PageRegion == f.PageRegion)?.DateOfRegistration ?? DateTime.UtcNow);
+                appRegistrationModel.Regions?.ForEach(f => f.DateOfRegistration = existingAppRegistration.Regions?.FirstOrDefault(r => r.PageRegion == f.PageRegion)?.DateOfRegistration ?? DateTime.UtcNow);
                 appRegistrationModel.AjaxRequests?.ForEach(f => f.LastModifiedDate = DateTime.UtcNow);
-                appRegistrationModel.AjaxRequests?.ForEach(f => f.DateOfRegistration = existingAppRegistration.AjaxRequests.FirstOrDefault(r => r.Name == f.Name)?.DateOfRegistration ?? DateTime.UtcNow);
+                appRegistrationModel.AjaxRequests?.ForEach(f => f.DateOfRegistration = existingAppRegistration.AjaxRequests?.FirstOrDefault(r => r.Name == f.Name)?.DateOfRegistration ?? DateTime.UtcNow);
                 appRegistrationModel.LastModifiedDate = DateTime.UtcNow;
 
                 if (!appRegistrationModel.Validate(logger))
