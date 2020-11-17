@@ -154,7 +154,11 @@ namespace DFC.Api.AppRegistry.Services
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var hashcode = response.Content.Headers.GetValues(ContentMDS).FirstOrDefault();
+                    string? hashcode = null;
+                    if (response.Content.Headers.TryGetValues(ContentMDS, out var headers))
+                    {
+                        hashcode = headers.FirstOrDefault();
+                    }
 
                     return !string.IsNullOrWhiteSpace(hashcode)
                         ? hashcode.Replace("-", string.Empty, StringComparison.OrdinalIgnoreCase)
