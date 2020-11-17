@@ -49,7 +49,7 @@ namespace DFC.Api.AppRegistry.Services
                 return HttpStatusCode.NoContent;
             }
 
-            foreach (var appRegistration in appRegistrations.Where(w => w.JavaScriptNames != null && w.JavaScriptNames.Any()))
+            foreach (var appRegistration in appRegistrations)
             {
                 await UpdateHashCodesAsync(appRegistration, cdnLocation).ConfigureAwait(false);
             }
@@ -104,14 +104,12 @@ namespace DFC.Api.AppRegistry.Services
 
             int updatedHashcodeCount = 0;
 
-            if (appRegistrationModel.CssScriptNames != null && appRegistrationModel.CssScriptNames.Any())
+            foreach (var dict in new List<Dictionary<string, string?>> { appRegistrationModel.CssScriptNames!, appRegistrationModel.JavaScriptNames! })
             {
-                updatedHashcodeCount += await RefreshHashcodesListAsync(appRegistrationModel.CssScriptNames, cdnLocation).ConfigureAwait(false);
-            }
-
-            if (appRegistrationModel.JavaScriptNames != null && appRegistrationModel.JavaScriptNames.Any())
-            {
-                updatedHashcodeCount += await RefreshHashcodesListAsync(appRegistrationModel.JavaScriptNames, cdnLocation).ConfigureAwait(false);
+                if (dict != null && dict.Any())
+                {
+                    updatedHashcodeCount += await RefreshHashcodesListAsync(dict, cdnLocation).ConfigureAwait(false);
+                }
             }
 
             return updatedHashcodeCount;
