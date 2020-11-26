@@ -1,0 +1,20 @@
+
+<policies>
+  <inbound>
+    <base />
+    <rate-limit calls="__RateLimitRequests__" renewal-period="__RateLimitRenewalPeriod__" />
+  </inbound>
+  <backend>
+    <retry condition="@(context.Response.StatusCode == 503)" count="15" interval="1">
+      <forward-request />
+    </retry>
+  </backend>
+  <outbound>
+    <set-header name="X-Powered-By" exists-action="delete" />
+    <set-header name="X-ASPnet-Version" exists-action="delete" />
+    <base />
+  </outbound>
+  <on-error>
+    <base />
+  </on-error>
+</policies>
