@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
@@ -24,13 +25,14 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         public async Task PostWithBodyReturnsOk()
         {
             // Arrange
-            var expectedResult = new StatusCodeResult(200);
+            var expectedResult = new StatusCodeResult((int)HttpStatusCode.OK);
             var function = new PagesWebhookHttpTrigger(fakeLogger, fakewebhookReceiver);
+            var request = BuildRequestWithValidBody("A webhook test");
 
             A.CallTo(() => fakewebhookReceiver.ReceiveEvents(A<string>.Ignored)).Returns(new StatusCodeResult(200));
 
             // Act
-            var result = await function.Run(BuildRequestWithValidBody("A webhook test")).ConfigureAwait(false);
+            var result = await function.Run(request).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakewebhookReceiver.ReceiveEvents(A<string>.Ignored)).MustHaveHappenedOnceExactly();
@@ -45,7 +47,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         {
             // Arrange
             HttpRequest? request = null;
-            var expectedResult = new StatusCodeResult(400);
+            var expectedResult = new StatusCodeResult((int)HttpStatusCode.BadRequest);
             var function = new PagesWebhookHttpTrigger(fakeLogger, fakewebhookReceiver);
 
             A.CallTo(() => fakewebhookReceiver.ReceiveEvents(A<string>.Ignored)).Returns(new StatusCodeResult(200));
@@ -63,7 +65,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         public async Task PostNullRequestBodyReturnsBadRequest()
         {
             // Arrange
-            var expectedResult = new StatusCodeResult(400);
+            var expectedResult = new StatusCodeResult((int)HttpStatusCode.BadRequest);
             var function = new PagesWebhookHttpTrigger(fakeLogger, fakewebhookReceiver);
             var request = new DefaultHttpRequest(new DefaultHttpContext());
 
@@ -79,17 +81,22 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         }
 
         [Fact]
-        public async Task PostThrowsException()
+        public async Task PostCatchesException()
         {
             // Arrange
+            var expectedResult = new StatusCodeResult((int)HttpStatusCode.InternalServerError);
+            var function = new PagesWebhookHttpTrigger(fakeLogger, fakewebhookReceiver);
+            var request = BuildRequestWithValidBody("A webhook test");
+
             A.CallTo(() => fakewebhookReceiver.ReceiveEvents(A<string>.Ignored)).Throws(new NotImplementedException());
 
-            var function = new PagesWebhookHttpTrigger(fakeLogger, fakewebhookReceiver);
-            var request = new DefaultHttpRequest(new DefaultHttpContext());
-
             // Act
+            var result = await function.Run(request).ConfigureAwait(false);
+
             // Assert
-            await Assert.ThrowsAsync<NotImplementedException>(async () => await function.Run(BuildRequestWithValidBody("a body")).ConfigureAwait(false)).ConfigureAwait(false);
+            var statusResult = Assert.IsType<StatusCodeResult>(result);
+
+            Assert.Equal(expectedResult.StatusCode, statusResult.StatusCode);
         }
 
         private static HttpRequest BuildRequestWithValidBody(string bodyString)
