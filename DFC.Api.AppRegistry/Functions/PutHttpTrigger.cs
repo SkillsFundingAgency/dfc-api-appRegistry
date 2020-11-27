@@ -1,3 +1,5 @@
+using DFC.Api.AppRegistry.Common;
+using DFC.Api.AppRegistry.Contracts;
 using DFC.Api.AppRegistry.Extensions;
 using DFC.Api.AppRegistry.Models;
 using DFC.Compui.Cosmos.Contracts;
@@ -19,13 +21,16 @@ namespace DFC.Api.AppRegistry.Functions
     {
         private readonly ILogger<PutHttpTrigger> logger;
         private readonly IDocumentService<AppRegistrationModel> documentService;
+        private readonly IUpdateScriptHashCodeService updateScriptHashCodeService;
 
         public PutHttpTrigger(
            ILogger<PutHttpTrigger> logger,
-           IDocumentService<AppRegistrationModel> documentService)
+           IDocumentService<AppRegistrationModel> documentService,
+           IUpdateScriptHashCodeService updateScriptHashCodeService)
         {
             this.logger = logger;
             this.documentService = documentService;
+            this.updateScriptHashCodeService = updateScriptHashCodeService;
         }
 
         [FunctionName("Put")]
@@ -54,7 +59,7 @@ namespace DFC.Api.AppRegistry.Functions
                 return new BadRequestResult();
             }
 
-            var appRegistrationModel = await request.GetModelFromBodyAsync<AppRegistrationModel>(logger).ConfigureAwait(false);
+            var appRegistrationModel = await request.GetModelFromBodyAsync<AppRegistrationModel>().ConfigureAwait(false);
 
             if (appRegistrationModel == null)
             {
@@ -69,8 +74,8 @@ namespace DFC.Api.AppRegistry.Functions
             }
 
             logger.LogInformation($"Attempting to get app registration for: {path}");
-            var existingAppRegistration = await documentService.GetAsync(p => p.Path == path).ConfigureAwait(false);
-            if (existingAppRegistration == null)
+            var existingAppRegistrations = await documentService.GetAsync(p => p.Path == path).ConfigureAwait(false);
+            if (existingAppRegistrations == null || !existingAppRegistrations.Any())
             {
                 logger.LogWarning($"No app registration exists for path: {path}");
                 return new NoContentResult();
@@ -80,21 +85,27 @@ namespace DFC.Api.AppRegistry.Functions
             {
                 logger.LogInformation($"Attempting to update app registration for: {appRegistrationModel.Path}");
 
-                appRegistrationModel.Id = existingAppRegistration.First().Id;
-                appRegistrationModel.Etag = existingAppRegistration.First().Etag; 
+                var existingAppRegistration = existingAppRegistrations.First();
+                appRegistrationModel.Id = existingAppRegistration.Id;
+                appRegistrationModel.Etag = existingAppRegistration.Etag;
+                appRegistrationModel.CdnLocation = existingAppRegistration.CdnLocation;
+                appRegistrationModel.DateOfRegistration = existingAppRegistration.DateOfRegistration ?? DateTime.UtcNow;
+                appRegistrationModel.PageLocations = existingAppRegistration.PageLocations;
                 appRegistrationModel.Regions?.ForEach(f => f.LastModifiedDate = DateTime.UtcNow);
+                appRegistrationModel.Regions?.ForEach(f => f.DateOfRegistration = existingAppRegistration.Regions?.FirstOrDefault(r => r.PageRegion == f.PageRegion)?.DateOfRegistration ?? DateTime.UtcNow);
+                appRegistrationModel.AjaxRequests?.ForEach(f => f.LastModifiedDate = DateTime.UtcNow);
+                appRegistrationModel.AjaxRequests?.ForEach(f => f.DateOfRegistration = existingAppRegistration.AjaxRequests?.FirstOrDefault(r => r.Name == f.Name)?.DateOfRegistration ?? DateTime.UtcNow);
                 appRegistrationModel.LastModifiedDate = DateTime.UtcNow;
 
-                var validationResults = appRegistrationModel.Validate(new ValidationContext(appRegistrationModel));
-                if (validationResults != null && validationResults.Any())
+                if (!appRegistrationModel.Validate(logger))
                 {
-                    logger.LogWarning($"Validation Failed with {validationResults.Count()} errors");
-                    foreach (var validationResult in validationResults)
-                    {
-                        logger.LogWarning($"Validation Failed: {validationResult.ErrorMessage}: {string.Join(",", validationResult.MemberNames)}");
-                    }
-
                     return new UnprocessableEntityResult();
+                }
+
+                var shellAppRegistrations = await documentService.GetAsync(p => p.Path == Constants.PathNameForShell).ConfigureAwait(false);
+                if (shellAppRegistrations != null && shellAppRegistrations.Any() && !string.IsNullOrWhiteSpace(shellAppRegistrations.FirstOrDefault()?.CdnLocation))
+                {
+                    await updateScriptHashCodeService.RefreshHashcodesAsync(appRegistrationModel, shellAppRegistrations.First().CdnLocation).ConfigureAwait(false);
                 }
 
                 var statusCode = await documentService.UpsertAsync(appRegistrationModel).ConfigureAwait(false);

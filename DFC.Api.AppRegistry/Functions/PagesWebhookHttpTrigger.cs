@@ -10,6 +10,7 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
+using System.Web.Http;
 
 namespace DFC.Api.AppRegistry.Functions
 {
@@ -29,6 +30,8 @@ namespace DFC.Api.AppRegistry.Functions
         [FunctionName("PagesWebhook")]
         [Display(Name = "Pages Webhook", Description = "Receives webhook Post requests for Pages.")]
         [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "Page processed", ShowSchema = false)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.BadRequest, Description = "Invalid request data", ShowSchema = false)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.InternalServerError, Description = "Internal error caught and logged", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.TooManyRequests, Description = "Too many requests being sent, by default the API supports 150 per minute.", ShowSchema = false)]
@@ -42,7 +45,7 @@ namespace DFC.Api.AppRegistry.Functions
                 if (request == null)
                 {
                     logger.LogError($"{nameof(request)} is null");
-                    return new StatusCodeResult(400);
+                    return new StatusCodeResult((int)HttpStatusCode.BadRequest);
                 }
 
                 using var streamReader = new StreamReader(request.Body);
@@ -51,7 +54,7 @@ namespace DFC.Api.AppRegistry.Functions
                 if (string.IsNullOrEmpty(requestBody))
                 {
                     logger.LogError($"{nameof(request)} body is null");
-                    return new StatusCodeResult(400);
+                    return new StatusCodeResult((int)HttpStatusCode.BadRequest);
                 }
 
                 var result = await webhookReceiver.ReceiveEvents(requestBody).ConfigureAwait(false);
@@ -63,7 +66,7 @@ namespace DFC.Api.AppRegistry.Functions
             catch (Exception ex)
             {
                 logger.LogError(ex.ToString());
-                throw;
+                return new StatusCodeResult((int)HttpStatusCode.InternalServerError);
             }
         }
     }
