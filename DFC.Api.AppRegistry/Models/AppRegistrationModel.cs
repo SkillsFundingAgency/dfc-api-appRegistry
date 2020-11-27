@@ -15,7 +15,7 @@ using System.Text.RegularExpressions;
 namespace DFC.Api.AppRegistry.Models
 {
     [ExcludeFromCodeCoverage]
-    public class AppRegistrationModel : DocumentModel
+    public class AppRegistrationModel : DocumentModel, IValidatableObject
     {
         [Display(Description = "The path of the application. This should match the url value immediately after the domain. i.e. https://nationalcareeers.service.gov.uk/explore-careers.")]
         [Example(Description = "explore-careers")]
@@ -27,15 +27,9 @@ namespace DFC.Api.AppRegistry.Models
         [Example(Description = "explore-careers")]
         public override string? PartitionKey
         {
-            get
-            {
-                return Path;
-            }
+            get => Path;
 
-            set
-            {
-                Path = value;
-            }
+            set => Path = value;
         }
 
         [Display(Description = "Text value that appears on the Top Navigation section of the National Careers Service website. If this value is NOT present no menu option will be displayed.")]
@@ -45,6 +39,10 @@ namespace DFC.Api.AppRegistry.Models
         [Display(Description = "Number indicating the position in the top navigation bar.  This value will have to agreed with Product owners and Service designers before deployment. Its suggested that numbers are allocated in increments of 100 or so.")]
         [Example(Description = "200")]
         public int TopNavigationOrder { get; set; }
+
+        [Display(Description = "Location of CDN containing assets")]
+        [Example(Description = "https://dev-cdn.nationalcareersservice.org.uk")]
+        public string? CdnLocation { get; set; }
 
         [Display(Description = "Which page layout the application should us.")]
         [Example(Description = "FullWidth")]
@@ -87,8 +85,17 @@ namespace DFC.Api.AppRegistry.Models
         [Display(Description = "List of Regions registered to the application.")]
         public List<RegionModel>? Regions { get; set; }
 
+        [Display(Description = "List of Ajax Requests registered to the application.")]
+        public List<AjaxRequestModel>? AjaxRequests { get; set; }
+
         [Display(Description = "List of page location supported by the application.")]
         public Dictionary<Guid, PageLocationModel>? PageLocations { get; set; }
+
+        [Display(Description = "List of JavaScripts required by the application.")]
+        public Dictionary<string, string?>? JavaScriptNames { get; set; }
+
+        [Display(Description = "List of CSS Scripts required by the application.")]
+        public Dictionary<string, string?>? CssScriptNames { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -122,6 +129,22 @@ namespace DFC.Api.AppRegistry.Models
                 if (htmlDoc.ParseErrors.Any())
                 {
                     result.Add(new ValidationResult(string.Format(CultureInfo.InvariantCulture, ValidationMessages.MalformedHtml, nameof(PhaseBannerHtml))));
+                }
+            }
+
+            if (Regions != null && Regions.Any())
+            {
+                foreach (var region in Regions)
+                {
+                    result.AddRange(region.Validate(new ValidationContext(region)));
+                }
+            }
+
+            if (AjaxRequests != null && AjaxRequests.Any())
+            {
+                foreach (var ajaxRequests in AjaxRequests)
+                {
+                    result.AddRange(ajaxRequests.Validate(new ValidationContext(ajaxRequests)));
                 }
             }
 

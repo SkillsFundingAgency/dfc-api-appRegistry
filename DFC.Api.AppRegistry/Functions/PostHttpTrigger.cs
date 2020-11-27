@@ -1,3 +1,5 @@
+using DFC.Api.AppRegistry.Common;
+using DFC.Api.AppRegistry.Contracts;
 using DFC.Api.AppRegistry.Extensions;
 using DFC.Api.AppRegistry.Models;
 using DFC.Compui.Cosmos.Contracts;
@@ -19,13 +21,16 @@ namespace DFC.Api.AppRegistry.Functions
     {
         private readonly ILogger<PostHttpTrigger> logger;
         private readonly IDocumentService<AppRegistrationModel> documentService;
+        private readonly IUpdateScriptHashCodeService updateScriptHashCodeService;
 
         public PostHttpTrigger(
            ILogger<PostHttpTrigger> logger,
-           IDocumentService<AppRegistrationModel> documentService)
+           IDocumentService<AppRegistrationModel> documentService,
+           IUpdateScriptHashCodeService updateScriptHashCodeService)
         {
             this.logger = logger;
             this.documentService = documentService;
+            this.updateScriptHashCodeService = updateScriptHashCodeService;
         }
 
         [FunctionName("Post")]
@@ -49,7 +54,7 @@ namespace DFC.Api.AppRegistry.Functions
                 return new BadRequestResult();
             }
 
-            var appRegistrationModel = await request.GetModelFromBodyAsync<AppRegistrationModel>(logger).ConfigureAwait(false);
+            var appRegistrationModel = await request.GetModelFromBodyAsync<AppRegistrationModel>().ConfigureAwait(false);
 
             if (appRegistrationModel == null)
             {
@@ -63,18 +68,18 @@ namespace DFC.Api.AppRegistry.Functions
 
                 appRegistrationModel.Id = Guid.NewGuid();
                 appRegistrationModel.Regions?.ForEach(f => f.DateOfRegistration = DateTime.UtcNow);
+                appRegistrationModel.AjaxRequests?.ForEach(f => f.DateOfRegistration = DateTime.UtcNow);
                 appRegistrationModel.DateOfRegistration = DateTime.UtcNow;
 
-                var validationResults = appRegistrationModel.Validate(new ValidationContext(appRegistrationModel));
-                if (validationResults != null && validationResults.Any())
+                if (!appRegistrationModel.Validate(logger))
                 {
-                    logger.LogWarning($"Validation Failed with {validationResults.Count()} errors");
-                    foreach (var validationResult in validationResults)
-                    {
-                        logger.LogWarning($"Validation Failed: {validationResult.ErrorMessage}: {string.Join(",", validationResult.MemberNames)}");
-                    }
-
                     return new UnprocessableEntityResult();
+                }
+
+                var shellAppRegistrations = await documentService.GetAsync(p => p.Path == Constants.PathNameForShell).ConfigureAwait(false);
+                if (shellAppRegistrations != null && shellAppRegistrations.Any() && !string.IsNullOrWhiteSpace(shellAppRegistrations.FirstOrDefault()?.CdnLocation))
+                {
+                    await updateScriptHashCodeService.RefreshHashcodesAsync(appRegistrationModel, shellAppRegistrations.First().CdnLocation).ConfigureAwait(false);
                 }
 
                 var statusCode = await documentService.UpsertAsync(appRegistrationModel).ConfigureAwait(false);

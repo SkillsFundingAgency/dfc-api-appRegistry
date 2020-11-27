@@ -25,13 +25,13 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             var expectedResult = new OkObjectResult(fakeAppRegistrationModels);
             var function = new GetListHttpTrigger(fakeLogger, fakeDocumentService);
 
-            A.CallTo(() => fakeDocumentService.GetAllAsync()).Returns(fakeAppRegistrationModels);
+            A.CallTo(() => fakeDocumentService.GetAllAsync(A<string>.Ignored)).Returns(fakeAppRegistrationModels);
 
             // Act
             var result = await function.Run(A.Fake<HttpRequest>()).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => fakeDocumentService.GetAllAsync()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDocumentService.GetAllAsync(A<string>.Ignored)).MustHaveHappenedOnceExactly();
 
             var statusResult = Assert.IsType<OkObjectResult>(result);
 
@@ -46,13 +46,13 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             IEnumerable<AppRegistrationModel>? fakeAppRegistrationModels = null;
             var function = new GetListHttpTrigger(fakeLogger, fakeDocumentService);
 
-            A.CallTo(() => fakeDocumentService.GetAllAsync()).Returns(fakeAppRegistrationModels);
+            A.CallTo(() => fakeDocumentService.GetAllAsync(A<string>.Ignored)).Returns(fakeAppRegistrationModels);
 
             // Act
             var result = await function.Run(A.Fake<HttpRequest>()).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => fakeDocumentService.GetAllAsync()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeDocumentService.GetAllAsync(A<string>.Ignored)).MustHaveHappenedOnceExactly();
 
             var statusResult = Assert.IsType<NoContentResult>(result);
 
