@@ -349,6 +349,14 @@
                 "value": "deleted"
               },
               {
+                "name": "SubscriptionSettings__Filter__IncludeEventTypes__3",
+                "value": "draft"
+              },
+              {
+                "name": "SubscriptionSettings__Filter__IncludeEventTypes__4",
+                "value": "draft-discarded"
+              },
+              {
                 "name": "SubscriptionSettings__Endpoint",
                 "value": "[parameters('SubscriptionSettingsEndpoint')]"
               },
