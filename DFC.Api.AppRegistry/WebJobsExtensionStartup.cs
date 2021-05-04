@@ -12,6 +12,7 @@ using DFC.Compui.Cosmos.Contracts;
 using DFC.Compui.Subscriptions.Pkg.Netstandard.Extensions;
 using DFC.Compui.Subscriptions.Pkg.Webhook.Extensions;
 using DFC.Swagger.Standard;
+using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -46,11 +47,12 @@ namespace DFC.Api.AppRegistry
             var cosmosDbConnection = configuration.GetSection(CosmosDbConfigAppSettings).Get<CosmosDbConnection>();
             var policyOptions = configuration.GetSection(AppSettingsPolicies).Get<PolicyOptions>() ?? new PolicyOptions();
             var policyRegistry = builder.Services.AddPolicyRegistry();
+            var cosmosRetryOptions = new RetryOptions { MaxRetryAttemptsOnThrottledRequests = 20, MaxRetryWaitTimeInSeconds = 60 };
 
             builder.AddSwashBuckle(Assembly.GetExecutingAssembly());
             builder.Services.AddApplicationInsightsTelemetry();
             builder.Services.AddAutoMapper(typeof(WebJobsExtensionStartup).Assembly);
-            builder.Services.AddDocumentServices<AppRegistrationModel>(cosmosDbConnection, false);
+            builder.Services.AddDocumentServices<AppRegistrationModel>(cosmosDbConnection, false, cosmosRetryOptions);
             builder.Services.AddSingleton(configuration.GetSection(nameof(UpdateScriptHashCodeClientOptions)).Get<UpdateScriptHashCodeClientOptions>() ?? new UpdateScriptHashCodeClientOptions());
             builder.Services.AddSingleton(configuration.GetSection(nameof(PathClientOptions)).Get<PathClientOptions>() ?? new PathClientOptions());
             builder.Services.AddSingleton(configuration.GetSection(nameof(RegionClientOptions)).Get<RegionClientOptions>() ?? new RegionClientOptions());
