@@ -4,14 +4,6 @@
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet",
     "APPINSIGHTS_INSTRUMENTATIONKEY": "",
-    "LegacyCosmosDbConnectionString": "[Cosmos DB Connection String]",
-    "RegionsCollectionName": "regions",
-    "PathsCollectionName": "paths",
-    "LegacyDatabaseName": "composition",
-    "RegionsLeaseCollectionName": "regions_lease",
-    "RegionsLeaseCollectionNamePrefix": "ls",
-    "PathsLeaseCollectionName": "paths_lease",
-    "PathsLeaseCollectionNamePrefix": "ls",
     "ApiSuffix": ""
   },
   "Configuration": {
@@ -35,16 +27,6 @@
       "BackoffPower": 2,
       "Count": 3
     }
-  },
-  "PathClientOptions": {
-    "BaseAddress": "http://localhost/",
-    "Timeout": "00:00:30",
-    "ApiKey": "[ API key ]"
-  },
-  "RegionClientOptions": {
-    "BaseAddress": "http://localhost/",
-    "Timeout": "00:00:30",
-    "ApiKey": "[ API key ]"
   },
   "PagesClientOptions": {
     "BaseAddress": "http://localhost/",
