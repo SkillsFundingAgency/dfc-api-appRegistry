@@ -54,8 +54,6 @@ namespace DFC.Api.AppRegistry
             builder.Services.AddAutoMapper(typeof(WebJobsExtensionStartup).Assembly);
             builder.Services.AddDocumentServices<AppRegistrationModel>(cosmosDbConnection, false, cosmosRetryOptions);
             builder.Services.AddSingleton(configuration.GetSection(nameof(UpdateScriptHashCodeClientOptions)).Get<UpdateScriptHashCodeClientOptions>() ?? new UpdateScriptHashCodeClientOptions());
-            builder.Services.AddSingleton(configuration.GetSection(nameof(PathClientOptions)).Get<PathClientOptions>() ?? new PathClientOptions());
-            builder.Services.AddSingleton(configuration.GetSection(nameof(RegionClientOptions)).Get<RegionClientOptions>() ?? new RegionClientOptions());
             builder.Services.AddSingleton(configuration.GetSection(nameof(PagesClientOptions)).Get<PagesClientOptions>() ?? new PagesClientOptions());
             builder.Services.AddTransient<ISwaggerDocumentGenerator, SwaggerDocumentGenerator>();
             builder.Services.AddTransient<ILegacyDataLoadService, LegacyDataLoadService>();
@@ -70,14 +68,6 @@ namespace DFC.Api.AppRegistry
             builder.Services
                 .AddPolicies(policyRegistry, nameof(UpdateScriptHashCodeClientOptions), policyOptions)
                 .AddHttpClient<IUpdateScriptHashCodeService, UpdateScriptHashCodeService, UpdateScriptHashCodeClientOptions>(configuration, nameof(UpdateScriptHashCodeClientOptions), nameof(PolicyOptions.HttpRetry), nameof(PolicyOptions.HttpCircuitBreaker));
-
-            builder.Services
-                .AddPolicies(policyRegistry, nameof(PathClientOptions), policyOptions)
-                .AddHttpClient<ILegacyPathService, LegacyPathService, PathClientOptions>(configuration, nameof(PathClientOptions), nameof(PolicyOptions.HttpRetry), nameof(PolicyOptions.HttpCircuitBreaker));
-
-            builder.Services
-                .AddPolicies(policyRegistry, nameof(RegionClientOptions), policyOptions)
-                .AddHttpClient<ILegacyRegionService, LegacyRegionService, RegionClientOptions>(configuration, nameof(RegionClientOptions), nameof(PolicyOptions.HttpRetry), nameof(PolicyOptions.HttpCircuitBreaker));
 
             builder.Services
                 .AddPolicies(policyRegistry, nameof(PagesClientOptions), policyOptions)
