@@ -51,7 +51,6 @@ namespace DFC.Api.AppRegistry
 
             builder.AddSwashBuckle(Assembly.GetExecutingAssembly());
             builder.Services.AddApplicationInsightsTelemetry();
-            builder.Services.AddAutoMapper(typeof(WebJobsExtensionStartup).Assembly);
             builder.Services.AddDocumentServices<AppRegistrationModel>(cosmosDbConnection, false, cosmosRetryOptions);
             builder.Services.AddSingleton(configuration.GetSection(nameof(UpdateScriptHashCodeClientOptions)).Get<UpdateScriptHashCodeClientOptions>() ?? new UpdateScriptHashCodeClientOptions());
             builder.Services.AddSingleton(configuration.GetSection(nameof(PagesClientOptions)).Get<PagesClientOptions>() ?? new PagesClientOptions());
