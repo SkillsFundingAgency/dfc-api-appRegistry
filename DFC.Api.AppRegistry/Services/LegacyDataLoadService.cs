@@ -18,23 +18,17 @@ namespace DFC.Api.AppRegistry.Services
         private readonly IModelMappingService modelMappingService;
         private readonly IModelValidationService modelValidationService;
         private readonly IDocumentService<AppRegistrationModel> documentService;
-        private readonly ILegacyPathService legacyPathService;
-        private readonly ILegacyRegionService legacyRegionService;
 
         public LegacyDataLoadService(
             ILogger<LegacyDataLoadService> logger,
             IModelMappingService modelMappingService,
             IModelValidationService modelValidationService,
-            IDocumentService<AppRegistrationModel> documentService,
-            ILegacyPathService legacyPathService,
-            ILegacyRegionService legacyRegionService)
+            IDocumentService<AppRegistrationModel> documentService)
         {
             this.logger = logger;
             this.modelMappingService = modelMappingService;
             this.modelValidationService = modelValidationService;
             this.documentService = documentService;
-            this.legacyPathService = legacyPathService;
-            this.legacyRegionService = legacyRegionService;
         }
 
         public async Task<AppRegistrationModel?> GetAppRegistrationByPathAsync(string? path)

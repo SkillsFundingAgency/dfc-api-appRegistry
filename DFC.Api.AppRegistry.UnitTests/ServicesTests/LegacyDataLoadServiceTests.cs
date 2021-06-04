@@ -22,13 +22,11 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
         private readonly IModelMappingService fakeModelMappingService = A.Fake<IModelMappingService>();
         private readonly IModelValidationService fakeModelValidationService = A.Fake<IModelValidationService>();
         private readonly IDocumentService<AppRegistrationModel> fakeDocumentService = A.Fake<IDocumentService<AppRegistrationModel>>();
-        private readonly ILegacyPathService fakeLegacyPathService = A.Fake<ILegacyPathService>();
-        private readonly ILegacyRegionService fakeLegacyRegionService = A.Fake<ILegacyRegionService>();
         private readonly LegacyDataLoadService legacyDataLoadService;
 
         public LegacyDataLoadServiceTests()
         {
-            legacyDataLoadService = new LegacyDataLoadService(fakeLogger, fakeModelMappingService, fakeModelValidationService, fakeDocumentService, fakeLegacyPathService, fakeLegacyRegionService);
+            legacyDataLoadService = new LegacyDataLoadService(fakeLogger, fakeModelMappingService, fakeModelValidationService, fakeDocumentService);
         }
 
         [Fact]
