@@ -7,16 +7,6 @@ namespace DFC.Api.AppRegistry.Contracts
 {
     public interface ILegacyDataLoadService
     {
-        Task LoadAsync();
-
-        Task ProcessPathsAsync(IList<LegacyPathModel> legacyPathModels);
-
-        Task ProcessPathAsync(LegacyPathModel legacyPathModel);
-
-        Task UpdateRegionAsync(LegacyRegionModel legacyRegionModel);
-
-        Task UpdatePathAsync(LegacyPathModel? legacyPathModel);
-
         Task UpdateAppRegistrationAsync(AppRegistrationModel appRegistrationModel);
 
         Task<AppRegistrationModel?> GetAppRegistrationByPathAsync(string path);
