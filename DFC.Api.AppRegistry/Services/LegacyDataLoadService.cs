@@ -1,11 +1,9 @@
 ﻿using DFC.Api.AppRegistry.Contracts;
 using DFC.Api.AppRegistry.Models;
-using DFC.Api.AppRegistry.Models.Legacy;
 using DFC.Compui.Cosmos.Contracts;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -15,18 +13,15 @@ namespace DFC.Api.AppRegistry.Services
     public class LegacyDataLoadService : ILegacyDataLoadService
     {
         private readonly ILogger<LegacyDataLoadService> logger;
-        private readonly IModelMappingService modelMappingService;
         private readonly IModelValidationService modelValidationService;
         private readonly IDocumentService<AppRegistrationModel> documentService;
 
         public LegacyDataLoadService(
             ILogger<LegacyDataLoadService> logger,
-            IModelMappingService modelMappingService,
             IModelValidationService modelValidationService,
             IDocumentService<AppRegistrationModel> documentService)
         {
             this.logger = logger;
-            this.modelMappingService = modelMappingService;
             this.modelValidationService = modelValidationService;
             this.documentService = documentService;
         }

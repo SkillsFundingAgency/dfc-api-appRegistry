@@ -1,6 +1,5 @@
 ﻿using DFC.Api.AppRegistry.Contracts;
 using DFC.Api.AppRegistry.Models;
-using DFC.Api.AppRegistry.Models.Legacy;
 using DFC.Api.AppRegistry.Services;
 using DFC.Api.AppRegistry.UnitTests.TestModels;
 using DFC.Compui.Cosmos.Contracts;
@@ -19,14 +18,13 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
     public class LegacyDataLoadServiceTests
     {
         private readonly ILogger<LegacyDataLoadService> fakeLogger = A.Fake<ILogger<LegacyDataLoadService>>();
-        private readonly IModelMappingService fakeModelMappingService = A.Fake<IModelMappingService>();
         private readonly IModelValidationService fakeModelValidationService = A.Fake<IModelValidationService>();
         private readonly IDocumentService<AppRegistrationModel> fakeDocumentService = A.Fake<IDocumentService<AppRegistrationModel>>();
         private readonly LegacyDataLoadService legacyDataLoadService;
 
         public LegacyDataLoadServiceTests()
         {
-            legacyDataLoadService = new LegacyDataLoadService(fakeLogger, fakeModelMappingService, fakeModelValidationService, fakeDocumentService);
+            legacyDataLoadService = new LegacyDataLoadService(fakeLogger, fakeModelValidationService, fakeDocumentService);
         }
 
         [Fact]
@@ -40,8 +38,6 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 
             // assert
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappened();
-            A.CallTo(() => fakeModelMappingService.MapModels(A<AppRegistrationModel>.Ignored, A<LegacyPathModel>.Ignored, A<List<LegacyRegionModel>>.Ignored)).MustNotHaveHappened();
-
             Assert.NotNull(result);
         }
 
@@ -57,8 +53,6 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 
             // assert
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappened();
-            A.CallTo(() => fakeModelMappingService.MapModels(A<AppRegistrationModel>.Ignored, A<LegacyPathModel>.Ignored, A<List<LegacyRegionModel>>.Ignored)).MustNotHaveHappened();
-
             Assert.Null(result);
         }
 
