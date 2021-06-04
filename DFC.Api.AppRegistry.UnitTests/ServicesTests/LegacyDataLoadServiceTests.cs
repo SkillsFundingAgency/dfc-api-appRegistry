@@ -15,16 +15,16 @@ using Xunit;
 namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
 {
     [Trait("Category", "LegacyDataLoad - Service tests")]
-    public class LegacyDataLoadServiceTests
+    public class DataLoadServiceTests
     {
-        private readonly ILogger<LegacyDataLoadService> fakeLogger = A.Fake<ILogger<LegacyDataLoadService>>();
+        private readonly ILogger<DataLoadService> fakeLogger = A.Fake<ILogger<DataLoadService>>();
         private readonly IModelValidationService fakeModelValidationService = A.Fake<IModelValidationService>();
         private readonly IDocumentService<AppRegistrationModel> fakeDocumentService = A.Fake<IDocumentService<AppRegistrationModel>>();
-        private readonly LegacyDataLoadService legacyDataLoadService;
+        private readonly DataLoadService dataLoadService;
 
-        public LegacyDataLoadServiceTests()
+        public DataLoadServiceTests()
         {
-            legacyDataLoadService = new LegacyDataLoadService(fakeLogger, fakeModelValidationService, fakeDocumentService);
+            dataLoadService = new DataLoadService(fakeLogger, fakeModelValidationService, fakeDocumentService);
         }
 
         [Fact]
@@ -34,7 +34,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(new List<AppRegistrationModel> { new AppRegistrationModel { Path = PagesDataLoadService.AppRegistryPathNameForPagesApp } });
 
             // Act
-            var result = await legacyDataLoadService.GetAppRegistrationByPathAsync("a-path").ConfigureAwait(false);
+            var result = await dataLoadService.GetAppRegistrationByPathAsync("a-path").ConfigureAwait(false);
 
             // assert
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappened();
@@ -49,7 +49,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).Returns(models);
 
             // Act
-            var result = await legacyDataLoadService.GetAppRegistrationByPathAsync("a-path").ConfigureAwait(false);
+            var result = await dataLoadService.GetAppRegistrationByPathAsync("a-path").ConfigureAwait(false);
 
             // assert
             A.CallTo(() => fakeDocumentService.GetAsync(A<Expression<Func<AppRegistrationModel, bool>>>.Ignored)).MustHaveHappened();
@@ -63,7 +63,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             AppRegistrationModel? dummyAppRegistrationModel = null;
 
             // Act
-            var exceptionResult = await Assert.ThrowsAsync<ArgumentNullException>(async () => await legacyDataLoadService.UpdateAppRegistrationAsync(dummyAppRegistrationModel).ConfigureAwait(false)).ConfigureAwait(false);
+            var exceptionResult = await Assert.ThrowsAsync<ArgumentNullException>(async () => await dataLoadService.UpdateAppRegistrationAsync(dummyAppRegistrationModel).ConfigureAwait(false)).ConfigureAwait(false);
 
             // assert
             A.CallTo(() => fakeModelValidationService.ValidateModel(A<AppRegistrationModel>.Ignored)).MustNotHaveHappened();
@@ -84,7 +84,7 @@ namespace DFC.Api.AppRegistry.UnitTests.ServicesTests
             A.CallTo(() => fakeDocumentService.UpsertAsync(A<AppRegistrationModel>.Ignored)).Returns(upsertResult);
 
             // Act
-            await legacyDataLoadService.UpdateAppRegistrationAsync(validAppRegistrationModel).ConfigureAwait(false);
+            await dataLoadService.UpdateAppRegistrationAsync(validAppRegistrationModel).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeModelValidationService.ValidateModel(A<AppRegistrationModel>.Ignored)).MustHaveHappenedOnceExactly();

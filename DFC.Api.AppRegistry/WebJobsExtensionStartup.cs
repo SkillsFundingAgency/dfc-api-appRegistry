@@ -55,7 +55,7 @@ namespace DFC.Api.AppRegistry
             builder.Services.AddSingleton(configuration.GetSection(nameof(UpdateScriptHashCodeClientOptions)).Get<UpdateScriptHashCodeClientOptions>() ?? new UpdateScriptHashCodeClientOptions());
             builder.Services.AddSingleton(configuration.GetSection(nameof(PagesClientOptions)).Get<PagesClientOptions>() ?? new PagesClientOptions());
             builder.Services.AddTransient<ISwaggerDocumentGenerator, SwaggerDocumentGenerator>();
-            builder.Services.AddTransient<ILegacyDataLoadService, LegacyDataLoadService>();
+            builder.Services.AddTransient<IDataLoadService, DataLoadService>();
             builder.Services.AddTransient<IApiDataService, ApiDataService>();
             builder.Services.AddTransient<IApiService, ApiService>();
             builder.Services.AddTransient<IModelValidationService, ModelValidationService>();

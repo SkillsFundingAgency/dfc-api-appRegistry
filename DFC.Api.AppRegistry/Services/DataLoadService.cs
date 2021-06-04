@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 
 namespace DFC.Api.AppRegistry.Services
 {
-    public class LegacyDataLoadService : ILegacyDataLoadService
+    public class DataLoadService : IDataLoadService
     {
-        private readonly ILogger<LegacyDataLoadService> logger;
+        private readonly ILogger<DataLoadService> logger;
         private readonly IModelValidationService modelValidationService;
         private readonly IDocumentService<AppRegistrationModel> documentService;
 
-        public LegacyDataLoadService(
-            ILogger<LegacyDataLoadService> logger,
+        public DataLoadService(
+            ILogger<DataLoadService> logger,
             IModelValidationService modelValidationService,
             IDocumentService<AppRegistrationModel> documentService)
         {
