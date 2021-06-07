@@ -17,9 +17,6 @@
         "ApiName": {
             "value": "paths"
         },
-        "ApimCompositeKey": {
-            "value": "123456789"
-        },
         "CompositeUiSharedResourceGroup": {
             "value": "dfc-dev-compui-shared-rg"
         },
@@ -47,31 +44,13 @@
         "enableAlerts": {
             "value": false
         },
-        "RegionClientOptionsBaseAddress": {
-            "value": "123456789"
-        },
-        "PathClientOptionsBaseAddress": {
-            "value": "123456789"
-        },
         "SubscriptionSettingsEndpoint": {
             "value": "123456789"
-        },
-        "RegionsCollectionName": {
-            "value": "a-comsmos-collection"
-        },
-        "PathsCollectionName": {
-            "value": "a-comsmos-collection"
         },
         "ApiTitleSuffix": {
             "value": "a-comsmos-collection"
         },
         "PagesClientOptionsBaseAddress": {
-            "value": "tbc"
-        },
-        "PathsLeaseCollectionName": {
-            "value": "tbc"
-        },
-        "RegionsLeaseCollectionName": {
             "value": "tbc"
         },
         "SubscriptionSettingsFilterBeginsWith": {

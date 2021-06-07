@@ -17,9 +17,6 @@
         "ApiName": {
             "value": "__ApiName__"
         },
-        "ApimCompositeKey": {
-            "value": "__ApimCompositeKey__"
-        },
         "AseHostingEnvironmentName": {
             "value": "__AseHostingEnvironmentName__"
         },
@@ -62,32 +59,14 @@
         "enableAlerts": {
             "value": __EnableAzureMonitorAlerting__
         },
-        "RegionClientOptionsBaseAddress": {
-            "value": "__RegionClientOptionsBaseAddress__"
-        },
-        "PathClientOptionsBaseAddress": {
-            "value": "__PathClientOptionsBaseAddress__"
-        },
         "SubscriptionSettingsEndpoint": {
             "value": "__SubscriptionSettingsEndpoint__"
-        },
-        "RegionsCollectionName": {
-            "value": "__RegionsCollectionName__"
-        },
-        "PathsCollectionName": {
-            "value": "__PathsCollectionName__"
         },
         "ApiTitleSuffix": {
             "value": "__ApiTitleSuffix__"
         },
         "PagesClientOptionsBaseAddress": {
             "value": "__PagesClientOptionsBaseAddress__"
-        },
-        "PathsLeaseCollectionName": {
-            "value": "__PathsLeaseCollectionName__"
-        },
-        "RegionsLeaseCollectionName": {
-            "value": "__RegionsLeaseCollectionName__"
         },
         "SubscriptionSettingsFilterBeginsWith": {
             "value": "__SubscriptionSettingsFilterBeginsWith__"
