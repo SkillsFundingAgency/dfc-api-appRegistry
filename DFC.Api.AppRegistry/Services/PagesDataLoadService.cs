@@ -19,27 +19,27 @@ namespace DFC.Api.AppRegistry.Services
         private readonly HttpClient httpClient;
         private readonly PagesClientOptions pagesClientOptions;
         private readonly IApiDataService apiDataService;
-        private readonly ILegacyDataLoadService legacyDataLoadService;
+        private readonly IDataLoadService dataLoadService;
 
         public PagesDataLoadService(
             ILogger<PagesDataLoadService> logger,
             HttpClient httpClient,
             PagesClientOptions pagesClientOptions,
             IApiDataService apiDataService,
-            ILegacyDataLoadService legacyDataLoadService)
+            IDataLoadService dataLoadService)
         {
             this.logger = logger;
             this.httpClient = httpClient;
             this.pagesClientOptions = pagesClientOptions;
             this.apiDataService = apiDataService;
-            this.legacyDataLoadService = legacyDataLoadService;
+            this.dataLoadService = dataLoadService;
         }
 
         public async Task<HttpStatusCode> CreateOrUpdateAsync(Guid contentId)
         {
             logger.LogInformation($"Load page location {contentId} into App Registration started");
 
-            var appRegistration = await legacyDataLoadService.GetAppRegistrationByPathAsync(AppRegistryPathNameForPagesApp).ConfigureAwait(false);
+            var appRegistration = await dataLoadService.GetAppRegistrationByPathAsync(AppRegistryPathNameForPagesApp).ConfigureAwait(false);
 
             if (appRegistration == null)
             {
@@ -67,7 +67,7 @@ namespace DFC.Api.AppRegistry.Services
 
                 appRegistration.LastModifiedDate = DateTime.UtcNow;
 
-                await legacyDataLoadService.UpdateAppRegistrationAsync(appRegistration).ConfigureAwait(false);
+                await dataLoadService.UpdateAppRegistrationAsync(appRegistration).ConfigureAwait(false);
             }
 
             logger.LogInformation($"Load page location {contentId} into App Registration completed");
@@ -79,7 +79,7 @@ namespace DFC.Api.AppRegistry.Services
         {
             logger.LogInformation($"Load page locations into App Registration started");
 
-            var appRegistration = await legacyDataLoadService.GetAppRegistrationByPathAsync(AppRegistryPathNameForPagesApp).ConfigureAwait(false);
+            var appRegistration = await dataLoadService.GetAppRegistrationByPathAsync(AppRegistryPathNameForPagesApp).ConfigureAwait(false);
 
             if (appRegistration == null)
             {
@@ -97,7 +97,7 @@ namespace DFC.Api.AppRegistry.Services
             appRegistration.PageLocations = pageLocations;
             appRegistration.LastModifiedDate = DateTime.UtcNow;
 
-            await legacyDataLoadService.UpdateAppRegistrationAsync(appRegistration).ConfigureAwait(false);
+            await dataLoadService.UpdateAppRegistrationAsync(appRegistration).ConfigureAwait(false);
 
             logger.LogInformation($"Load page locations into AppRegistration completed");
         }
@@ -106,7 +106,7 @@ namespace DFC.Api.AppRegistry.Services
         {
             logger.LogInformation($"Remove page location {contentId} from App Registration started");
 
-            var appRegistration = await legacyDataLoadService.GetAppRegistrationByPathAsync(AppRegistryPathNameForPagesApp).ConfigureAwait(false);
+            var appRegistration = await dataLoadService.GetAppRegistrationByPathAsync(AppRegistryPathNameForPagesApp).ConfigureAwait(false);
 
             if (appRegistration == null)
             {
@@ -116,7 +116,7 @@ namespace DFC.Api.AppRegistry.Services
             appRegistration.PageLocations?.Remove(contentId);
             appRegistration.LastModifiedDate = DateTime.UtcNow;
 
-            await legacyDataLoadService.UpdateAppRegistrationAsync(appRegistration).ConfigureAwait(false);
+            await dataLoadService.UpdateAppRegistrationAsync(appRegistration).ConfigureAwait(false);
 
             logger.LogInformation($"Remove page location {contentId} from App Registration completed");
             return HttpStatusCode.OK;
