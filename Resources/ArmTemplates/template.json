@@ -17,9 +17,6 @@
     "ApiName": {
       "type": "string"
     },
-    "ApimCompositeKey": {
-      "type": "string"
-    },
     "ApiTitleSuffix": {
       "type": "string",
       "defaultValue": "",
@@ -78,28 +75,10 @@
         "description": "Enable or disable alerting"
       }
     },
-    "RegionClientOptionsBaseAddress": {
-      "type": "string"
-    },
-    "PathClientOptionsBaseAddress": {
-      "type": "string"
-    },
     "SubscriptionSettingsEndpoint": {
       "type": "string"
     },
-    "RegionsCollectionName": {
-      "type": "string"
-    },
-    "PathsCollectionName": {
-      "type": "string"
-    },
     "PagesClientOptionsBaseAddress": {
-      "type": "string"
-    },
-    "PathsLeaseCollectionName": {
-      "type": "string"
-    },
-    "RegionsLeaseCollectionName": {
       "type": "string"
     },
     "SubscriptionSettingsFilterBeginsWith": {
@@ -261,38 +240,6 @@
                 "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('CompositeUiSharedStorageAccountName'),';AccountKey=',listKeys(resourceId(parameters('CompositeUiSharedResourceGroup'), 'Microsoft.Storage/storageAccounts', parameters('CompositeUiSharedStorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]"
               },
               {
-                "name": "LegacyCosmosDbConnectionString",
-                "value": "[concat('AccountEndpoint=https://', parameters('CosmosDbAccount'), '.documents.azure.com:443/;AccountKey=', listKeys(resourceId(parameters('CompositeUiSharedResourceGroup'), 'Microsoft.DocumentDB/databaseAccounts', parameters('CosmosDbAccount')), '2015-04-08').primaryMasterKey, ';')]"
-              },
-              {
-                "name": "RegionsCollectionName",
-                "value": "[parameters('RegionsCollectionName')]"
-              },
-              {
-                "name": "PathsCollectionName",
-                "value": "[parameters('PathsCollectionName')]"
-              },
-              {
-                "name": "RegionsLeaseCollectionName",
-                "value": "[parameters('RegionsLeaseCollectionName')]"
-              },
-              {
-                "name": "PathsLeaseCollectionName",
-                "value": "[parameters('PathsLeaseCollectionName')]"
-              },
-              {
-                "name": "LegacyDatabaseName",
-                "value": "composition"
-              },
-              {
-                "name": "RegionsLeaseCollectionNamePrefix",
-                "value": "ls"
-              },
-              {
-                "name": "PathsLeaseCollectionNamePrefix",
-                "value": "ls"
-              },
-              {
                 "name": "PartitionKey",
                 "value": "/id"
               },
@@ -315,22 +262,6 @@
               {
                 "name": "Configuration__CosmosDbConnections__AppRegistry__PartitionKey",
                 "value": "/PartitionKey"
-              },
-              {
-                "name": "PathClientOptions__BaseAddress",
-                "value": "[parameters('PathClientOptionsBaseAddress')]"
-              },
-              {
-                "name": "PathClientOptions__ApiKey",
-                "value": "[parameters('ApimCompositeKey')]"
-              },
-              {
-                "name": "RegionClientOptions__BaseAddress",
-                "value": "[parameters('RegionClientOptionsBaseAddress')]"
-              },
-              {
-                "name": "RegionClientOptions__ApiKey",
-                "value": "[parameters('ApimCompositeKey')]"
               },
               {
                 "name": "SubscriptionSettings__Filter__BeginsWith",

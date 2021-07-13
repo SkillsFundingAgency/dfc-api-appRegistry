@@ -7,7 +7,7 @@ namespace DFC.Api.AppRegistry.Enums
         [Description("No layout")]
         None = 0,
 
-        [Description("Uses a layout which is full width ")]
+        [Description("Uses a layout which is full width")]
         FullWidth = 1,
 
         [Description("Uses a layout where the sidebar is located on the right")]
@@ -18,5 +18,8 @@ namespace DFC.Api.AppRegistry.Enums
 
         [Description("Uses a layout which is full width but has no main div tag")]
         FullWidthNoMain = 4,
+
+        [Description("Uses a layout which is full browser width")]
+        UseBrowserWidth = 5,
     }
 }
