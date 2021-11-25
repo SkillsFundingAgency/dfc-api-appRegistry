@@ -97,6 +97,9 @@ namespace DFC.Api.AppRegistry.Models
         [Display(Description = "List of CSS Scripts required by the application.")]
         public Dictionary<string, string?>? CssScriptNames { get; set; }
 
+        [Display(Description = "Indicator stating that the application is interactive")]
+        public bool IsInteractiveApp { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var result = new List<ValidationResult>();
