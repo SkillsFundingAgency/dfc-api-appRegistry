@@ -3,7 +3,8 @@
     <TargetFramework>net6.0</TargetFramework>
     <AzureFunctionsVersion>v4</AzureFunctionsVersion>
     <CodeAnalysisRuleSet>../DFC.Digital.CodeAnalysis.ruleset</CodeAnalysisRuleSet>
-    <ProjectGuid>{E5160D3E-46F2-4384-8C57-078251EB776E}</ProjectGuid>
+	  <_FunctionsSkipCleanOutput>true</_FunctionsSkipCleanOutput>
+	  <ProjectGuid>{E5160D3E-46F2-4384-8C57-078251EB776E}</ProjectGuid>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
