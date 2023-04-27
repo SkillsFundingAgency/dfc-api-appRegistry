@@ -2,6 +2,9 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+     "appInsightsName":{
+      "type": "string"
+    },
     "ApimLoggerName": {
       "type": "string"
     },
@@ -93,7 +96,7 @@
   },
   "variables": {
     "ApiName": "[concat(parameters('ApimProductInstanceName'), '-', parameters('ApiName'))]",
-    "AppServiceAppInsightsName": "[concat(variables('ResourcePrefix'), '-ai')]",
+    "AppServiceAppInsightsName":"[parameters('appInsightsName')]",
     "AppServicePlanName": "[if(greater(length(parameters('SharedAppServicePlanName')), 0), parameters('SharedAppServicePlanName'), concat(variables('ResourcePrefix'), '-asp'))]",
     "AppServicePlanResourceGroup": "[if(greater(length(parameters('SharedAppServicePlanResourceGroup')), 0), parameters('SharedAppServicePlanResourceGroup'), resourceGroup().name)]",
     "BuildingBlocksDfcBaseUrl": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",

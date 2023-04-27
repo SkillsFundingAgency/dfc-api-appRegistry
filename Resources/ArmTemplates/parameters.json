@@ -76,6 +76,9 @@
         },
         "subscriptionUrl":{
             "value": "__subscriptionUrl__"
+        },
+        "appInsightsName": {
+            "value": "__appInsightsName__" 
         }
     }
 }
