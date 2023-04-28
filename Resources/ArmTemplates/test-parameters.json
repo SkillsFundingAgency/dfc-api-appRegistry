@@ -62,8 +62,8 @@
         "subscriptionUrl":{
             "value": "url"
         },
-        "appInsightsName": {
-            "value": "dfc-foo-shared-ai"
+        "appInsightsInstrumentationKey": {
+            "value": "2276ec76-bb9c-4a0c-a407-3347cbe6c6b8"
         } 
     }
 }
