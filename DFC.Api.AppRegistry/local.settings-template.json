@@ -1,0 +1,44 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "APPINSIGHTS_INSTRUMENTATIONKEY": "",
+    "ApiSuffix": ""
+  },
+  "Configuration": {
+    "ApplicationName": "DFC-Api-AppRegistry",
+    "CosmosDbConnections": {
+      "AppRegistry": {
+        "AccessKey": "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
+        "EndpointUrl": "https://localhost:8081",
+        "DatabaseId": "composition",
+        "CollectionId": "appregistry",
+        "PartitionKey": "/PartitionKey"
+      }
+    }
+  },
+  "Policies": {
+    "HttpCircuitBreaker": {
+      "DurationOfBreak": "00:01:00",
+      "ExceptionsAllowedBeforeBreaking": 3
+    },
+    "HttpRetry": {
+      "BackoffPower": 2,
+      "Count": 3
+    }
+  },
+  "PagesClientOptions": {
+    "BaseAddress": "http://localhost/",
+    "Timeout": "00:00:30"
+  },
+  "SubscriptionSettings": {
+    "Endpoint": "http://localhost/webhook",
+    "SubscriptionServiceEndpoint": "http://localhost/Subscription/",
+    "ApiKey": "[ API key ]",
+    "Filter": {
+      "BeginsWith": "/dfc-app-pages/",
+      "IncludeEventTypes": [ "published", "unpublished", "deleted" ]
+    }
+  }
+}
