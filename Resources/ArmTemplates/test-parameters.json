@@ -61,6 +61,9 @@
         },
         "subscriptionUrl":{
             "value": "url"
-        }
+        },
+        "appInsightsInstrumentationKey": {
+            "value": "deadbeef-0a0a-0a0a-0a0a-0a0a0a0a0a0a"
+        } 
     }
 }

@@ -2,6 +2,9 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "appInsightsInstrumentationKey": {
+            "type": "string"
+    },
     "ApimLoggerName": {
       "type": "string"
     },
@@ -93,13 +96,12 @@
   },
   "variables": {
     "ApiName": "[concat(parameters('ApimProductInstanceName'), '-', parameters('ApiName'))]",
-    "AppServiceAppInsightsName": "[concat(variables('ResourcePrefix'), '-ai')]",
+    "AppServiceAppInsightsInstrumentationKey": "[parameters('appInsightsInstrumentationKey')]",
     "AppServicePlanName": "[if(greater(length(parameters('SharedAppServicePlanName')), 0), parameters('SharedAppServicePlanName'), concat(variables('ResourcePrefix'), '-asp'))]",
     "AppServicePlanResourceGroup": "[if(greater(length(parameters('SharedAppServicePlanResourceGroup')), 0), parameters('SharedAppServicePlanResourceGroup'), resourceGroup().name)]",
     "BuildingBlocksDfcBaseUrl": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
     "FunctionAppName": "[concat(variables('ResourcePrefix'), '-fa')]",
-    "ResourcePrefix": "[tolower(concat('dfc-', parameters('Environment'), '-api-appRegistry'))]",
-    "ActionGroupName": "[concat('dfc-', replace(tolower(parameters('Environment')), '-draft', ''), '-compui-shared-actgrp')]"
+    "ResourcePrefix": "[tolower(concat('dfc-', parameters('Environment'), '-api-appRegistry'))]"
   },
   "resources": [
     {
@@ -131,26 +133,26 @@
       "dependsOn": [
       ]
     },
-    {
-      "apiVersion": "2017-05-10",
-      "name": "[variables('AppServiceAppInsightsName')]",
-      "type": "Microsoft.Resources/deployments",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('BuildingBlocksDfcBaseUrl'), 'application-insights.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "appInsightsName": {
-            "value": "[variables('AppServiceAppInsightsName')]"
-          },
-          "attachedService": {
-            "value": ""
-          }
-        }
-      }
-    },
+    // {
+    //   "apiVersion": "2017-05-10",
+    //   "name": "[variables('AppServiceAppInsightsName')]",
+    //   "type": "Microsoft.Resources/deployments",
+    //   "properties": {
+    //     "mode": "Incremental",
+    //     "templateLink": {
+    //       "uri": "[concat(variables('BuildingBlocksDfcBaseUrl'), 'application-insights.json')]",
+    //       "contentVersion": "1.0.0.0"
+    //     },
+    //     "parameters": {
+    //       "appInsightsName": {
+    //         "value": "[variables('AppServiceAppInsightsName')]"
+    //       },
+    //       "attachedService": {
+    //         "value": ""
+    //       }
+    //     }
+    //   }
+    // },
     {
       "apiVersion": "2017-05-10",
       "name": "[variables('AppServicePlanName')]",
@@ -233,7 +235,7 @@
               },
               {
                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                "value": "[reference(variables('AppServiceAppInsightsName')).outputs.InstrumentationKey.value]"
+                "value": "[variables('AppServiceAppInsightsInstrumentationKey')]"
               },
               {
                 "name": "AzureWebJobsStorage",
@@ -306,10 +308,7 @@
             ]
           }
         }
-      },
-      "dependsOn": [
-        "[variables('AppServiceAppInsightsName')]"
-      ]
+      }
     },
     {
       "apiVersion": "2017-05-10",
@@ -340,89 +339,89 @@
           }
         }
       }
-    },
-    {
-      "apiVersion": "2019-05-01",
-      "name": "[concat(variables('AppServiceAppInsightsName'), '-metric-exceptions')]",
-      "type": "Microsoft.Resources/deployments",
-      "dependsOn": [
-        "[variables('AppServiceAppInsightsName')]"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('BuildingBlocksDfcBaseUrl'), 'Application-Insights/metric-alerts.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "enabled": {
-            "value": "[parameters('enableAlerts')]"
-          },
-          "alertName": {
-            "value": "[concat(variables('AppServiceAppInsightsName'), '-metric-exceptions')]"
-          },
-          "alertSeverity": {
-            "value": 3
-          },
-          "metricName": {
-            "value": "exceptions/count"
-          },
-          "operator": {
-            "value": "GreaterThan"
-          },
-          "threshold": {
-            "value": "[parameters('ExceptionCountThreshold')]"
-          },
-          "aggregation": {
-            "value": "Count"
-          },
-          "windowSize": {
-            "value": "PT5M"
-          },
-          "evaluationFrequency": {
-            "value": "PT1M"
-          },
-          "actionGroupName": {
-            "value": "[variables('ActionGroupName')]"
-          },
-          "actionGroupResourceGroup": {
-            "value": "[parameters('CompositeUiSharedResourceGroup')]"
-          },
-          "resourceId": {
-            "value": "[resourceId('Microsoft.Insights/Components', variables('AppServiceAppInsightsName'))]"
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "2019-05-01",
-      "name": "[concat(variables('AppServiceAppInsightsName'), '-failure-anomaly-v2')]",
-      "type": "Microsoft.Resources/deployments",
-      "dependsOn": [
-        "[variables('AppServiceAppInsightsName')]"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(variables('BuildingBlocksDfcBaseUrl'), 'Application-Insights/failure-anomaly-rule.json')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "alertName": {
-            "value": "[concat(variables('AppServiceAppInsightsName'), '-failure-anomaly-v2')]"
-          },
-          "enabled": {
-            "value": "[parameters('enableAlerts')]"
-          },
-          "resourceId": {
-            "value": "[resourceId('Microsoft.Insights/Components', variables('AppServiceAppInsightsName'))]"
-          },
-          "actionGroupId": {
-            "value": "[resourceId(parameters('CompositeUiSharedResourceGroup'), 'microsoft.insights/actionGroups', variables('ActionGroupName'))]"
-          }
-        }
-      }
     }
+    // {
+    //   "apiVersion": "2019-05-01",
+    //   "name": "[concat(variables('AppServiceAppInsightsName'), '-metric-exceptions')]",
+    //   "type": "Microsoft.Resources/deployments",
+    //   "dependsOn": [
+    //     "[variables('AppServiceAppInsightsName')]"
+    //   ],
+    //   "properties": {
+    //     "mode": "Incremental",
+    //     "templateLink": {
+    //       "uri": "[concat(variables('BuildingBlocksDfcBaseUrl'), 'Application-Insights/metric-alerts.json')]",
+    //       "contentVersion": "1.0.0.0"
+    //     },
+    //     "parameters": {
+    //       "enabled": {
+    //         "value": "[parameters('enableAlerts')]"
+    //       },
+    //       "alertName": {
+    //         "value": "[concat(variables('AppServiceAppInsightsName'), '-metric-exceptions')]"
+    //       },
+    //       "alertSeverity": {
+    //         "value": 3
+    //       },
+    //       "metricName": {
+    //         "value": "exceptions/count"
+    //       },
+    //       "operator": {
+    //         "value": "GreaterThan"
+    //       },
+    //       "threshold": {
+    //         "value": "[parameters('ExceptionCountThreshold')]"
+    //       },
+    //       "aggregation": {
+    //         "value": "Count"
+    //       },
+    //       "windowSize": {
+    //         "value": "PT5M"
+    //       },
+    //       "evaluationFrequency": {
+    //         "value": "PT1M"
+    //       },
+    //       "actionGroupName": {
+    //         "value": "[variables('ActionGroupName')]"
+    //       },
+    //       "actionGroupResourceGroup": {
+    //         "value": "[parameters('CompositeUiSharedResourceGroup')]"
+    //       },
+    //       "resourceId": {
+    //         "value": "[resourceId('Microsoft.Insights/Components', variables('AppServiceAppInsightsName'))]"
+    //       }
+    //     }
+    //   }
+    // },
+    // {
+    //   "apiVersion": "2019-05-01",
+    //   "name": "[concat(variables('AppServiceAppInsightsName'), '-failure-anomaly-v2')]",
+    //   "type": "Microsoft.Resources/deployments",
+    //   "dependsOn": [
+    //     "[variables('AppServiceAppInsightsName')]"
+    //   ],
+    //   "properties": {
+    //     "mode": "Incremental",
+    //     "templateLink": {
+    //       "uri": "[concat(variables('BuildingBlocksDfcBaseUrl'), 'Application-Insights/failure-anomaly-rule.json')]",
+    //       "contentVersion": "1.0.0.0"
+    //     },
+    //     "parameters": {
+    //       "alertName": {
+    //         "value": "[concat(variables('AppServiceAppInsightsName'), '-failure-anomaly-v2')]"
+    //       },
+    //       "enabled": {
+    //         "value": "[parameters('enableAlerts')]"
+    //       },
+    //       "resourceId": {
+    //         "value": "[resourceId('Microsoft.Insights/Components', variables('AppServiceAppInsightsName'))]"
+    //       },
+    //       "actionGroupId": {
+    //         "value": "[resourceId(parameters('CompositeUiSharedResourceGroup'), 'microsoft.insights/actionGroups', variables('ActionGroupName'))]"
+    //       }
+    //     }
+    //   }
+    //}
   ],
   "outputs": {}
 }

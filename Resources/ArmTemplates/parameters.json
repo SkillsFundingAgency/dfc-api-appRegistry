@@ -76,6 +76,9 @@
         },
         "subscriptionUrl":{
             "value": "__subscriptionUrl__"
+        },
+        "appInsightsInstrumentationKey": {
+            "value": "__appInsightsInstrumentationKey__" 
         }
     }
 }
