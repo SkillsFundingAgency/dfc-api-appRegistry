@@ -76,6 +76,12 @@
         },
         "subscriptionUrl":{
             "value": "__subscriptionUrl__"
+        },
+        "workspaceName": {
+            "value": "__sharedLogAnalyticsWorkspace__"
+        },
+        "workspaceResourceGroup": {
+            "value": "__sharedLogAnalyticsResourceGroup__"
         }
     }
 }
