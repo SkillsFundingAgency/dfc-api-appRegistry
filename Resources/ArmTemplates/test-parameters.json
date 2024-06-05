@@ -17,6 +17,9 @@
         "ApiName": {
             "value": "paths"
         },
+        "functionAppName": {
+            "value": "dfc-foo-api-appregistry-fa-ver"
+        },
         "CompositeUiSharedResourceGroup": {
             "value": "dfc-dev-compui-shared-rg"
         },

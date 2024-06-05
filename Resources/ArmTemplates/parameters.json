@@ -17,6 +17,9 @@
         "ApiName": {
             "value": "__ApiName__"
         },
+        "functionAppName": {
+            "value": "__FunctionAppName__"
+        },
         "AseHostingEnvironmentName": {
             "value": "__AseHostingEnvironmentName__"
         },
