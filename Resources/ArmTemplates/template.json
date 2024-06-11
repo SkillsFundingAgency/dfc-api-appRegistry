@@ -24,6 +24,9 @@
         "description": "The suffix to add after the API title. Used for draft environments to seperate API instances"
       }
     },
+    "functionAppName": {
+      "type": "string"
+    },
     "AseHostingEnvironmentName": {
       "type": "string",
       "defaultValue": ""
@@ -103,7 +106,6 @@
     "AppServicePlanName": "[if(greater(length(parameters('SharedAppServicePlanName')), 0), parameters('SharedAppServicePlanName'), concat(variables('ResourcePrefix'), '-asp'))]",
     "AppServicePlanResourceGroup": "[if(greater(length(parameters('SharedAppServicePlanResourceGroup')), 0), parameters('SharedAppServicePlanResourceGroup'), resourceGroup().name)]",
     "BuildingBlocksDfcBaseUrl": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
-    "FunctionAppName": "[concat(variables('ResourcePrefix'), '-fa')]",
     "ResourcePrefix": "[tolower(concat('dfc-', parameters('Environment'), '-api-appRegistry'))]",
     "ActionGroupName": "[concat('dfc-', replace(tolower(parameters('Environment')), '-draft', ''), '-compui-shared-actgrp')]"
   },
@@ -198,7 +200,7 @@
     },
     {
       "apiVersion": "2017-05-10",
-      "name": "[variables('FunctionAppName')]",
+      "name": "[parameters('functionAppName')]",
       "type": "Microsoft.Resources/deployments",
       "properties": {
         "mode": "Incremental",
@@ -208,7 +210,7 @@
         },
         "parameters": {
           "appServiceName": {
-            "value": "[variables('FunctionAppName')]"
+            "value": "[parameters('functionAppName')]"
           },
           "appServicePlanName": {
             "value": "[variables('AppServicePlanName')]"
