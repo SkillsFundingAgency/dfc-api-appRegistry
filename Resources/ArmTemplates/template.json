@@ -316,6 +316,10 @@
               {
                 "name": "ApiSuffix",
                 "value": "[parameters('ApiTitleSuffix')]"
+              },
+              {
+                "name": "AzureFunctionsWebHost__hostid",
+                "value": "[if(greaterOrEquals(length(parameters('functionAppName')), 32), substring(parameters('functionAppName'), sub(length(parameters('functionAppName')), 32)), parameters('functionAppName'))]"
               }
             ]
           }
