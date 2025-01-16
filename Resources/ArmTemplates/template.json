@@ -227,6 +227,9 @@
           "clientAffinity": {
             "value": true
           },
+          "healthCheckPath": {
+            "value": "/appregistry/"
+          },
           "appServiceAppSettings": {
             "value": [
               {
@@ -320,6 +323,106 @@
               {
                 "name": "AzureFunctionsWebHost__hostid",
                 "value": "[if(greaterOrEquals(length(parameters('functionAppName')), 32), substring(parameters('functionAppName'), sub(length(parameters('functionAppName')), 32)), parameters('functionAppName'))]"
+              },
+              {
+                "name": "AzureFunctionsWebHost__hostid",
+                "value": "[replace(guid(concat(parameters('FunctionAppName'), '-production')), '-', '')]"
+              }
+            ]
+          },
+ "appServiceSlotAppSettings": {
+            "value": [
+              {
+                "name": "FUNCTIONS_EXTENSION_VERSION",
+                "value": "~3"
+              },
+              {
+                "name": "FUNCTIONS_WORKER_RUNTIME",
+                "value": "dotnet"
+              },
+              {
+                "name": "MSDEPLOY_RENAME_LOCKED_FILES",
+                "value": "1"
+              },
+              {
+                "name": "WEBSITE_RUN_FROM_PACKAGE",
+                "value": "1"
+              },
+              {
+                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                "value": "[reference(variables('AppServiceAppInsightsName')).outputs.InstrumentationKey.value]"
+              },
+              {
+                "name": "AzureWebJobsStorage",
+                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('CompositeUiSharedStorageAccountName'),';AccountKey=',listKeys(resourceId(parameters('CompositeUiSharedResourceGroup'), 'Microsoft.Storage/storageAccounts', parameters('CompositeUiSharedStorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]"
+              },
+              {
+                "name": "PartitionKey",
+                "value": "/id"
+              },
+              {
+                "name": "Configuration__CosmosDbConnections__AppRegistry__EndpointUrl",
+                "value": "[concat('https://', parameters('CosmosDbAccount'), '.documents.azure.com:443/')]"
+              },
+              {
+                "name": "Configuration__CosmosDbConnections__AppRegistry__AccessKey",
+                "value": "[parameters('CompositeUiSharedCosmosPrimaryKey')]"
+              },
+              {
+                "name": "Configuration__CosmosDbConnections__AppRegistry__DatabaseId",
+                "value": "composition"
+              },
+              {
+                "name": "Configuration__CosmosDbConnections__AppRegistry__CollectionId",
+                "value": "[parameters('CosmosDbCollectionName')]"
+              },
+              {
+                "name": "Configuration__CosmosDbConnections__AppRegistry__PartitionKey",
+                "value": "/PartitionKey"
+              },
+              {
+                "name": "SubscriptionSettings__Filter__BeginsWith",
+                "value": "[parameters('SubscriptionSettingsFilterBeginsWith')]"
+              },
+              {
+                "name": "SubscriptionSettings__Filter__IncludeEventTypes__0",
+                "value": "published"
+              },
+              {
+                "name": "SubscriptionSettings__Filter__IncludeEventTypes__1",
+                "value": "unpublished"
+              },
+              {
+                "name": "SubscriptionSettings__Filter__IncludeEventTypes__2",
+                "value": "deleted"
+              },
+              {
+                "name": "SubscriptionSettings__Filter__IncludeEventTypes__3",
+                "value": "draft"
+              },
+              {
+                "name": "SubscriptionSettings__Filter__IncludeEventTypes__4",
+                "value": "draft-discarded"
+              },
+              {
+                "name": "SubscriptionSettings__Endpoint",
+                "value": "[parameters('SubscriptionSettingsEndpoint')]"
+              },
+              {
+                "name": "SubscriptionSettings__SubscriptionServiceEndpoint",
+                "value": "[parameters('subscriptionUrl')]"
+              },
+              {
+                "name": "PagesClientOptions__BaseAddress",
+                "value": "[parameters('PagesClientOptionsBaseAddress')]"
+              },
+              {
+                "name": "ApiSuffix",
+                "value": "[parameters('ApiTitleSuffix')]"
+              },
+              {
+                "name": "AzureFunctionsWebHost__hostid",
+                "value": "[replace(guid(concat(parameters('FunctionAppName'), '-staging')), '-', '')]"
               }
             ]
           }
